@@ -1,13 +1,28 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import { HashRouter, Route, Routes } from 'react-router';
 import reportWebVitals from './reportWebVitals';
+import LoginPage from './components/LoginPage';
+import { initializeApp } from 'firebase/app';
+import { getAnalytics } from "firebase/analytics";
+import { FIREBASE_CONFIG } from './config/firebaseConfig';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import HomePage from './components/HomePage';
+
+// Initialize Firebase
+const app = initializeApp(FIREBASE_CONFIG);
+const analytics = getAnalytics(app);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <HashRouter>
+      <Routes>
+        <Route path="/" element={<LoginPage app={app} analytics={analytics}/>}/>
+        <Route path="/home" element={<HomePage/>}/>
+      </Routes>
+    </HashRouter>
   </React.StrictMode>
 );
 
