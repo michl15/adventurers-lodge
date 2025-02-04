@@ -9,6 +9,7 @@ import { getAnalytics } from "firebase/analytics";
 import { FIREBASE_CONFIG } from './config/firebaseConfig';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import HomePage from './components/HomePage';
+import CharacterCreationPage from './components/CharacterCreationPage';
 
 // Initialize Firebase
 const app = initializeApp(FIREBASE_CONFIG);
@@ -21,6 +22,7 @@ root.render(
       <Routes>
         <Route path="/" element={<LoginPage app={app} analytics={analytics}/>}/>
         <Route path="/home" element={<HomePage/>}/>
+        <Route path="/character_creation" element={<CharacterCreationPage/>}/>
       </Routes>
     </HashRouter>
   </React.StrictMode>

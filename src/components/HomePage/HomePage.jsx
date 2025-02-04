@@ -31,10 +31,17 @@ const HomePage = () => {
         });
       }
 
+      const onCharacterCreationClick = () => {
+        navigate('/character_creation');
+      }
+
     return (
         <div>
           <Button onClick={onSignOutClick}>
             Sign out
+          </Button>
+          <Button onClick={onCharacterCreationClick}>
+            Create Character
           </Button>
             Homepage
         </div>
