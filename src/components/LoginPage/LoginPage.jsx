@@ -1,6 +1,7 @@
 import React from "react";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { Button } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { useNavigate } from "react-router";
 
 const LoginPage = ({app, analytics}) => {
@@ -38,7 +39,28 @@ const LoginPage = ({app, analytics}) => {
 
     return (
         <div>
-            <Button onClick={handleLoginOnClick}>Sign in with Google</Button>
+            <div className="d-flex justify-content-center align-items-center">
+                <Form className="rounded p-4">
+                    <Form.Group className="mb-3" controlId="formBasicUsername">
+                        <Form.Label>Username</Form.Label>
+                        <Form.Control type="username" placeholder="Enter Username" />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="formBasicPassword">
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control type="password" placeholder="Enter Password" />
+                    </Form.Group>
+
+                    <Form.Group>
+                        <Button className="m-1" variant="primary" type="submit">
+                            Submit
+                        </Button>
+                        <Button onClick={handleLoginOnClick}>
+                            Sign in with Google
+                        </Button>
+                    </Form.Group>
+                </Form>
+            </div>
         </div>
     )
 }
