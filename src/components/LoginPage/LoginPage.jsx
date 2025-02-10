@@ -1,7 +1,9 @@
 import React from "react";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { Button } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { useNavigate } from "react-router";
+import { HeaderImage, PageContainer, StyledForm, StyledHeader } from "./LoginStyles";
 
 const LoginPage = ({app, analytics}) => {
     const auth = getAuth(app);
@@ -38,7 +40,30 @@ const LoginPage = ({app, analytics}) => {
 
     return (
         <div>
-            <Button onClick={handleLoginOnClick}>Sign in with Google</Button>
+            <PageContainer>
+                <StyledHeader>Welcome to Adventurer's Lodge!</StyledHeader>
+                <HeaderImage src="https://pngimg.com/uploads/dragon/dragon_PNG84477.png"/>
+                <StyledForm className="rounded p-4">
+                    <Form.Group className="mb-3" controlId="formBasicUsername">
+                        <Form.Label>Username</Form.Label>
+                        <Form.Control type="username" placeholder="Enter Username" />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="formBasicPassword">
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control type="password" placeholder="Enter Password" />
+                    </Form.Group>
+
+                    <Form.Group>
+                        <Button className="m-1" variant="primary" type="submit">
+                            Submit
+                        </Button>
+                        <Button onClick={handleLoginOnClick}>
+                            Sign in with Google
+                        </Button>
+                    </Form.Group>
+                </StyledForm>
+            </PageContainer>
         </div>
     )
 }
