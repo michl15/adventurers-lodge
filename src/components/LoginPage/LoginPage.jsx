@@ -3,6 +3,7 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { Button } from "react-bootstrap";
 import { Form } from "react-bootstrap";
 import { useNavigate } from "react-router";
+import { HeaderImage, PageContainer, StyledForm, StyledHeader } from "./LoginStyles";
 
 const LoginPage = ({app, analytics}) => {
     const auth = getAuth(app);
@@ -39,8 +40,10 @@ const LoginPage = ({app, analytics}) => {
 
     return (
         <div>
-            <div className="d-flex justify-content-center align-items-center">
-                <Form className="rounded p-4">
+            <PageContainer>
+                <StyledHeader>Welcome to Adventurer's Lodge!</StyledHeader>
+                <HeaderImage src="https://pngimg.com/uploads/dragon/dragon_PNG84477.png"/>
+                <StyledForm className="rounded p-4">
                     <Form.Group className="mb-3" controlId="formBasicUsername">
                         <Form.Label>Username</Form.Label>
                         <Form.Control type="username" placeholder="Enter Username" />
@@ -59,8 +62,8 @@ const LoginPage = ({app, analytics}) => {
                             Sign in with Google
                         </Button>
                     </Form.Group>
-                </Form>
-            </div>
+                </StyledForm>
+            </PageContainer>
         </div>
     )
 }
