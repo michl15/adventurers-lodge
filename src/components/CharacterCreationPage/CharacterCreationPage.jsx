@@ -1,31 +1,45 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import { getDatabase, push, ref } from "firebase/database";
+import { getDatabase, push, ref, set } from "firebase/database";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-const CharacterCreationPage = () => {
+const CharacterCreationPage = ({app}) => {
     const [charName, setCharName] = useState('');
     const [charClass, setCharClass] = useState('');
+    const [userId, setUserId] = useState('');
+
+    useEffect(() => {
+        const auth = getAuth();
+        onAuthStateChanged(auth, (user) => {
+            setUserId(user.uid)
+    })
+
+    }, []);
+
 
     const onNameChange = (event) => {
-        console.log(event.target.value)
         setCharName(event.target.value);
     }
 
     const onClassChange = (event) => {
-        console.log(event.target.value)
         setCharClass(event.target.value);
     }
 
     const onSubmit = () => {
         const database = getDatabase();
         const charRef = ref(database, 'characters');
-
+        
         const charData = {
             name: charName,
-            class: charClass
+            class: charClass,
+            level: 1
         }
 
-        push(charRef, charData);
+        const newCharKey = push(charRef, charData).key;
+        const userRef = ref(database, "users/" + userId + "/characters/" + newCharKey);
+
+        set(userRef, true);
+
     }
 
     return (

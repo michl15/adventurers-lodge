@@ -22,7 +22,7 @@ root.render(
       <Routes>
         <Route path="/" element={<LoginPage app={app} analytics={analytics}/>}/>
         <Route path="/home" element={<HomePage/>}/>
-        <Route path="/character_creation" element={<CharacterCreationPage/>}/>
+        <Route path="/character_creation" element={<CharacterCreationPage app={app}/>}/>
       </Routes>
     </HashRouter>
   </React.StrictMode>
