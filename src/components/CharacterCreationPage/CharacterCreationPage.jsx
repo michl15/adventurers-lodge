@@ -3,7 +3,7 @@ import { Button, Form } from "react-bootstrap";
 import { getDatabase, push, ref, set } from "firebase/database";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-const CharacterCreationPage = ({app}) => {
+const CharacterCreationPage = () => {
     const [charName, setCharName] = useState('');
     const [charClass, setCharClass] = useState('');
     const [userId, setUserId] = useState('');
