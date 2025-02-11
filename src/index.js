@@ -10,6 +10,7 @@ import { FIREBASE_CONFIG } from './config/firebaseConfig';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import HomePage from './components/HomePage';
 import CharacterCreationPage from './components/CharacterCreationPage';
+import CharacterPage from './components/CharacterPage/CharacterPage';
 
 // Initialize Firebase
 const app = initializeApp(FIREBASE_CONFIG);
@@ -23,6 +24,8 @@ root.render(
         <Route path="/" element={<LoginPage app={app} analytics={analytics}/>}/>
         <Route path="/home" element={<HomePage/>}/>
         <Route path="/character_creation" element={<CharacterCreationPage/>}/>
+        <Route path="/character_page" element={<CharacterPage/>}/>
+
       </Routes>
     </HashRouter>
   </React.StrictMode>
