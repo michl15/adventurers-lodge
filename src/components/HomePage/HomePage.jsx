@@ -1,9 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useNavigate } from "react-router";
 import { Button } from "react-bootstrap";
+import styled from 'styled-components'
+import CharacterDisplay from "./CharacterDisplay";
+
+const SignOutButton = styled(Button)`
+    position: absolute;
+    top: 10px;
+    right: 10px;
+`
 
 const HomePage = () => {
+    const [userId, setUserId] = useState('');
+
     const auth = getAuth();
     const navigate = useNavigate();
     
@@ -12,7 +22,7 @@ const HomePage = () => {
           // User is signed in, see docs for a list of available properties
           // https://firebase.google.com/docs/reference/js/auth.user
           const uid = user.uid;
-          console.log(uid); 
+          setUserId(uid);
           // ...
         } else {
           // User is signed out
@@ -37,9 +47,10 @@ const HomePage = () => {
 
     return (
         <div>
-          <Button onClick={onSignOutClick}>
+          <SignOutButton onClick={onSignOutClick}>
             Sign out
-          </Button>
+          </SignOutButton>
+          <CharacterDisplay uid={userId}/>
           <Button onClick={onCharacterCreationClick}>
             Create Character
           </Button>
