@@ -2,11 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { getDatabase, push, ref, set } from "firebase/database";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { Toast } from "react-bootstrap";
 
 const CharacterCreationPage = () => {
     const [charName, setCharName] = useState('');
     const [charClass, setCharClass] = useState('');
     const [userId, setUserId] = useState('');
+
+    const [showToast, setShowToast] = useState(false);
+    const toggleToast = () => setShowToast(true)
+    const toggleToastOff = () => setShowToast(false)
+
+
 
     useEffect(() => {
         const auth = getAuth();
@@ -28,7 +35,7 @@ const CharacterCreationPage = () => {
     const onSubmit = () => {
         const database = getDatabase();
         const charRef = ref(database, 'characters');
-        
+
         const charData = {
             name: charName,
             class: charClass,
@@ -40,7 +47,13 @@ const CharacterCreationPage = () => {
 
         set(userRef, true);
 
+        toggleToast();
+
+
+
     }
+
+
 
     return (
         <Form>
@@ -53,6 +66,12 @@ const CharacterCreationPage = () => {
                 <Form.Control type="text" onChange={onClassChange} value={charClass}/>
             </Form.Group>
             <Button onClick={onSubmit}>Submit</Button>
+            <Toast show={showToast} onClose={toggleToastOff}>
+                <Toast.Header>
+                    <strong className="me-auto">Character Created</strong>
+                </Toast.Header>
+                <Toast.Body>Congraulations! You made a character</Toast.Body>
+            </Toast>
         </Form>
     )
 }
