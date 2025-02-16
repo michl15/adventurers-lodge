@@ -1,18 +1,23 @@
 import React from "react";
-import { Button, Card } from "react-bootstrap";
+import { Card } from "react-bootstrap";
+import styled from 'styled-components'
+
+const CharCard = styled(Card) `
+    padding: 10px;
+`
 
 const CharacterCard = ({characterData}) => {
     const name = characterData.name;
     const charClass = characterData.class;
+    const charLevel = characterData.level;
 
     return (
-        <Card>
-            <Card.Title>{name}</Card.Title>
-            <Card.Subtitle>{charClass}</Card.Subtitle>
+        <CharCard border="info">
             <Card.Body>
-                <Button variant="link">Details</Button>
+                <h3>{name}</h3>
+                <p>Level {charLevel} {charClass}</p>
             </Card.Body>
-        </Card>
+        </CharCard>
     )
 
 }

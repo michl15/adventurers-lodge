@@ -10,6 +10,14 @@ const SignOutButton = styled(Button)`
     top: 10px;
     right: 10px;
 `
+/*
+  TODO:
+  - capability to create a new campaign
+  - display campaigns that user is participating in
+  - capability to click on a character card and open character details for that character
+  - REFACTOR: separate auth checking into a resuable util function
+  - REFACTOR: create app context to manage app-level state
+*/
 
 const HomePage = () => {
     const [userId, setUserId] = useState('');
@@ -47,14 +55,13 @@ const HomePage = () => {
 
     return (
         <div>
+            <h1>Home</h1>
           <SignOutButton onClick={onSignOutClick}>
             Sign out
           </SignOutButton>
-          <CharacterDisplay uid={userId}/>
-          <Button onClick={onCharacterCreationClick}>
-            Create Character
-          </Button>
-            Homepage
+          <h2>My Characters</h2>
+          <CharacterDisplay uid={userId} onCharacterCreationClick={onCharacterCreationClick}/>
+          <h3>My Campaigns</h3>
         </div>
     )
 }
