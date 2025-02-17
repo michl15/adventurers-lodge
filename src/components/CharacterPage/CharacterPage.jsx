@@ -7,15 +7,8 @@ const CharacterPage = ({name, charClass}) => {
     const [userId, setUserId] = useState('');
     const [itemName, setItemName] = useState('');
     const [itemDescription, setItemDescription] = useState('');
-    const [charArray, setCharArray] = useState([]);
     const [itemArray, setItemArray] = useState([]);
 
-    const fetchNames = async () => {
-        const database = getDatabase();
-        const charRef = ref(database, 'characters', 'name')
-        const snapshot = await get(charRef);
-        setCharArray(Object.values(snapshot.val()));
-    }
 
     const fetchItem = async () => {
         const database = getDatabase();
@@ -46,7 +39,6 @@ const CharacterPage = ({name, charClass}) => {
 
         set(userRef, true);
 
-        console.log(itemArray)
 
     }
 
@@ -66,13 +58,14 @@ const CharacterPage = ({name, charClass}) => {
                 <Button onClick={onItemSubmit}>Submit</Button>
             </Form>
             <h1>Inventory</h1>
+            <button onClick={fetchItem}> Open </button>
             <div>
                 {itemArray.map((item, index) => (
                 <Accordion>
-                        <Accordion.Item eventKey={index}>
-                            <Accordion.Header> {item.name} </Accordion.Header>
-                            <Accordion.Body> {item.description} </Accordion.Body>
-                        </Accordion.Item>
+                    <Accordion.Item eventKey={index}>
+                        <Accordion.Header> {item.name} </Accordion.Header>
+                        <Accordion.Body> {item.description} </Accordion.Body>
+                    </Accordion.Item>
                 </Accordion>
                 ))}
             </div>
