@@ -15,8 +15,13 @@ const SignOutButton = styled(Button)`
   - capability to create a new campaign
   - display campaigns that user is participating in
   - capability to click on a character card and open character details for that character
-  - REFACTOR: separate auth checking into a resuable util function
+    - go to character page using charId and dynamic routing
+    - https://stackoverflow.com/questions/57058879/how-to-create-dynamic-routes-with-react-router-dom
+  - REFACTOR: separate auth checking into a resuable util function (consider context below)
   - REFACTOR: create app context to manage app-level state
+    - https://legacy.reactjs.org/docs/context.html
+    - auth state
+    - firebase db
 */
 
 const HomePage = () => {
