@@ -1,20 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Button, Form, Spinner } from "react-bootstrap";
 import { getDatabase, push, ref, set, get } from "firebase/database";
 import { Accordion } from "react-bootstrap";
+import { useParams } from "react-router";
 
-const CharacterPage = ({name, charClass}) => {
-    const [userId, setUserId] = useState('');
+const CharacterPage = () => {
     const [itemName, setItemName] = useState('');
     const [itemDescription, setItemDescription] = useState('');
     const [itemArray, setItemArray] = useState([]);
+    const [isLoadingItems, setIsLoadingItems] = useState(true);
 
+    const {charId} = useParams();
+    const dbPath = "characters/" + charId + "/inventory";
 
+    /**
+     * Getting item list
+     */
     const fetchItem = async () => {
         const database = getDatabase();
-        const itemRef = ref(database, 'inventory', 'name', 'description')
+        const itemRef = ref(database, dbPath)
         const snapshot = await get(itemRef);
-        setItemArray(Object.values(snapshot.val()));
+        if (snapshot.exists && snapshot.val()) {
+            const ids = Object.keys(snapshot.val());
+            let newArray = [];
+           for(let i = 0; i < ids.length; i++) {
+            const itemPath = 'items/' + ids[i];
+                const newRef = ref(database, itemPath);
+                const snapshot = await get(newRef);
+                if (!newArray.includes(snapshot.val())) {
+                    newArray.push(snapshot.val());
+                } 
+           }
+            setItemArray(newArray);
+        }
+        setIsLoadingItems(false);
     }
 
     const onItemNameChange = (event) => {
@@ -25,9 +44,12 @@ const CharacterPage = ({name, charClass}) => {
         setItemDescription(event.target.value);
     }
 
+    /**
+     * creating items
+     */
     const onItemSubmit = () => {
         const database = getDatabase();
-        const itemRef = ref(database, 'inventory')
+        const itemRef = ref(database, 'items')
 
         const itemData = {
             name: itemName,
@@ -35,12 +57,21 @@ const CharacterPage = ({name, charClass}) => {
         }
 
         const newItemKey = push(itemRef, itemData).key;
-        const userRef = ref(database, "users/" + userId + "/characters/" + newItemKey + "/inventory");
 
-        set(userRef, true);
+        const charRef = ref(database, `${dbPath}/${newItemKey}`);
+        set(charRef, true);
 
+        // TODO: wrap in a try/catch block, only add this item if the set is successful
+        const newArray = [...itemArray];
+        newArray.push(itemData);
+        setItemArray(newArray); 
 
     }
+
+    useEffect(() => {
+        fetchItem();
+        // eslint-disable-next-line
+    }, [])
 
     return (
         <div>
@@ -58,16 +89,15 @@ const CharacterPage = ({name, charClass}) => {
                 <Button onClick={onItemSubmit}>Submit</Button>
             </Form>
             <h1>Inventory</h1>
-            <button onClick={fetchItem}> Open </button>
             <div>
-                {itemArray.map((item, index) => (
-                <Accordion>
-                    <Accordion.Item eventKey={index}>
-                        <Accordion.Header> {item.name} </Accordion.Header>
-                        <Accordion.Body> {item.description} </Accordion.Body>
-                    </Accordion.Item>
+                {!isLoadingItems ? itemArray.map((item, index) => (
+                <Accordion key={index}>
+                        <Accordion.Item eventKey={index}>
+                            <Accordion.Header> {item.name} </Accordion.Header>
+                            <Accordion.Body> {item.description} </Accordion.Body>
+                        </Accordion.Item>
                 </Accordion>
-                ))}
+                )) : <Spinner animation="border"/>}
             </div>
         </div>
     )

@@ -24,7 +24,7 @@ root.render(
         <Route path="/" element={<LoginPage app={app} analytics={analytics}/>}/>
         <Route path="/home" element={<HomePage/>}/>
         <Route path="/character_creation" element={<CharacterCreationPage/>}/>
-        <Route path="/character_page" element={<CharacterPage/>}/>
+        <Route path="/characters/:charId" element={<CharacterPage/>}/>
 
       </Routes>
     </HashRouter>
