@@ -21,7 +21,7 @@ const CharacterCard = ({characterData}) => {
 
 
     return (
-        <CharCard border="info">
+        <CharCard border="info" onClick={onCharacterClick}>
             <Card.Body>
                 <h3>{name}</h3>
                 <p>Level {charLevel} {charClass}</p>
