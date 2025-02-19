@@ -19,8 +19,9 @@ const CharacterCard = ({characterData}) => {
         navigate(`/characters/${charId}`);
     }
 
+
     return (
-        <CharCard border="info" onClick={onCharacterClick}>
+        <CharCard border="info">
             <Card.Body>
                 <h3>{name}</h3>
                 <p>Level {charLevel} {charClass}</p>
