@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Spinner } from "react-bootstrap";
+import { Button, Form, Spinner, Modal } from "react-bootstrap";
 import {push, ref, set, get } from "firebase/database";
 import { Accordion } from "react-bootstrap";
 import { useParams } from "react-router";
 import { firebaseDatabase } from "../../firebase/firebase";
+
 
 const CharacterPage = () => {
     const [itemName, setItemName] = useState('');
     const [itemDescription, setItemDescription] = useState('');
     const [itemArray, setItemArray] = useState([]);
     const [isLoadingItems, setIsLoadingItems] = useState(true);
+    //Modal states
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
 
     const {charId} = useParams();
     const dbPath = "characters/" + charId + "/inventory";
@@ -30,7 +36,7 @@ const CharacterPage = () => {
                 const snapshot = await get(newRef);
                 if (!newArray.includes(snapshot.val())) {
                     newArray.push(snapshot.val());
-                } 
+                }
            }
             setItemArray(newArray);
         }
@@ -65,7 +71,8 @@ const CharacterPage = () => {
         // TODO: wrap in a try/catch block, only add this item if the set is successful
         const newArray = [...itemArray];
         newArray.push(itemData);
-        setItemArray(newArray); 
+        setItemArray(newArray);
+        handleClose()
 
     }
 
@@ -74,21 +81,11 @@ const CharacterPage = () => {
         // eslint-disable-next-line
     }, [])
 
+
+
     return (
         <div>
             Character
-            <h1>Add Item</h1>
-            <Form>
-                <Form.Group>
-                    <Form.Label>Item Name</Form.Label>
-                    <Form.Control type="text" onChange={onItemNameChange} value={itemName}/>
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Item Description</Form.Label>
-                    <Form.Control type="text" onChange={onItemDescriptionChange} value={itemDescription}/>
-                </Form.Group>
-                <Button onClick={onItemSubmit}>Submit</Button>
-            </Form>
             <h1>Inventory</h1>
             <div>
                 {!isLoadingItems ? itemArray.map((item, index) => (
@@ -100,6 +97,45 @@ const CharacterPage = () => {
                 </Accordion>
                 )) : <Spinner animation="border"/>}
             </div>
+
+            <Button variant="primary" onClick={handleShow}>
+                    Add Item
+            </Button>
+
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                <Modal.Title>Add Item</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                <Form>
+                    <Form.Group className="mb-3" controlId="itemForm.NameInput">
+                    <Form.Label>Item Name</Form.Label>
+                    <Form.Control
+                        type="text"
+                        onChange={onItemNameChange}
+                        value={itemName}
+                        placeholder="Item Name"
+                        autoFocus
+                    />
+                    </Form.Group>
+                    <Form.Group
+                    className="mb-3"
+                    controlId="itemForm.DescriptionInput"
+                    >
+                    <Form.Label>Item Description</Form.Label>
+                    <Form.Control as="textarea" onChange={onItemDescriptionChange} value={itemDescription} rows={3} />
+                    </Form.Group>
+                </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}>
+                    Close
+                </Button>
+                <Button variant="primary" onClick={onItemSubmit}>
+                    Save Changes
+                </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     )
 }
