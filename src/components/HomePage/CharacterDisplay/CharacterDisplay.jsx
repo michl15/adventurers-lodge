@@ -1,9 +1,10 @@
-import { get, getDatabase, ref } from "firebase/database";
+import { get, ref } from "firebase/database";
 import React, { useEffect, useState } from "react";
 import CharacterCard from "../CharacterCard";
 import { Card, Container, Row } from "react-bootstrap";
 import styled from 'styled-components'
 import { PlusCircle } from "react-bootstrap-icons";
+import { firebaseDatabase } from "../../../firebase/firebase";
 
 const CardContainer = styled(Row)`
     margin: 10px 0px;
@@ -58,7 +59,7 @@ const CharacterDisplay = ({uid, onCharacterCreationClick}) => {
         }
 
         // get the database - TODO: add db to app context
-        const db = getDatabase();
+        const db = firebaseDatabase;
 
         // Call function to get characters
         getCharacterList(db);

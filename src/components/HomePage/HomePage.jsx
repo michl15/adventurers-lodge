@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import React from "react";
 import { useNavigate } from "react-router";
 import { Button } from "react-bootstrap";
 import styled from 'styled-components'
 import CharacterDisplay from "./CharacterDisplay";
+import { useFirebaseAuth } from "../../context/FirebaseAuthContext";
 
 const SignOutButton = styled(Button)`
     position: absolute;
@@ -25,48 +25,34 @@ const SignOutButton = styled(Button)`
 */
 
 const HomePage = () => {
-    const [userId, setUserId] = useState('');
-
-    const auth = getAuth();
+    const {user, firebaseSignOut} = useFirebaseAuth();
     const navigate = useNavigate();
-    
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-          // User is signed in, see docs for a list of available properties
-          // https://firebase.google.com/docs/reference/js/auth.user
-          const uid = user.uid;
-          setUserId(uid);
-          // ...
-        } else {
-          // User is signed out
-          // ...
-          navigate('/');
-        }
+
+    const signedIn = user !== null;
+
+    const onSignOutClick = () => {
+      firebaseSignOut(() => {
+        console.log('signed out');
+        navigate('/')
       });
+    }
 
-      const onSignOutClick = () => {
-        signOut(auth).then(() => {
-          // Sign-out successful.
-          console.log('User signed out');
-        }).catch((error) => {
-          // An error happened.
-          console.error('Error signing out:', error);
-        });
-      }
-
-      const onCharacterCreationClick = () => {
-        navigate('/character_creation');
-      }
+    const onCharacterCreationClick = () => {
+      navigate('/character_creation');
+    }
 
     return (
         <div>
+          {signedIn &&
+          <>
             <h1>Home</h1>
-          <SignOutButton onClick={onSignOutClick}>
-            Sign out
-          </SignOutButton>
-          <h2>My Characters</h2>
-          <CharacterDisplay uid={userId} onCharacterCreationClick={onCharacterCreationClick}/>
-          <h3>My Campaigns</h3>
+            <SignOutButton onClick={onSignOutClick}>
+              Sign out
+            </SignOutButton>
+            <h2>My Characters</h2>
+            <CharacterDisplay uid={user?.uid} onCharacterCreationClick={onCharacterCreationClick}/>
+            <h3>My Campaigns</h3>
+          </>}
         </div>
     )
 }
