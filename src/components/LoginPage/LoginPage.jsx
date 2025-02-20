@@ -1,12 +1,13 @@
 import React from "react";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { Button } from "react-bootstrap";
 import { Form } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { HeaderImage, PageContainer, StyledForm, StyledHeader } from "./LoginStyles";
+import { firebaseAuth } from "../../firebase/firebase";
 
-const LoginPage = ({app, analytics}) => {
-    const auth = getAuth(app);
+const LoginPage = () => {
+    const auth = firebaseAuth;
     const provider = new GoogleAuthProvider();
     const navigate = useNavigate();
 

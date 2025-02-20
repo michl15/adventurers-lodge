@@ -4,30 +4,27 @@ import './index.css';
 import { HashRouter, Route, Routes } from 'react-router';
 import reportWebVitals from './reportWebVitals';
 import LoginPage from './components/LoginPage';
-import { initializeApp } from 'firebase/app';
-import { getAnalytics } from "firebase/analytics";
-import { FIREBASE_CONFIG } from './config/firebaseConfig';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import HomePage from './components/HomePage';
 import CharacterCreationPage from './components/CharacterCreationPage';
 import CharacterPage from './components/CharacterPage/CharacterPage';
+import { FirebaseAuthProvider } from './context/FirebaseAuthContext';
 
-// Initialize Firebase
-const app = initializeApp(FIREBASE_CONFIG);
-const analytics = getAnalytics(app);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+    <FirebaseAuthProvider>
     <HashRouter>
       <Routes>
-        <Route path="/" element={<LoginPage app={app} analytics={analytics}/>}/>
+        <Route path="/" element={<LoginPage/>}/>
         <Route path="/home" element={<HomePage/>}/>
         <Route path="/character_creation" element={<CharacterCreationPage/>}/>
         <Route path="/characters/:charId" element={<CharacterPage/>}/>
 
       </Routes>
     </HashRouter>
+    </FirebaseAuthProvider>
   </React.StrictMode>
 );
 

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Spinner } from "react-bootstrap";
-import { getDatabase, push, ref, set, get } from "firebase/database";
+import {push, ref, set, get } from "firebase/database";
 import { Accordion } from "react-bootstrap";
 import { useParams } from "react-router";
+import { firebaseDatabase } from "../../firebase/firebase";
 
 const CharacterPage = () => {
     const [itemName, setItemName] = useState('');
@@ -17,7 +18,7 @@ const CharacterPage = () => {
      * Getting item list
      */
     const fetchItem = async () => {
-        const database = getDatabase();
+        const database = firebaseDatabase;
         const itemRef = ref(database, dbPath)
         const snapshot = await get(itemRef);
         if (snapshot.exists && snapshot.val()) {
@@ -48,7 +49,7 @@ const CharacterPage = () => {
      * creating items
      */
     const onItemSubmit = () => {
-        const database = getDatabase();
+        const database = firebaseDatabase;
         const itemRef = ref(database, 'items')
 
         const itemData = {
