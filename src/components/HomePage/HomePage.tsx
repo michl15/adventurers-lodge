@@ -1,9 +1,12 @@
-import React from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Button } from "react-bootstrap";
 import styled from 'styled-components'
 import CharacterDisplay from "./CharacterDisplay";
-import { useFirebaseAuth } from "../../context/FirebaseAuthContext";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { firebaseAuth } from "../../firebase/firebase";
+import { User as FirebaseUser } from "firebase/auth";
+
 
 const SignOutButton = styled(Button)`
     position: absolute;
@@ -25,16 +28,18 @@ const SignOutButton = styled(Button)`
 */
 
 const HomePage = () => {
-    const {user, firebaseSignOut} = useFirebaseAuth();
+    const [user, setUser] = useState<FirebaseUser | null>(null);
+    onAuthStateChanged(firebaseAuth, (u) => {
+      setUser(u);
+    })
     const navigate = useNavigate();
 
     const signedIn = user !== null;
 
     const onSignOutClick = () => {
-      firebaseSignOut(() => {
-        console.log('signed out');
-        navigate('/')
-      });
+      signOut(firebaseAuth).then(() => {
+        navigate('/');
+      })
     }
 
     const onCharacterCreationClick = () => {

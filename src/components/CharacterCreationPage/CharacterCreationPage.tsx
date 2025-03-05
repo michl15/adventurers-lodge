@@ -2,13 +2,15 @@ import React, { useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { push, ref, set } from "firebase/database";
 import { Toast } from "react-bootstrap";
-import { firebaseDatabase } from "../../firebase/firebase";
-import { useFirebaseAuth } from "../../context/FirebaseAuthContext";
+import { firebaseAuth, firebaseDatabase } from "../../firebase/firebase";
 import { useNavigate } from "react-router";
 import styled from "styled-components";
 import { BASE_STATS, DEFAULT_PROFICIENCIES, } from "../../constants/constants";
 import { calculateProficiencyBonus, calculateStatModifier } from "../../util/calculations";
 import Proficiencies from "../Proficiencies";
+import { ProficienciesTypes, StatsTypes } from "../../constants/types";
+import { User as FirebaseUser, onAuthStateChanged } from "firebase/auth";
+
 
 const StatsRowContainer = styled(Row)`
     display: flex;
@@ -45,32 +47,36 @@ const SubmitButtonContainer = styled.div`
     padding: 10px 10px;
 `
 const CharacterCreationPage = () => {
-    const [charName, setCharName] = useState('');
-    const [charClass, setCharClass] = useState('');
-    const [charStats, setCharStats] = useState(BASE_STATS);
-    const [charLvl, setCharLvl] = useState(1);
-    const [validated, setValidated] = useState(false)
-    const [charSkills, setCharSkills] = useState(DEFAULT_PROFICIENCIES);
-    const [charMaxHP, setCharMaxHP] = useState(null);
-    const [charDesc, setCharDesc] = useState('');
+    const [charName, setCharName] = useState<string>('');
+    const [charClass, setCharClass] = useState<string>('');
+    const [charStats, setCharStats] = useState<StatsTypes>(BASE_STATS);
+    const [charLvl, setCharLvl] = useState<number | string>(1);
+    const [validated, setValidated] = useState<boolean>(false)
+    const [charSkills, setCharSkills] = useState<ProficienciesTypes<boolean>>(DEFAULT_PROFICIENCIES);
+    const [charMaxHP, setCharMaxHP] = useState<number | string>(10);
+    const [charDesc, setCharDesc] = useState<string>('');
 
-    const { user } = useFirebaseAuth();
     const navigate = useNavigate();
     const [showToast, setShowToast] = useState(false);
     const toggleToast = () => setShowToast(true)
     const toggleToastOff = () => setShowToast(false)
 
-    const onNameChange = (event) => {
+    const [user, setUser] = useState<FirebaseUser | null>(null);
+    onAuthStateChanged(firebaseAuth, (u) => {
+      setUser(u);
+    })
+
+    const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValidated(false);
         setCharName(event.target.value);
     }
 
-    const onClassChange = (event) => {
+    const onClassChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValidated(false);
         setCharClass(event.target.value);
     }
 
-    const onStatChange = (event, label) => {
+    const onStatChange = (event: React.ChangeEvent<HTMLInputElement>, label: string) => {
         setValidated(false);
         if (!event.target.value) {
             setCharStats({...charStats, [label]: ''})
@@ -81,7 +87,7 @@ const CharacterCreationPage = () => {
         }
     }
 
-    const onLevelChange = (event) => {
+    const onLevelChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValidated(false);
         if (!event.target.value) {
             setCharLvl('')
@@ -91,7 +97,7 @@ const CharacterCreationPage = () => {
         }
     }
 
-    const onMaxHPChange = (event) => {
+    const onMaxHPChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (!event.target.value) {
             setCharMaxHP('')
         }
@@ -100,18 +106,18 @@ const CharacterCreationPage = () => {
         }
     }
 
-    const onDescChange = (event) => {
+    const onDescChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValidated(false);
         setCharDesc(event.target.value);
     }
 
 
     const onRollStats = () => {
-        let newStatsObj = {}
+        let newStatsObj: StatsTypes = {...BASE_STATS}
         for(const [key] of Object.entries(charStats)) {
             // generate a random number between 5-18
             const newStat = Math.floor((Math.random() * 13) + 5);
-            newStatsObj[key] = newStat;
+            newStatsObj[key as keyof StatsTypes] = newStat;
         }
         setCharStats(newStatsObj);
     }
@@ -120,7 +126,7 @@ const CharacterCreationPage = () => {
         setCharStats(BASE_STATS);
     }
 
-    const onSubmit = (event) => {
+    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         const form = event.currentTarget;
         if (!form.checkValidity()) {
             event.preventDefault();
@@ -159,12 +165,12 @@ const CharacterCreationPage = () => {
     const renderStatsForm = () => {
         const statsNames = Object.keys(charStats);
         return statsNames.map((stat) => {
-            const modifier = calculateStatModifier(charStats[stat]);
+            const modifier = calculateStatModifier(charStats[stat as keyof StatsTypes]);
             return (
             <Col key={`stats-${stat}`}>
                 <Form.Group>
                     <Form.Label>{stat.toUpperCase()}</Form.Label>
-                    <StatsInput type="text" onChange={(event) => {onStatChange(event, stat)}} value={charStats[stat]}/>
+                    <StatsInput type="text" onChange={(event: React.ChangeEvent<HTMLInputElement>) => {onStatChange(event, stat)}} value={charStats[stat as keyof StatsTypes]}/>
                     <Form.Text>
                         {modifier >= 0 ? `+${modifier}` : `${modifier}`}
                     </Form.Text>
@@ -173,7 +179,7 @@ const CharacterCreationPage = () => {
         )})
     }
 
-    const onSwitchChange = (skill) => {
+    const onSwitchChange = (skill: string) => {
         setCharSkills({...charSkills, [skill]: !charSkills[skill]})
     }
 
@@ -249,7 +255,7 @@ const CharacterCreationPage = () => {
                         <Row>
                         <Form.Group controlId="formFileLg" className="mb-3">
                             <Form.Label>Upload an image (NOT WORKING right now)</Form.Label>
-                            <Form.Control type="file" size="md" accept=".png,.jpeg"/>
+                            <Form.Control type="file" accept=".png,.jpeg" disabled/>
                         </Form.Group>
                         </Row>
                     </Col>

@@ -1,6 +1,8 @@
-const BASE_STATS = {str: 10, dex: 10, con: 10, int: 10, wis: 10, cha:10}
+import { ProficienciesTypes, SkillsTypes, StatsTypes } from "./types"
 
-const SKILLS = {
+const BASE_STATS: StatsTypes = {str: 10, dex: 10, con: 10, int: 10, wis: 10, cha:10}
+
+const SKILLS: SkillsTypes<string> = {
     str: ["Athletics"], 
     dex: ["Acrobatics", "Sleight of Hand", "Stealth"], 
     int: ["Arcana", "History", "Investigation", "Nature", "Religion"],
@@ -8,7 +10,7 @@ const SKILLS = {
     cha: ["Deception", "Intimidation", "Performance", "Persuasion"]
 }
 
-const DEFAULT_PROFICIENCIES = {
+const DEFAULT_PROFICIENCIES: ProficienciesTypes<boolean> = {
     "Athletics": false,
     "Acrobatics": false,
     "Sleight of Hand": false, 
@@ -29,7 +31,11 @@ const DEFAULT_PROFICIENCIES = {
     "Persuasion": false
 }
 
-const STATS_MAP = {
+interface statsMap<Value> {
+    [id: string]: Value,
+}
+
+const STATS_MAP: statsMap<string> = {
     str: "Strength",
     dex: "Dexterity",
     con: "Constitution",
