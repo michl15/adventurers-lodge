@@ -1,5 +1,5 @@
-import { get, ref } from "firebase/database";
-import React, { useEffect, useState } from "react";
+import { Database, get, ref } from "firebase/database";
+import React, { MouseEventHandler, useEffect, useState } from "react";
 import CharacterCard from "../CharacterCard";
 import { Card, Container, Row } from "react-bootstrap";
 import styled from 'styled-components'
@@ -30,11 +30,16 @@ const CreateCardContent = styled.div`
     align-items: center;
 `
 
-const CharacterDisplay = ({uid, onCharacterCreationClick}) => {
+type CharacterDisplayProps = {
+    uid: string;
+    onCharacterCreationClick: MouseEventHandler<HTMLElement>
+}
+
+const CharacterDisplay = ({uid, onCharacterCreationClick}: CharacterDisplayProps) => {
     const [characterMap, setCharacterMap] = useState(new Map());
 
     useEffect(() => {
-        const getCharacterData = async (characters, db) => {
+        const getCharacterData = async (characters: {}, db: Database) => {
             // iterate through characters
             for(const char of Object.entries(characters)) {
                 const charId = char[0];
@@ -48,7 +53,7 @@ const CharacterDisplay = ({uid, onCharacterCreationClick}) => {
             setCharacterMap(new Map(characterMap));
         }
     
-        const getCharacterList = async (db) => {
+        const getCharacterList = async (db: Database) => {
             // fetch list of characters associated with uid
             const userRef = ref(db, `/users/${uid}/characters`);
             const snapshot = await get(userRef);
@@ -84,7 +89,7 @@ const CharacterDisplay = ({uid, onCharacterCreationClick}) => {
      * @param {Function} onCharacterCreationClick 
      * @returns 
      */
-    const createACharCard = (onCharacterCreationClick) => {
+    const createACharCard = (onCharacterCreationClick: MouseEventHandler<HTMLElement>) => {
         return (
             <Card onClick={onCharacterCreationClick}>
                 <Card.Body>

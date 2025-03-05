@@ -1,20 +1,14 @@
 import * as React from "react";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { firebaseAuth } from "../firebase/firebase";
 
 
-const FirebaseAuthContext = React.createContext({user: null, useSignOut: () => {}});
+const FirebaseAuthContext = React.createContext({user: null});
 
 const FirebaseAuthProvider = ({ children }) => {
   const [user, setUser] = React.useState(null);
 
-  const firebaseSignOut = async (callback) => {
-    return signOut(firebaseAuth).then(() => {
-        callback();
-    });
-  }
-
-  const value = { user, firebaseSignOut };
+  const value = { user };
 
   React.useEffect(() => {
     const unsubscribe = onAuthStateChanged(firebaseAuth, (u) => {

@@ -2,12 +2,17 @@ import React from "react";
 import { Card } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import styled from 'styled-components'
+import { CharacterData } from "../../../constants/types";
 
 const CharCard = styled(Card) `
     padding: 10px;
 `
 
-const CharacterCard = ({characterData}) => {
+type CharacterCardProps = {
+    characterData: CharacterData;
+}
+
+const CharacterCard = ({characterData}: CharacterCardProps) => {
     const name = characterData.name;
     const charClass = characterData.class;
     const charLevel = characterData.level;

@@ -4,11 +4,12 @@ import {push, ref, set, get } from "firebase/database";
 import { Accordion } from "react-bootstrap";
 import { useParams } from "react-router";
 import { firebaseDatabase } from "../../firebase/firebase";
+import { Item } from "../../constants/types";
 
 const CharacterPage = () => {
     const [itemName, setItemName] = useState('');
     const [itemDescription, setItemDescription] = useState('');
-    const [itemArray, setItemArray] = useState([]);
+    const [itemArray, setItemArray] = useState<Item[]>([]);
     const [isLoadingItems, setIsLoadingItems] = useState(true);
 
     const {charId} = useParams();
@@ -21,9 +22,9 @@ const CharacterPage = () => {
         const database = firebaseDatabase;
         const itemRef = ref(database, dbPath)
         const snapshot = await get(itemRef);
-        if (snapshot.exists && snapshot.val()) {
+        if (snapshot.exists() && snapshot.val()) {
             const ids = Object.keys(snapshot.val());
-            let newArray = [];
+            let newArray: Item[] = [];
            for(let i = 0; i < ids.length; i++) {
             const itemPath = 'items/' + ids[i];
                 const newRef = ref(database, itemPath);
@@ -37,12 +38,12 @@ const CharacterPage = () => {
         setIsLoadingItems(false);
     }
 
-    const onItemNameChange = (event) => {
+    const onItemNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setItemName(event.target.value);
     }
 
-    const onItemDescriptionChange = (event) => {
-        setItemDescription(event.target.value);
+    const onItemDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setItemDescription(event.currentTarget.value);
     }
 
     /**
@@ -63,7 +64,7 @@ const CharacterPage = () => {
         set(charRef, true);
 
         // TODO: wrap in a try/catch block, only add this item if the set is successful
-        const newArray = [...itemArray];
+        const newArray: Item[] = [...itemArray];
         newArray.push(itemData);
         setItemArray(newArray); 
 
@@ -93,7 +94,7 @@ const CharacterPage = () => {
             <div>
                 {!isLoadingItems ? itemArray.map((item, index) => (
                 <Accordion key={index}>
-                        <Accordion.Item eventKey={index}>
+                        <Accordion.Item eventKey={index.toString()}>
                             <Accordion.Header> {item.name} </Accordion.Header>
                             <Accordion.Body> {item.description} </Accordion.Body>
                         </Accordion.Item>
