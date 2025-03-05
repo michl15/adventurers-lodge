@@ -13,6 +13,7 @@ const FirebaseAuthProvider = ({ children }) => {
         callback();
     });
   }
+
   const value = { user, firebaseSignOut };
 
   React.useEffect(() => {
@@ -31,7 +32,6 @@ const FirebaseAuthProvider = ({ children }) => {
 
 function useFirebaseAuth() {
     const context = React.useContext(FirebaseAuthContext);
-    //console.log(context.user);
     if (context === undefined) {
       throw new Error(
         "useFirebaseAuth must be used within a FirebaseAuthProvider"
