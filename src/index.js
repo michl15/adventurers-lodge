@@ -11,6 +11,7 @@ import CharacterPage from './components/CharacterPage/CharacterPage';
 import { FirebaseAuthProvider } from './context/FirebaseAuthContext';
 import NavigationBar from './components/NavigationBar';
 import PageContainer from './components/PageContainer';
+import ScrollToTop from './components/ScrollToTop';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -20,6 +21,7 @@ root.render(
     <HashRouter>
       <NavigationBar/>
       <PageContainer>
+      <ScrollToTop/>
         <Routes>
           <Route path="/" element={<LoginPage/>}/>
           <Route path="/home" element={<HomePage/>}/>
