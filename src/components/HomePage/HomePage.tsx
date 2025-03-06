@@ -1,18 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Button } from "react-bootstrap";
-import styled from 'styled-components'
 import CharacterDisplay from "./CharacterDisplay";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { firebaseAuth } from "../../firebase/firebase";
 import { User as FirebaseUser } from "firebase/auth";
 
-
-const SignOutButton = styled(Button)`
-    position: absolute;
-    top: 10px;
-    right: 10px;
-`
 /*
   TODO:
   - capability to create a new campaign
@@ -36,12 +28,6 @@ const HomePage = () => {
 
     const signedIn = user !== null;
 
-    const onSignOutClick = () => {
-      signOut(firebaseAuth).then(() => {
-        navigate('/');
-      })
-    }
-
     const onCharacterCreationClick = () => {
       navigate('/character_creation');
     }
@@ -50,10 +36,6 @@ const HomePage = () => {
         <div>
           {signedIn &&
           <>
-            <h1>Home</h1>
-            <SignOutButton onClick={onSignOutClick}>
-              Sign out
-            </SignOutButton>
             <h2>My Characters</h2>
             <CharacterDisplay uid={user?.uid} onCharacterCreationClick={onCharacterCreationClick}/>
             <h3>My Campaigns</h3>

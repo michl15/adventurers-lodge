@@ -106,10 +106,10 @@ const CharacterDisplay = ({uid, onCharacterCreationClick}: CharacterDisplayProps
 
     return (
         <Container fluid>
-            {renderCharacterCards()}
             <CreateAChar>
                 {createACharCard(onCharacterCreationClick)}
             </CreateAChar>
+            {renderCharacterCards()}
         </Container>
     )
 }
