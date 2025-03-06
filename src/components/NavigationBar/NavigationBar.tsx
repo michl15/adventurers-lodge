@@ -28,7 +28,7 @@ const NavigationBar = () => {
                     <Nav.Link as={Link} to="/home">Home</Nav.Link>
                     <NavDropdown title="Create">
                         <NavDropdown.Item as={Link} to="/character_creation">Create a Character</NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/character_campaign">Create a Campaign</NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/campaign_creation">Create a Campaign</NavDropdown.Item>
                     </NavDropdown>
                 </Nav>
                 <Nav className="justify-content-end">
