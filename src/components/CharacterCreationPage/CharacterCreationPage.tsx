@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { push, ref, set } from "firebase/database";
 import { Toast } from "react-bootstrap";
@@ -62,9 +62,6 @@ const CharacterCreationPage = () => {
     const toggleToastOff = () => setShowToast(false)
 
     const [user, setUser] = useState<FirebaseUser | null>(null);
-    onAuthStateChanged(firebaseAuth, (u) => {
-      setUser(u);
-    })
 
     const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValidated(false);
@@ -182,6 +179,12 @@ const CharacterCreationPage = () => {
     const onSwitchChange = (skill: string) => {
         setCharSkills({...charSkills, [skill]: !charSkills[skill]})
     }
+
+    useEffect(() => {
+        onAuthStateChanged(firebaseAuth, (u) => {
+            setUser(u);
+        });
+    }, [])
 
     return (
         <div>
