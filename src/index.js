@@ -9,6 +9,8 @@ import HomePage from './components/HomePage';
 import CharacterCreationPage from './components/CharacterCreationPage';
 import CharacterPage from './components/CharacterPage/CharacterPage';
 import { FirebaseAuthProvider } from './context/FirebaseAuthContext';
+import NavigationBar from './components/NavigationBar';
+import PageContainer from './components/PageContainer';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -16,13 +18,15 @@ root.render(
   <React.StrictMode>
     <FirebaseAuthProvider>
     <HashRouter>
-      <Routes>
-        <Route path="/" element={<LoginPage/>}/>
-        <Route path="/home" element={<HomePage/>}/>
-        <Route path="/character_creation" element={<CharacterCreationPage/>}/>
-        <Route path="/characters/:charId" element={<CharacterPage/>}/>
-
-      </Routes>
+      <NavigationBar/>
+      <PageContainer>
+        <Routes>
+          <Route path="/" element={<LoginPage/>}/>
+          <Route path="/home" element={<HomePage/>}/>
+          <Route path="/character_creation" element={<CharacterCreationPage/>}/>
+          <Route path="/characters/:charId" element={<CharacterPage/>}/>
+        </Routes>
+      </PageContainer>
     </HashRouter>
     </FirebaseAuthProvider>
   </React.StrictMode>
