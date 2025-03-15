@@ -132,6 +132,8 @@ const CharacterCreationPage = () => {
         setValidated(true);
 
         if (user && form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
             const database = firebaseDatabase;
             const charRef = ref(database, 'characters');
 
@@ -140,19 +142,18 @@ const CharacterCreationPage = () => {
                 class: charClass,
                 stats: charStats,
                 level: charLvl || 1,
-                skills: charSkills
+                skills: charSkills,
+                hp: charMaxHP,
+                maxHP: charMaxHP,
+                description: charDesc
             }
 
             const newCharKey = push(charRef, charData).key;
             const userRef = ref(database, "users/" + user?.uid + "/characters/" + newCharKey);
 
             set(userRef, true).then(() => {
-                event.preventDefault();
-                event.stopPropagation();
                 navigate(`/characters/${newCharKey}`);
             }).catch((error) => {
-                event.preventDefault();
-                event.stopPropagation();
                 toggleToast();
                 console.error(error)
             });
@@ -233,7 +234,7 @@ const CharacterCreationPage = () => {
                 <Row>
                     <Col md="auto">
                     <h4>Proficiencies</h4>
-                        <Proficiencies charLvl={charLvl} charSkills={charSkills} onSwitchChange={onSwitchChange}/>
+                        <Proficiencies charLvl={charLvl} charSkills={charSkills} onSwitchChange={onSwitchChange} editMode={true}/>
                     </Col>
                     <Col>
                     <StatsRowContainer>

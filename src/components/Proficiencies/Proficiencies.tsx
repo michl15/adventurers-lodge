@@ -9,10 +9,11 @@ interface ProficienciesTypes<Value> {
 type ProficienciesProps = {
     charLvl: string | number;
     onSwitchChange: Function;
-    charSkills: ProficienciesTypes<boolean>
+    charSkills: ProficienciesTypes<boolean>;
+    editMode: boolean;
 }
 
-const Proficiencies = ({charLvl, onSwitchChange, charSkills}: ProficienciesProps) => {
+const Proficiencies = ({charLvl, onSwitchChange, charSkills, editMode = false}: ProficienciesProps) => {
     const stats = Object.keys(SKILLS);
     const proficiencyBonus = calculateProficiencyBonus(charLvl);
     
@@ -31,6 +32,7 @@ const Proficiencies = ({charLvl, onSwitchChange, charSkills}: ProficienciesProps
                                         onChange={() => {
                                             onSwitchChange(skill);
                                         }}
+                                        disabled={!editMode}
                                     />
                                 </ListGroup.Item>
                                 <ListGroup.Item variant={charSkills[skill] ? "info" : ""}>

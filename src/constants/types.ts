@@ -7,6 +7,13 @@ type CharacterData = {
     class: string;
     level: string;
     key: string;
+    inventory: Inventory;
+    stats: StatsTypes;
+    skills: ProficienciesTypes<boolean>;
+    image: string | undefined;
+    description: string | undefined;
+    hp: number;
+    maxHP: number;
 }
 
 type Item = {
@@ -27,4 +34,8 @@ type StatsTypes = {
     cha: number;
 }
 
-export type { ProficienciesTypes, CharacterData, Item, SkillsTypes, StatsTypes }
+type Inventory = {
+    [itemId: string]: boolean
+}
+
+export type { ProficienciesTypes, CharacterData, Item, SkillsTypes, StatsTypes, Inventory }
