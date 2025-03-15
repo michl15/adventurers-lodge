@@ -6,6 +6,8 @@ import { DEFAULT_PROFICIENCIES } from "../../constants/constants";
 import StatsDisplay from "./StatsDisplay";
 import { JSX } from "react";
 import HPDisplay from "./HPDisplay";
+import CharacterLanguages from "../CharacterLanguages";
+import CharacterTraits from "../CharacterTraits/CharacterTraits";
 
 type CharacterDetailsProps = {
     details: CharacterData | null;
@@ -31,7 +33,7 @@ const CharacterDetails = ({details, inventory}: CharacterDetailsProps) => {
                     </Col>
                     <Col xs lg={6} className="my-auto">
                         <h3>{details.name}</h3>
-                        <h4>{`Level ${details.level} ${details.class}`}</h4>
+                        <h4>{`Level ${details.level} ${details.class} ${details.race ? "| " + details.race : ""}`}</h4>
                     </Col>
                     <Col xs lg={3} className="my-auto">
                         <HPDisplay maxHP={details.maxHP} currHP={details.hp}/>
@@ -43,13 +45,25 @@ const CharacterDetails = ({details, inventory}: CharacterDetailsProps) => {
                 <hr/>
                 <Row>
                     <Col md="auto">
+                    <h4>Skills</h4>
                         <Proficiencies charLvl={details.level} onSwitchChange={() => {}} charSkills={details.skills || DEFAULT_PROFICIENCIES} editMode={false}/>
                     </Col>
                     <Col>
                         <Row>
+                            <h4>Stats</h4>
                             <StatsDisplay stats={details.stats}/>
                         </Row>
-                        <hr/>   
+                        <hr/> 
+                        <Row>
+                            <h4>Traits</h4>
+                            <CharacterTraits traits={details.traits} edit={false}/>
+                        </Row>  
+                        <br/>
+                        <Row>
+                            <h4>Languages</h4>
+                            <CharacterLanguages langList={details.languages} edit={false} onAddLang={() => {}}/>
+                        </Row>  
+                        <hr/>
                         <Row>
                             {inventory()}
                         </Row>

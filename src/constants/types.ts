@@ -14,6 +14,9 @@ type CharacterData = {
     description: string | undefined;
     hp: number;
     maxHP: number;
+    race: string;
+    languages: Language[];
+    traits: Trait[];
 }
 
 type Item = {
@@ -38,4 +41,40 @@ type Inventory = {
     [itemId: string]: boolean
 }
 
-export type { ProficienciesTypes, CharacterData, Item, SkillsTypes, StatsTypes, Inventory }
+type Class = {
+    name: string;
+    index: string;
+    url: string;
+}
+
+type Race = {
+    index: string;
+    name: string;
+    url: string;
+}
+
+type Language = {
+    index: string;
+    name: string;
+    url: string;
+    source: string | undefined;
+}
+
+type Trait = {
+    index: string;
+    name: string;
+    url: string;
+    source: string | undefined;
+    info: string;
+}
+
+type AbilityBonus = {
+    ability_score: {
+        index: string;
+        name: string;
+        url: string;
+    }
+    bonus: number;
+}
+
+export type { ProficienciesTypes, CharacterData, Item, SkillsTypes, StatsTypes, Inventory, Class, Race, Language, AbilityBonus, Trait }
