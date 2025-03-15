@@ -7,11 +7,11 @@ import LoginPage from './components/LoginPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import HomePage from './components/HomePage';
 import CharacterCreationPage from './components/CharacterCreationPage';
-import CharacterPage from './components/CharacterPage/CharacterPage';
 import { FirebaseAuthProvider } from './context/FirebaseAuthContext';
 import NavigationBar from './components/NavigationBar';
 import PageContainer from './components/PageContainer';
 import ScrollToTop from './components/ScrollToTop';
+import CharacterPage from './components/CharacterPage';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

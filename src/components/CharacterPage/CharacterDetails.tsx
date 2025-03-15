@@ -1,0 +1,73 @@
+import { Button, Card, Col, Container, Image, Row } from "react-bootstrap";
+import { CharacterData } from "../../constants/types";
+import styled from "styled-components";
+import Proficiencies from "../Proficiencies";
+import { DEFAULT_PROFICIENCIES } from "../../constants/constants";
+import StatsDisplay from "./StatsDisplay";
+import { JSX } from "react";
+import HPDisplay from "./HPDisplay";
+
+type CharacterDetailsProps = {
+    details: CharacterData | null;
+    inventory: () => JSX.Element;
+}
+
+const CharImage = styled(Image)`
+    width: 100px;
+`
+
+const EditButton = styled(Button)`
+    margin-left: 100%;
+`
+
+const CharacterDetails = ({details, inventory}: CharacterDetailsProps) => {
+    if (details) {
+        const charImage = details.image ? details.image : "/assets/placeholder-icon.png";
+        return (
+            <Container fluid>
+                <Row>
+                    <Col md="auto">
+                        <CharImage src={charImage} alt="character"/>
+                    </Col>
+                    <Col xs lg={6} className="my-auto">
+                        <h3>{details.name}</h3>
+                        <h4>{`Level ${details.level} ${details.class}`}</h4>
+                    </Col>
+                    <Col xs lg={3} className="my-auto">
+                        <HPDisplay maxHP={details.maxHP} currHP={details.hp}/>
+                    </Col>
+                    <Col xs lg={1} className="my-auto">
+                        <EditButton variant="outline-info">Edit (TODO)</EditButton>
+                    </Col>
+                </Row>
+                <hr/>
+                <Row>
+                    <Col md="auto">
+                        <Proficiencies charLvl={details.level} onSwitchChange={() => {}} charSkills={details.skills || DEFAULT_PROFICIENCIES} editMode={false}/>
+                    </Col>
+                    <Col>
+                        <Row>
+                            <StatsDisplay stats={details.stats}/>
+                        </Row>
+                        <hr/>   
+                        <Row>
+                            {inventory()}
+                        </Row>
+                        <hr/>
+                        <Row className="justify-content-center">
+                            <h4>Character Notes/Description</h4>
+                            <Card style={{width: "90%"}}>
+                                <Card.Body>
+                                    {details.description ? details.description : "Edit your character to add more details here"}
+                                </Card.Body>
+                            </Card>
+                        </Row>
+                    </Col>
+                </Row>
+            </Container>
+        )
+    }
+    return null;
+}
+
+export default CharacterDetails;
