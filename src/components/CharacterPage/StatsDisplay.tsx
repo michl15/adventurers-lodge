@@ -45,7 +45,7 @@ const StatsDisplay = ({stats}: StatsDisplayProps) => {
                             <h4>{statValue}</h4>
                         </Row>
                         <Row className="d-flex align-items-center justify-content-center">
-                            <Modifier variant={positive ? "success" : "danger"}>{positive ? `+${modifier}` : `${modifier}`}</Modifier>
+                            <Modifier variant={positive ? "info" : "danger"}>{positive ? `+${modifier}` : `${modifier}`}</Modifier>
                         </Row>
                     </Container>
                 </StatsItem>

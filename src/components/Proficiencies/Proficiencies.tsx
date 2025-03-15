@@ -17,12 +17,14 @@ const Proficiencies = ({charLvl, onSwitchChange, charSkills, editMode = false}: 
     const stats = Object.keys(SKILLS);
     const proficiencyBonus = calculateProficiencyBonus(charLvl);
     
-    return stats.map((stat: string) => {
+    return (<ListGroup> 
+        {stats.map((stat: string) => {
                 return (
-                    <Form.Group key={`skills-${stat}`}>
+                    <ListGroup.Item key={`skills-${stat}`}>
+                    <Form.Group>
                         <Form.Label>{STATS_MAP[stat]}</Form.Label>
                         {SKILLS[stat].map((skill: string) => (
-                            <ListGroup horizontal key={`${skill}-switch-listgroup`} style={{margin:'1px 0px'}}>
+                            <ListGroup horizontal key={`${skill}-switch-listgroup`} style={{margin:'3px 0px'}}>
                                 <ListGroup.Item style={{width:'200px'}} variant={charSkills[skill] ? "info" : ""}>
                                     <Form.Check
                                         type="switch"
@@ -41,9 +43,10 @@ const Proficiencies = ({charLvl, onSwitchChange, charSkills, editMode = false}: 
                             </ListGroup>
                         ))}
                     </Form.Group>
+                    </ListGroup.Item>
                 )
             }
-    )
+    )} </ListGroup>)
 }
 
 export default Proficiencies;

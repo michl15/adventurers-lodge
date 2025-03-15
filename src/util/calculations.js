@@ -16,4 +16,15 @@ const calculateStatModifier = (stat) => {
     return Math.floor((stat - 10) / 2);
 }
 
-export { calculateProficiencyBonus, calculateStatModifier }
+// Helper function to roll stats
+const rollStat = () => {
+    let vals = [];
+    for(let i = 0; i < 4; i++) {
+        vals.push(Math.floor(Math.random() * 6) + 1);
+    }
+    const min = Math.min(...vals)
+    const sum = vals.reduce((partialSum, a) => partialSum + a, 0) - min;
+    return sum;
+};
+
+export { calculateProficiencyBonus, calculateStatModifier, rollStat }
