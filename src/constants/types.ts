@@ -56,15 +56,15 @@ type Race = {
 type Language = {
     index: string;
     name: string;
-    url: string;
-    source: string | undefined;
+    url: string | boolean;
+    source: string | boolean;
 }
 
 type Trait = {
     index: string;
     name: string;
     url: string;
-    source: string | undefined;
+    source: string | boolean;
     info: string;
 }
 

@@ -342,8 +342,20 @@ const CharacterCreationPage = () => {
         return trimmedInfo;
     }
 
-    const onAddLanguageClick = () => {
+    const onAddLanguageClick = (newLang: string) => {
+        const newLanguage: Language = {
+            index: newLang.toLowerCase(),
+            name: newLang,
+            url: false,
+            source: false
 
+        }
+        setCharLanguages([...charLanguages, newLanguage]);
+    }
+
+    const onRemoveLanguageClick = (index: string) => {
+        const newLanguages = charLanguages.filter((lang) => lang.index !== index);
+        setCharLanguages(newLanguages);
     }
 
     useEffect(() => {
@@ -475,7 +487,7 @@ const CharacterCreationPage = () => {
                     </Row>
                     <Row>
                         <h5>Languages</h5>
-                        <CharacterLanguages langList={charLanguages} edit={true} onAddLang={onAddLanguageClick}/>
+                        <CharacterLanguages langList={charLanguages} edit={true} onAddLang={onAddLanguageClick} onRemoveLang={onRemoveLanguageClick}/>
                     </Row>
                     <br/>
                         <Row>
