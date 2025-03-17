@@ -63,33 +63,48 @@ const SwapToCustomClass = styled.span`
 `
 
 const CharacterCreationPage = () => {
+    // #region State
+    // Character input fields
     const [charName, setCharName] = useState<string>('');
     const [charClass, setCharClass] = useState<string>('');
     const [charStats, setCharStats] = useState<StatsTypes>(BASE_STATS);
     const [charLvl, setCharLvl] = useState<number | string>(1);
-    const [validated, setValidated] = useState<boolean>(false)
     const [charSkills, setCharSkills] = useState<ProficienciesTypes<boolean>>(DEFAULT_PROFICIENCIES);
     const [charMaxHP, setCharMaxHP] = useState<number | string>(10);
     const [charDesc, setCharDesc] = useState<string>('');
-    const [customClass, setCustomClass] = useState(false);
-    const [classOptions, setClassOptions] = useState<Class[]>([]);
-    const [hitDie, setHitDie] = useState(10);
-    const [proficienciesInfo, setProficienciesInfo] = useState("");
-    const [raceOptions, setRaceOptions] = useState<Race[]>([]);
-    const [customRace, setCustomRace] = useState(false);
     const [charRace, setCharRace] = useState("");
+    const [hitDie, setHitDie] = useState(10);
     const [charLanguages, setCharLanguages] = useState<Language[]>([]);
-    const [statBonuses, setStatBonuses] = useState<AbilityBonus[]>([]);
-    const [statsApplied, setStatsApplied] = useState(false);
     const [charTraits, setCharTraits] = useState<Trait[]>([]);
 
-    const navigate = useNavigate();
+    // flags
+    const [validated, setValidated] = useState(false)
+    const [customClass, setCustomClass] = useState(false);
+    const [customRace, setCustomRace] = useState(false);
+    const [statsApplied, setStatsApplied] = useState(false);
     const [showToast, setShowToast] = useState(false);
+
+    // options for dropdowns
+    const [classOptions, setClassOptions] = useState<Class[]>([]);
+    const [raceOptions, setRaceOptions] = useState<Race[]>([]);
+
+    // data for selected class/race
+    const [proficienciesInfo, setProficienciesInfo] = useState("");
+    const [statBonuses, setStatBonuses] = useState<AbilityBonus[]>([]);
+
+    // user data for current user
+    const [user, setUser] = useState<FirebaseUser | null>(null);
+
+    // #endregion State
+    // hook for React Router navigation
+    const navigate = useNavigate();
+
+    // Toast toggle utility fn
     const toggleToast = () => setShowToast(true)
     const toggleToastOff = () => setShowToast(false)
 
-    const [user, setUser] = useState<FirebaseUser | null>(null);
-
+    /* =================================== Input field onChange handlers ===================================== */
+    // #region onChange handlers
     const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValidated(false);
         setCharName(event.target.value);
@@ -122,7 +137,7 @@ const CharacterCreationPage = () => {
             // Languages from race
             const languages = raceInfo.languages;
             languages.forEach((lang: Language) => {lang.source = event.target.value})
-            const removeOld = charLanguages.filter((lang) => lang.source === undefined)
+            const removeOld = charLanguages.filter((lang) => lang.source === false)
             const newLanguages: Language[] = [...removeOld, ...languages];
             setCharLanguages(newLanguages);
 
@@ -136,7 +151,8 @@ const CharacterCreationPage = () => {
                 traitInfo.desc.forEach((str: string) => desc += str + " ");
                 traits[i].info = desc;
             }
-            const removeOldTraits = charTraits.filter((trait) => trait.source === undefined)
+            // when selecting a new race, remove other traits from prev race
+            const removeOldTraits = charTraits.filter((trait) => trait.source === false)
             const newTraits: Trait[] = [...removeOldTraits, ...traits];
             setCharTraits(newTraits);
 
@@ -144,18 +160,9 @@ const CharacterCreationPage = () => {
             const abilities = raceInfo.ability_bonuses;
             setStatBonuses(abilities);
             setStatsApplied(false);
+        } else {
+            removeOldValues();
         }
-    }
-
-    const applyStatBonus = () => {
-        let newCharStats = {...charStats};
-        for(let i = 0; i < statBonuses.length; i++) {
-            const stat = statBonuses[i].ability_score?.index;
-            const adjustedStat = charStats[stat as keyof StatsTypes] + statBonuses[i].bonus;
-            newCharStats = {...newCharStats, [stat]: adjustedStat}
-        }
-        setCharStats(newCharStats);
-        setStatsApplied(true);
     }
 
     const onRaceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -168,7 +175,6 @@ const CharacterCreationPage = () => {
         const numVal = Number(val.substring(1));
         setHitDie(numVal);
         setCharMaxHP(numVal + calculateStatModifier(charStats['con']) );
-
     }
 
     const onStatChange = (event: React.ChangeEvent<HTMLInputElement>, label: string) => {
@@ -211,7 +217,13 @@ const CharacterCreationPage = () => {
         setCharDesc(event.target.value);
     }
 
+    const onSwitchChange = (skill: string) => {
+        setCharSkills({...charSkills, [skill]: !charSkills[skill]})
+    }
 
+    // #endregion onChange handlers
+    /* ===================================== Button onClick handlers ======================================== */
+    // #region onClick handlers
     const onRollStats = () => {
         let newStatsObj: StatsTypes = {...BASE_STATS}
         for(const [key] of Object.entries(charStats)) {
@@ -251,7 +263,8 @@ const CharacterCreationPage = () => {
                 description: charDesc,
                 race: charRace,
                 languages: charLanguages,
-                traits: charTraits
+                traits: charTraits,
+                hitDie: hitDie
             }
 
             const newCharKey = push(charRef, charData).key;
@@ -263,48 +276,9 @@ const CharacterCreationPage = () => {
                 toggleToast();
                 console.error(error)
             });
+        } else {
+            window.scrollTo(0, 0);
         }
-    }
-
-    const getClasses = async () => {
-        const response = await fetch(API_CLASSES);
-        if (response.ok) {
-            const data = await response.json();
-            setClassOptions(data.results);
-        }
-    }
-
-    const getRaces = async () => {
-        const response = await fetch(API_RACES);
-        if (response.ok) {
-            const data = await response.json();
-            setRaceOptions(data.results);
-        }
-    }
-
-    const renderStatsForm = () => {
-        const statsNames = Object.keys(charStats);
-        return statsNames.map((stat) => {
-            const modifier = calculateStatModifier(charStats[stat as keyof StatsTypes]);
-            return (
-            <Col key={`stats-${stat}`}>
-                <Form.Group>
-                    <Form.Label>{stat.toUpperCase()}</Form.Label>
-                    <StatsInput type="text" onChange={(event: React.ChangeEvent<HTMLInputElement>) => {onStatChange(event, stat)}} value={charStats[stat as keyof StatsTypes]}/>
-                    <Form.Text>
-                        {modifier >= 0 ? `+${modifier}` : `${modifier}`}
-                    </Form.Text>
-                </Form.Group>
-            </Col>
-        )})
-    }
-
-    const onSwitchChange = (skill: string) => {
-        setCharSkills({...charSkills, [skill]: !charSkills[skill]})
-    }
-
-    const showCustomClassButtonContent = () => {
-        return customClass ? 'Use Vanilla 5e classes' : 'Use custom class'
     }
 
     const onCustomClassButtonClick = () => {
@@ -312,30 +286,10 @@ const CharacterCreationPage = () => {
         setCharClass("");
     }
 
-    const showCustomRaceButtonContent = () => {
-        return customRace ? 'Use Vanilla 5e races' : 'Use custom race'
-    }
-
     const onCustomRaceButtonClick = () => {
         setCustomRace(!customRace);
-        const removeOld = charLanguages.filter((lang) => lang.source === undefined)
-        const newLanguages: Language[] = [...removeOld];
-        setCharLanguages(newLanguages);
-
-        const removeOldTraits = charTraits.filter((trait) => trait.source === undefined)
-        const newTraits: Trait[] = [...removeOldTraits];
-        setCharTraits(newTraits);
-
         setCharRace("");
-    }
-
-    const statInfo = () => {
-        let infoStr = "";
-        statBonuses.forEach((ability) => {
-            infoStr += `${ability.ability_score.name} +${ability.bonus}, `
-        })
-        const trimmedInfo = infoStr.substring(0, infoStr.length - 2);
-        return trimmedInfo;
+        removeOldValues();
     }
 
     const onAddLanguageClick = (newLang: string) => {
@@ -354,13 +308,101 @@ const CharacterCreationPage = () => {
         setCharLanguages(newLanguages);
     }
 
+    const onAddTraitClick = (newTrait: Trait) => {
+        setCharTraits([...charTraits, newTrait]);
+    }
+
+    const onRemoveTraitClick = (index: string) => {
+        const newTraits = charTraits.filter((trait) => trait.index !== index);
+        setCharTraits(newTraits);
+    }
+
+    const applyStatBonus = () => {
+        let newCharStats = {...charStats};
+        for(let i = 0; i < statBonuses.length; i++) {
+            const stat = statBonuses[i].ability_score?.index;
+            const adjustedStat = charStats[stat as keyof StatsTypes] + statBonuses[i].bonus;
+            newCharStats = {...newCharStats, [stat]: adjustedStat}
+        }
+        setCharStats(newCharStats);
+        setStatsApplied(true);
+    }
+    
+    // #endregion onClick handlers
+    /* ===================================== Initial API fetches ======================================== */
+    // #region API calls
+    const getClasses = async () => {
+        const response = await fetch(API_CLASSES);
+        if (response.ok) {
+            const data = await response.json();
+            setClassOptions(data.results);
+        }
+    }
+
+    const getRaces = async () => {
+        const response = await fetch(API_RACES);
+        if (response.ok) {
+            const data = await response.json();
+            setRaceOptions(data.results);
+        }
+    }
+
+    // #endregion API calls
+    /* ===================================== Content rendering/utility ======================================== */
+    // #region Rendering/utility
+    const renderStatsForm = () => {
+        const statsNames = Object.keys(charStats);
+        return statsNames.map((stat) => {
+            const modifier = calculateStatModifier(charStats[stat as keyof StatsTypes]);
+            return (
+            <Col key={`stats-${stat}`}>
+                <Form.Group>
+                    <Form.Label>{stat.toUpperCase()}</Form.Label>
+                    <StatsInput type="text" onChange={(event: React.ChangeEvent<HTMLInputElement>) => {onStatChange(event, stat)}} value={charStats[stat as keyof StatsTypes]}/>
+                    <Form.Text>
+                        {modifier >= 0 ? `+${modifier}` : `${modifier}`}
+                    </Form.Text>
+                </Form.Group>
+            </Col>
+        )})
+    }
+
+    const showCustomClassButtonContent = () => {
+        return customClass ? 'Use Vanilla 5e classes' : 'Use custom class'
+    }
+
+    const showCustomRaceButtonContent = () => {
+        return customRace ? 'Use Vanilla 5e races' : 'Use custom race'
+    }
+
+    const statInfo = () => {
+        let infoStr = "";
+        statBonuses.forEach((ability) => {
+            infoStr += `${ability.ability_score.name} +${ability.bonus}, `
+        })
+        const trimmedInfo = infoStr.substring(0, infoStr.length - 2);
+        return trimmedInfo;
+    }
+
+    const removeOldValues = () => {
+        const removeOld = charLanguages.filter((lang) => lang.source === false)
+        const newLanguages: Language[] = [...removeOld];
+        setCharLanguages(newLanguages);
+
+        const removeOldTraits = charTraits.filter((trait) => trait.source === false)
+        const newTraits: Trait[] = [...removeOldTraits];
+        setCharTraits(newTraits);
+    }
+
+    // #endregion Rendering/utility
+
     useEffect(() => {
         onAuthStateChanged(firebaseAuth, (u) => {
             setUser(u);
         });
         getClasses();
         getRaces();
-    }, [])
+    }, []);
 
     return (
         <div>
@@ -466,11 +508,11 @@ const CharacterCreationPage = () => {
                         </Alert>
                     </Row>
                     {renderStatsForm()}
-                        <Row className="justify-content-md-center">
-                            <Col xs lg="2">
+                        <Row>
+                            <Col className="d-flex justify-content-end">
                                 <StatsButtons onClick={onRollStats} size="sm">Randomize</StatsButtons>
                             </Col>
-                            <Col xs lg="2">
+                            <Col>
                                 <StatsButtons onClick={onResetStats} size="sm" variant="danger">Reset</StatsButtons>
                             </Col>
                         </Row>
@@ -478,9 +520,9 @@ const CharacterCreationPage = () => {
                     <h4>Other</h4>
                     <Row>
                         <h5>Traits</h5>
-                        <CharacterTraits traits={charTraits} edit/>
-                        <br/>
+                        <CharacterTraits traits={charTraits} edit addNewTrait={onAddTraitClick} removeTrait={onRemoveTraitClick}/>
                     </Row>
+                    <br/>
                     <Row>
                         <h5>Languages</h5>
                         <CharacterLanguages langList={charLanguages} edit={true} onAddLang={onAddLanguageClick} onRemoveLang={onRemoveLanguageClick}/>

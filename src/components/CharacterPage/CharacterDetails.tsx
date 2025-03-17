@@ -1,3 +1,4 @@
+import React from "react";
 import { Button, Card, Col, Container, Image, Row } from "react-bootstrap";
 import { CharacterData } from "../../constants/types";
 import styled from "styled-components";
@@ -61,7 +62,7 @@ const CharacterDetails = ({details, inventory}: CharacterDetailsProps) => {
                         <br/>
                         <Row>
                             <h4>Languages</h4>
-                            <CharacterLanguages langList={details.languages} edit={false} onAddLang={() => {}}/>
+                            <CharacterLanguages langList={details.languages} edit={false}/>
                         </Row>  
                         <hr/>
                         <Row>
