@@ -27,7 +27,7 @@ const StatsButtons = styled(Button)`
 `
 
 const DescriptionBox = styled(Form.Control)`
-    min-height: 300px;
+    min-height: 200px;
     width: 100%;
     border: 1px solid #dee2e6;
     border-radius: 8px;
@@ -109,7 +109,6 @@ const CharacterCreationPage = () => {
             setHitDie(classInfo.hit_die);
             setCharMaxHP(classInfo.hit_die + calculateStatModifier(charStats['con']));
             setProficienciesInfo(classInfo.proficiency_choices[0].desc);
-            console.log(classInfo);
         }
     }
 
@@ -133,7 +132,6 @@ const CharacterCreationPage = () => {
                 traits[i].source = event.target.value;
                 const traitResp = await fetch(`${API_BASE_URL_5E}${traits[i].url}`);
                 const traitInfo = await traitResp.json();
-                console.log(traitInfo);
                 let desc = "";
                 traitInfo.desc.forEach((str: string) => desc += str + " ");
                 traits[i].info = desc;
@@ -146,8 +144,6 @@ const CharacterCreationPage = () => {
             const abilities = raceInfo.ability_bonuses;
             setStatBonuses(abilities);
             setStatsApplied(false);
-
-            console.log(raceInfo);
         }
     }
 
@@ -498,7 +494,7 @@ const CharacterCreationPage = () => {
                         </Row>
                         <Row>
                             <Form.Group controlId="formFileLg" className="mb-3">
-                                <Form.Label>Upload an image (NOT WORKING right now)</Form.Label>
+                                <Form.Label>Upload an image (TODO)</Form.Label>
                                 <Form.Control type="file" accept=".png,.jpeg" disabled/>
                             </Form.Group>
                         </Row>
