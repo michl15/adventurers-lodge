@@ -13,9 +13,7 @@ type CharacterLanguagesProps = {
 
 const AddNewLanguage = styled(ListGroup.Item)`
     &:hover {
-        color: #103e87;
         cursor: pointer;
-        background-color: #dbf9ff;
     }
 `
 
@@ -40,6 +38,7 @@ const CharacterLanguages = ({langList, edit, onAddLang, onRemoveLang}: Character
     
     const onCancel: React.MouseEventHandler<HTMLButtonElement> = (event) => {
         event.stopPropagation();
+        setValidInput(true)
         setShowAddLangForm(false);
     }
 
@@ -55,7 +54,6 @@ const CharacterLanguages = ({langList, edit, onAddLang, onRemoveLang}: Character
             if (newLanguage.trim() && checkInList?.length === 0) {
                 setValidInput(true);
                 onAddLang(newLanguage);
-                console.log('added');
                 setNewLanguage('');
                 setShowAddLangForm(false);
             } else {
@@ -72,7 +70,7 @@ const CharacterLanguages = ({langList, edit, onAddLang, onRemoveLang}: Character
 
     const addNewLanguage = () => {
         return (
-            <AddNewLanguage onClick={onAddLanguageClick}>
+            <AddNewLanguage onClick={onAddLanguageClick} style={{backgroundColor: showAddLangForm ? '#cfe2ff' : 'white', color: showAddLangForm ? '#103e87' : 'black'}}>
                 <PlusCircle style={{marginRight: "10px", marginBottom:"4px"}}/>
                 <span>Add new language</span>
                 <Collapse in={showAddLangForm}>
@@ -108,7 +106,7 @@ const CharacterLanguages = ({langList, edit, onAddLang, onRemoveLang}: Character
                             </Col>
                             <Col md="auto">
                             {edit && <Button variant="outline-danger" size="sm" onClick={() => {onDeleteLang(language.index)}}>
-                                <Trash3Fill/>
+                                <Trash3Fill style={{marginBottom:"5px"}}/>
                             </Button>}
                                 
                             </Col>

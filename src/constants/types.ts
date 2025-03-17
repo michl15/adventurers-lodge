@@ -63,7 +63,7 @@ type Language = {
 type Trait = {
     index: string;
     name: string;
-    url: string;
+    url: string | boolean;
     source: string | boolean;
     info: string;
 }
