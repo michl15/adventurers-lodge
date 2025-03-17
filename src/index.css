@@ -11,3 +11,10 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.labrada-advlodge {
+  font-family: "Labrada", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
