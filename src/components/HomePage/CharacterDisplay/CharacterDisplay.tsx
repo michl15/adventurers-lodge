@@ -39,7 +39,7 @@ const CharacterDisplay = ({uid, onCharacterCreationClick}: CharacterDisplayProps
     const [characterMap, setCharacterMap] = useState(new Map());
 
     useEffect(() => {
-        const getCharacterData = async (characters: {}, db: Database) => {
+        const getCharacterData = async (characters: object, db: Database) => {
             // iterate through characters
             for(const char of Object.entries(characters)) {
                 const charId = char[0];
@@ -71,7 +71,7 @@ const CharacterDisplay = ({uid, onCharacterCreationClick}: CharacterDisplayProps
 
         // disabling because we don't want characterMap in the deps
         // as updating it would cause infinite re-renders due to new reference
-        // eslint-disable-next-line
+         
     }, [uid]);
         
 

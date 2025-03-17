@@ -36,7 +36,7 @@ const StatsDisplay = ({stats}: StatsDisplayProps) => {
             const modifier = calculateStatModifier(statValue);
             const positive = modifier >= 0
             return (
-                <StatsItem>
+                <StatsItem key={`stats-list${stat}`}>
                     <Container fluid>
                         <Row className="text-center">
                             <div>{stat.toUpperCase()}</div>

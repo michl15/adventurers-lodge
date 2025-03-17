@@ -225,7 +225,7 @@ const CharacterCreationPage = () => {
     /* ===================================== Button onClick handlers ======================================== */
     // #region onClick handlers
     const onRollStats = () => {
-        let newStatsObj: StatsTypes = {...BASE_STATS}
+        const newStatsObj: StatsTypes = {...BASE_STATS}
         for(const [key] of Object.entries(charStats)) {
             // generate a random number between 0-20
             const newStat = rollStat();

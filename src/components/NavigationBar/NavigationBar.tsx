@@ -24,7 +24,7 @@ const NavigationBar = () => {
         <Navbar bg="info" variant="dark" sticky="top">
             <Container fluid>
                 <Nav>
-                    <NavbarBrand as={Link} to="/home">Adventurer's Lodge</NavbarBrand>
+                    <NavbarBrand as={Link} to="/home">Adventurer&apos;s Lodge</NavbarBrand>
                     <Nav.Link as={Link} to="/home">Home</Nav.Link>
                     <NavDropdown title="Create">
                         <NavDropdown.Item as={Link} to="/character_creation">Create a Character</NavDropdown.Item>

@@ -8,7 +8,7 @@ interface ProficienciesTypes<Value> {
 
 type ProficienciesProps = {
     charLvl: string | number;
-    onSwitchChange: Function;
+    onSwitchChange: (skill: string) => void;
     charSkills: ProficienciesTypes<boolean>;
     editMode: boolean;
 }
@@ -32,7 +32,7 @@ const Proficiencies = ({charLvl, onSwitchChange, charSkills, editMode = false}: 
                                         label={skill}
                                         checked={charSkills[skill]}
                                         onChange={() => {
-                                            onSwitchChange(skill);
+                                            onSwitchChange?.(skill);
                                         }}
                                         disabled={!editMode}
                                     />

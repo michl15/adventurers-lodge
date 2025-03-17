@@ -42,7 +42,7 @@ const LoginPage = () => {
     return (
         <div>
             <PageContainer>
-                <StyledHeader>Welcome to Adventurer's Lodge!</StyledHeader>
+                <StyledHeader>Welcome to Adventurer&apos;s Lodge!</StyledHeader>
                 <HeaderImage src="https://pngimg.com/uploads/dragon/dragon_PNG84477.png"/>
                 <StyledForm className="rounded p-4">
                     <Form.Group className="mb-3" controlId="formBasicUsername">

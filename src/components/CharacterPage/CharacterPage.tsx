@@ -29,7 +29,7 @@ const CharacterPage = () => {
         const snapshot = await get(itemRef);
         if (snapshot.exists() && snapshot.val()) {
             const ids = Object.keys(snapshot.val());
-            let newArray: Item[] = [];
+            const newArray: Item[] = [];
            for(let i = 0; i < ids.length; i++) {
             const itemPath = 'items/' + ids[i];
                 const newRef = ref(database, itemPath);
@@ -93,7 +93,7 @@ const CharacterPage = () => {
     useEffect(() => {
         fetchItem();
         getCharacterDetails();
-        // eslint-disable-next-line
+         
     }, [])
 
     const renderAddItemForm = () => {
