@@ -1,3 +1,3 @@
-import CharacterCreationPage from "./CharacterCreationPage";
+import CharacterCreationPage from './CharacterCreationPage';
 
 export default CharacterCreationPage;

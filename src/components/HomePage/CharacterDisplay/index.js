@@ -1,3 +1,3 @@
-import CharacterDisplay from "./CharacterDisplay";
+import CharacterDisplay from './CharacterDisplay';
 
 export default CharacterDisplay;

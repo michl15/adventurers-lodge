@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { useNavigate } from "react-router";
-import CharacterDisplay from "./CharacterDisplay";
-import { onAuthStateChanged } from "firebase/auth";
-import { firebaseAuth } from "../../firebase/firebase";
-import { User as FirebaseUser } from "firebase/auth";
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import CharacterDisplay from './CharacterDisplay';
+import { onAuthStateChanged } from 'firebase/auth';
+import { firebaseAuth } from '../../firebase/firebase';
+import { User as FirebaseUser } from 'firebase/auth';
 
 /*
   TODO:
@@ -22,26 +22,30 @@ import { User as FirebaseUser } from "firebase/auth";
 const HomePage = () => {
     const [user, setUser] = useState<FirebaseUser | null>(null);
     onAuthStateChanged(firebaseAuth, (u) => {
-      setUser(u);
-    })
+        setUser(u);
+    });
     const navigate = useNavigate();
 
     const signedIn = user !== null;
 
     const onCharacterCreationClick = () => {
-      navigate('/character_creation');
-    }
+        navigate('/character_creation');
+    };
 
     return (
         <div>
-          {signedIn &&
-          <>
-            <h2>My Characters</h2>
-            <CharacterDisplay uid={user?.uid} onCharacterCreationClick={onCharacterCreationClick}/>
-            <h3>My Campaigns</h3>
-          </>}
+            {signedIn && (
+                <>
+                    <h2>My Characters</h2>
+                    <CharacterDisplay
+                        uid={user?.uid}
+                        onCharacterCreationClick={onCharacterCreationClick}
+                    />
+                    <h3>My Campaigns</h3>
+                </>
+            )}
         </div>
-    )
-}
+    );
+};
 
 export default HomePage;
