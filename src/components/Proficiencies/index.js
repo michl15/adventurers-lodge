@@ -1,3 +1,3 @@
-import Proficiencies from "./Proficiencies";
+import Proficiencies from './Proficiencies';
 
 export default Proficiencies;

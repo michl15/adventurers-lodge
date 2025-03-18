@@ -1,21 +1,17 @@
-import { JSX } from "react"
-import { Container } from "react-bootstrap"
-import styled from "styled-components"
+import { JSX } from 'react';
+import { Container } from 'react-bootstrap';
+import styled from 'styled-components';
 
 const PaddedContainer = styled(Container)`
     width: 100%;
     padding: 10px 0px;
-`
+`;
 
 type PageContainerProps = {
-    children: JSX.Element
-}
-const PageContainer = ({children}: PageContainerProps) => {
-    return (
-        <PaddedContainer>
-            {children}
-        </PaddedContainer>
-    )
-}
+    children: JSX.Element;
+};
+const PageContainer = ({ children }: PageContainerProps) => {
+    return <PaddedContainer>{children}</PaddedContainer>;
+};
 
 export default PageContainer;

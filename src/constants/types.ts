@@ -1,6 +1,6 @@
 type ProficienciesTypes<Value> = {
-    [id: string]: Value
-}
+    [id: string]: Value;
+};
 
 type CharacterData = {
     name: string;
@@ -17,16 +17,16 @@ type CharacterData = {
     race: string;
     languages: Language[];
     traits: Trait[];
-}
+};
 
 type Item = {
     name: string;
     description: string;
-}
+};
 
 type SkillsTypes<Value> = {
-    [id: string]: Value[]
-}
+    [id: string]: Value[];
+};
 
 type StatsTypes = {
     str: number;
@@ -35,30 +35,30 @@ type StatsTypes = {
     int: number;
     wis: number;
     cha: number;
-}
+};
 
 type Inventory = {
-    [itemId: string]: boolean
-}
+    [itemId: string]: boolean;
+};
 
 type Class = {
     name: string;
     index: string;
     url: string;
-}
+};
 
 type Race = {
     index: string;
     name: string;
     url: string;
-}
+};
 
 type Language = {
     index: string;
     name: string;
     url: string | boolean;
     source: string | boolean;
-}
+};
 
 type Trait = {
     index: string;
@@ -66,15 +66,27 @@ type Trait = {
     url: string | boolean;
     source: string | boolean;
     info: string;
-}
+};
 
 type AbilityBonus = {
     ability_score: {
         index: string;
         name: string;
         url: string;
-    }
+    };
     bonus: number;
-}
+};
 
-export type { ProficienciesTypes, CharacterData, Item, SkillsTypes, StatsTypes, Inventory, Class, Race, Language, AbilityBonus, Trait }
+export type {
+    ProficienciesTypes,
+    CharacterData,
+    Item,
+    SkillsTypes,
+    StatsTypes,
+    Inventory,
+    Class,
+    Race,
+    Language,
+    AbilityBonus,
+    Trait,
+};

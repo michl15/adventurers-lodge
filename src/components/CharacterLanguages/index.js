@@ -1,3 +1,3 @@
-import CharacterLanguages from "./CharacterLanguages";
+import CharacterLanguages from './CharacterLanguages';
 
 export default CharacterLanguages;

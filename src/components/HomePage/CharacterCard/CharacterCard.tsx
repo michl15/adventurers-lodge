@@ -1,18 +1,18 @@
-import React from "react";
-import { Card } from "react-bootstrap";
-import { useNavigate } from "react-router";
-import styled from 'styled-components'
-import { CharacterData } from "../../../constants/types";
+import React from 'react';
+import { Card } from 'react-bootstrap';
+import { useNavigate } from 'react-router';
+import styled from 'styled-components';
+import { CharacterData } from '../../../constants/types';
 
-const CharCard = styled(Card) `
+const CharCard = styled(Card)`
     padding: 10px;
-`
+`;
 
 type CharacterCardProps = {
     characterData: CharacterData;
-}
+};
 
-const CharacterCard = ({characterData}: CharacterCardProps) => {
+const CharacterCard = ({ characterData }: CharacterCardProps) => {
     const name = characterData.name;
     const charClass = characterData.class;
     const charLevel = characterData.level;
@@ -22,18 +22,18 @@ const CharacterCard = ({characterData}: CharacterCardProps) => {
 
     const onCharacterClick = () => {
         navigate(`/characters/${charId}`);
-    }
-
+    };
 
     return (
         <CharCard border="info" onClick={onCharacterClick}>
             <Card.Body>
                 <h3>{name}</h3>
-                <p>Level {charLevel} {charClass}</p>
+                <p>
+                    Level {charLevel} {charClass}
+                </p>
             </Card.Body>
         </CharCard>
-    )
-
-}
+    );
+};
 
 export default CharacterCard;

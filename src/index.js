@@ -13,25 +13,30 @@ import PageContainer from './components/PageContainer';
 import ScrollToTop from './components/ScrollToTop';
 import CharacterPage from './components/CharacterPage';
 
-
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <FirebaseAuthProvider>
-    <HashRouter>
-      <NavigationBar/>
-      <PageContainer>
-      <ScrollToTop/>
-        <Routes>
-          <Route path="/" element={<LoginPage/>}/>
-          <Route path="/home" element={<HomePage/>}/>
-          <Route path="/character_creation" element={<CharacterCreationPage/>}/>
-          <Route path="/characters/:charId" element={<CharacterPage/>}/>
-        </Routes>
-      </PageContainer>
-    </HashRouter>
-    </FirebaseAuthProvider>
-  </React.StrictMode>
+    <React.StrictMode>
+        <FirebaseAuthProvider>
+            <HashRouter>
+                <NavigationBar />
+                <PageContainer>
+                    <ScrollToTop />
+                    <Routes>
+                        <Route path="/" element={<LoginPage />} />
+                        <Route path="/home" element={<HomePage />} />
+                        <Route
+                            path="/character_creation"
+                            element={<CharacterCreationPage />}
+                        />
+                        <Route
+                            path="/characters/:charId"
+                            element={<CharacterPage />}
+                        />
+                    </Routes>
+                </PageContainer>
+            </HashRouter>
+        </FirebaseAuthProvider>
+    </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
