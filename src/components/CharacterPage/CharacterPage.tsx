@@ -94,6 +94,7 @@ const CharacterPage = () => {
     useEffect(() => {
         fetchItem();
         getCharacterDetails();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const renderAddItemForm = () => {

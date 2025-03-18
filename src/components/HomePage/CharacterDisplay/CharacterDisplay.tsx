@@ -77,6 +77,7 @@ const CharacterDisplay = ({
 
         // disabling because we don't want characterMap in the deps
         // as updating it would cause infinite re-renders due to new reference
+        // eslint-disable-next-line
     }, [uid]);
 
     /**
