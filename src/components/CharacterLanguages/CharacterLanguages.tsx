@@ -47,7 +47,7 @@ const CharacterLanguages = ({
     const [validInput, setValidInput] = useState(true);
 
     const onAddLanguageClick: React.MouseEventHandler<HTMLElement> = () => {
-        setShowAddLangForm(true);
+        setShowAddLangForm(!showAddLangForm);
     };
 
     const onCancel: React.MouseEventHandler<HTMLButtonElement> = (event) => {
@@ -61,7 +61,8 @@ const CharacterLanguages = ({
         setNewLanguage(event.currentTarget.value);
     };
 
-    const onSubmitLang = () => {
+    const onSubmitLang = (event: React.MouseEvent<HTMLElement>) => {
+        event?.stopPropagation()
         if (onAddLang) {
             const checkInList = langList?.filter(
                 (lang) => lang.index === newLanguage.toLowerCase()
@@ -104,6 +105,7 @@ const CharacterLanguages = ({
                                     <Form.Control
                                         value={newLanguage}
                                         onChange={onLanguageChange}
+                                        onClick={(event) => { event.stopPropagation() }}
                                     />
                                     {!validInput && (
                                         <Form.Text>
