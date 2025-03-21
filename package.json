@@ -1,62 +1,63 @@
 {
-    "name": "adventurers-lodge",
-    "version": "0.1.0",
-    "private": true,
-    "dependencies": {
-        "@testing-library/jest-dom": "^5.17.0",
-        "@testing-library/react": "^15.0.6",
-        "@testing-library/user-event": "^13.5.0",
-        "bootstrap": "^5.3.3",
-        "firebase": "^10.14.0",
-        "react": "^18.3.1",
-        "react-bootstrap": "^2.10.9",
-        "react-bootstrap-icons": "^1.11.5",
-        "react-dom": "^18.3.1",
-        "react-router": "^7.1.5",
-        "react-scripts": "5.0.1",
-        "styled-components": "^6.1.15",
-        "web-vitals": "^2.1.4"
-    },
-    "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
-        "eject": "react-scripts eject",
-        "lint": "eslint",
-        "postinstall": "husky",
-        "test:nowatch": "react-scripts test --watchAll=false"
-    },
-    "eslintConfig": {
-        "extends": [
-            "react-app",
-            "react-app/jest"
-        ]
-    },
-    "browserslist": {
-        "production": [
-            ">0.2%",
-            "not dead",
-            "not op_mini all"
-        ],
-        "development": [
-            "last 1 chrome version",
-            "last 1 firefox version",
-            "last 1 safari version"
-        ]
-    },
-    "devDependencies": {
-        "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-        "@eslint/js": "^9.22.0",
-        "@types/jest": "^29.5.14",
-        "@types/node": "^22.13.9",
-        "@types/react": "^19.0.10",
-        "@types/react-dom": "^19.0.4",
-        "eslint-config-prettier": "^10.1.1",
-        "eslint-plugin-react": "^7.37.4",
-        "globals": "^16.0.0",
-        "husky": "^9.1.7",
-        "prettier": "3.5.3",
-        "typescript": "^5.8.2",
-        "typescript-eslint": "^8.26.1"
-    }
+  "name": "adventurers-lodge",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^15.0.6",
+    "@testing-library/user-event": "^13.5.0",
+    "bootstrap": "^5.3.3",
+    "firebase": "^10.14.0",
+    "react": "^18.3.1",
+    "react-bootstrap": "^2.10.9",
+    "react-bootstrap-icons": "^1.11.5",
+    "react-dom": "^18.3.1",
+    "react-router": "^7.1.5",
+    "react-scripts": "5.0.1",
+    "styled-components": "^6.1.15",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "lint": "eslint",
+    "postinstall": "husky",
+    "test:nowatch": "react-scripts test --watchAll=false",
+    "prepare": "husky"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@eslint/js": "^9.22.0",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.13.9",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-react": "^7.37.4",
+    "globals": "^16.0.0",
+    "husky": "^9.1.7",
+    "prettier": "3.5.3",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.26.1"
+  }
 }
