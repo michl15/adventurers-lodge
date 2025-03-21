@@ -18,7 +18,6 @@ const LoginPage = () => {
 
     const handleLoginOnClick = async () => {
         const result = await signInWithPopup(auth, provider);
-        console.log(result)
         if (result) {
             const credential =
                 GoogleAuthProvider.credentialFromResult(result);

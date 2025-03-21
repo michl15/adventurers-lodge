@@ -1,8 +1,38 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react"
 import LoginPage from "../LoginPage"
-import { signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, UserCredential } from "firebase/auth";
 
 const mockedUsedNavigate = jest.fn();
+
+class MockUserCredential {
+    user: any;
+    providerId?: string;
+    operationType?: string;
+
+    constructor(user: any, providerId?: string, operationType?: string) {
+        this.user = user;
+        this.providerId = providerId;
+        this.operationType = operationType
+    }
+
+    getProviderId(): string | undefined {
+        return this.providerId;
+    }
+
+    getOperationType(): string | undefined {
+        return this.operationType
+    }
+
+    _tokenResponse?: any;
+    _auth?: any;
+}
+
+const mockUser = {
+    uid: 'test-user-uid',
+    email: 'test@example.com',
+    displayName: 'Test User',
+    // Add other user properties as needed for your tests
+};
 
 jest.mock('react-router', () => ({
     ...jest.requireActual('react-router') as any,
@@ -11,12 +41,10 @@ jest.mock('react-router', () => ({
 
 
 jest.mock('firebase/auth', () => {
-    class AuthProviderMock {
-        constructor() {
-        }
-        credential = jest.fn();
-        credentialFromResult = jest.fn()
-    }
+    const AuthProviderMock = jest.fn(() => { return { credentialFromResult: jest.fn() } })
+    const mockSignInWithPopup = jest.fn(() => {
+        return Promise.resolve({ user: { uid: 'mockUserId' } });
+    })
 
     const mockAuth = {
         currentUser: null,
@@ -29,18 +57,16 @@ jest.mock('firebase/auth', () => {
 
             // Return a function to unsubscribe (required by Firebase API)
             return () => { };
-        }),
+        })
         // Add other auth methods as needed
     };
-
-    const mockSignInWithPopup = jest.fn(() => Promise.resolve({ user: { uid: 'mockUserId' } }));
 
     return {
         getAuth: jest.fn(() => mockAuth),
         connectAuthEmulator: jest.fn(),
         GoogleAuthProvider: AuthProviderMock,
         signInWithPopup: mockSignInWithPopup
-    };
+    }
 });
 
 describe('LoginPage.tsx', () => {
@@ -74,11 +100,15 @@ describe('LoginPage.tsx', () => {
 
     test('Login with Google works', async () => {
         render(<LoginPage />);
+        const mockedSignInPopup = jest.mocked(signInWithPopup);
+        mockedSignInPopup.mockResolvedValue(new MockUserCredential(mockUser) as UserCredential);
+        const mockedAuthProvider = jest.mocked(GoogleAuthProvider);
+        mockedAuthProvider.credentialFromResult = jest.fn();
 
         const googleSignInButton = screen.getByTestId("google-login-button");
         fireEvent.click(googleSignInButton);
-        expect(signInWithPopup).toHaveBeenCalled();
-        //await waitFor(() => expect(mockedUsedNavigate).toHaveBeenCalled());
+        expect(signInWithPopup).toHaveBeenCalledTimes(1);
+        await waitFor(() => expect(mockedUsedNavigate).toHaveBeenCalled());
 
     })
 })
