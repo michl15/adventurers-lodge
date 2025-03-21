@@ -22,7 +22,10 @@
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
-        "lint": "eslint"
+        "lint": "eslint",
+        "postinstall": "husky",
+        "test:nowatch": "react-scripts test --watchAll=false",
+        "prepare": "husky"
     },
     "eslintConfig": {
         "extends": [
@@ -52,6 +55,7 @@
         "eslint-config-prettier": "^10.1.1",
         "eslint-plugin-react": "^7.37.4",
         "globals": "^16.0.0",
+        "husky": "^9.1.7",
         "prettier": "3.5.3",
         "typescript": "^5.8.2",
         "typescript-eslint": "^8.26.1"
