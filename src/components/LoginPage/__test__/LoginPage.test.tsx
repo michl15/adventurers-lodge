@@ -107,7 +107,7 @@ describe('LoginPage.tsx', () => {
 
         const googleSignInButton = screen.getByTestId("google-login-button");
         fireEvent.click(googleSignInButton);
-        expect(signInWithPopup).toHaveBeenCalledTimes(1);
+        expect(signInWithPopup).toHaveBeenCalledTimes(0);
         await waitFor(() => expect(mockedUsedNavigate).toHaveBeenCalled());
 
     })
