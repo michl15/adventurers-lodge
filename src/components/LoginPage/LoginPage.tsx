@@ -19,8 +19,7 @@ const LoginPage = () => {
     const handleLoginOnClick = async () => {
         const result = await signInWithPopup(auth, provider);
         if (result) {
-            const credential =
-                GoogleAuthProvider.credentialFromResult(result);
+            const credential = GoogleAuthProvider.credentialFromResult(result);
             const token = credential?.accessToken;
             // The signed-in user info.
             const user = result.user;
@@ -28,7 +27,6 @@ const LoginPage = () => {
 
             console.log(credential, token, user);
             navigate('home');
-
         }
         /*         signInWithPopup(auth, provider)
                     .then((result) => {
@@ -85,10 +83,18 @@ const LoginPage = () => {
                     </Form.Group>
 
                     <Form.Group>
-                        <Button className="m-1" variant="primary" type="submit" data-testid="login-submit-button">
+                        <Button
+                            className="m-1"
+                            variant="primary"
+                            type="submit"
+                            data-testid="login-submit-button"
+                        >
                             Submit
                         </Button>
-                        <Button onClick={handleLoginOnClick} data-testid="google-login-button">
+                        <Button
+                            onClick={handleLoginOnClick}
+                            data-testid="google-login-button"
+                        >
                             Sign in with Google
                         </Button>
                     </Form.Group>

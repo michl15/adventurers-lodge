@@ -62,7 +62,7 @@ const CharacterLanguages = ({
     };
 
     const onSubmitLang = (event: React.MouseEvent<HTMLElement>) => {
-        event?.stopPropagation()
+        event?.stopPropagation();
         if (onAddLang) {
             const checkInList = langList?.filter(
                 (lang) => lang.index === newLanguage.toLowerCase()
@@ -105,7 +105,9 @@ const CharacterLanguages = ({
                                     <Form.Control
                                         value={newLanguage}
                                         onChange={onLanguageChange}
-                                        onClick={(event) => { event.stopPropagation() }}
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                        }}
                                     />
                                     {!validInput && (
                                         <Form.Text>
