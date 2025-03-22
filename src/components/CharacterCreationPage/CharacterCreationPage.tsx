@@ -77,7 +77,7 @@ const CharacterCreationPage = () => {
     // #region State
     // Character input fields
     const [charName, setCharName] = useState<string>('');
-    const [charClass, setCharClass] = useState<string>('');
+    const [charClass, setCharClass] = useState<Class | null>(null);
     const [charStats, setCharStats] = useState<StatsTypes>(BASE_STATS);
     const [charLvl, setCharLvl] = useState<number | string>(1);
     const [charSkills, setCharSkills] = useState<ProficienciesTypes<boolean>>(
@@ -85,7 +85,7 @@ const CharacterCreationPage = () => {
     );
     const [charMaxHP, setCharMaxHP] = useState<number | string>(10);
     const [charDesc, setCharDesc] = useState<string>('');
-    const [charRace, setCharRace] = useState('');
+    const [charRace, setCharRace] = useState<Race | null>(null);
     const [hitDie, setHitDie] = useState(10);
     const [charLanguages, setCharLanguages] = useState<Language[]>([]);
     const [charTraits, setCharTraits] = useState<Trait[]>([]);
@@ -125,17 +125,25 @@ const CharacterCreationPage = () => {
 
     const onClassChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValidated(false);
-        setCharClass(event.target.value);
+        if (event.target.value) {
+            setCharClass({
+                name: event.target.value,
+                index: false,
+                url: false
+            })
+        } else {
+            setCharClass(null)
+        }
     };
 
     const onClassDropdownChange = async (
-        event: React.ChangeEvent<HTMLSelectElement>
+        selectedClass: Class | null
     ) => {
         setValidated(false);
-        setCharClass(event.target.value);
-        if (event.target.value) {
+        setCharClass(selectedClass);
+        if (selectedClass?.url) {
             const response = await fetch(
-                `${API_CLASSES}${event.target.value.toLowerCase()}`
+                `${API_BASE_URL_5E}${selectedClass.url}`
             );
             const classInfo = await response.json();
             setHitDie(classInfo.hit_die);
@@ -147,20 +155,20 @@ const CharacterCreationPage = () => {
     };
 
     const onRaceDropdownChange = async (
-        event: React.ChangeEvent<HTMLSelectElement>
+        race: Race | null
     ) => {
         setValidated(false);
-        setCharRace(event.target.value);
-        if (event.target.value) {
+        setCharRace(race);
+        if (race?.url) {
             const response = await fetch(
-                `${API_RACES}${event.target.value.toLowerCase()}`
+                `${API_BASE_URL_5E}${race.url}`
             );
             const raceInfo = await response.json();
 
             // Languages from race
             const languages = raceInfo.languages;
             languages.forEach((lang: Language) => {
-                lang.source = event.target.value;
+                lang.source = race.name;
             });
             const removeOld = charLanguages.filter(
                 (lang) => lang.source === false
@@ -171,7 +179,7 @@ const CharacterCreationPage = () => {
             // traits from race
             const traits = raceInfo.traits;
             for (let i = 0; i < traits.length; i++) {
-                traits[i].source = event.target.value;
+                traits[i].source = race.name;
                 const traitResp = await fetch(
                     `${API_BASE_URL_5E}${traits[i].url}`
                 );
@@ -198,7 +206,12 @@ const CharacterCreationPage = () => {
 
     const onRaceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValidated(false);
-        setCharRace(event.target.value);
+        const newRace = {
+            name: event.target.value,
+            index: false,
+            url: false
+        }
+        setCharRace(newRace);
     };
 
     const onHitDieChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -318,12 +331,12 @@ const CharacterCreationPage = () => {
 
     const onCustomClassButtonClick = () => {
         setCustomClass(!customClass);
-        setCharClass('');
+        setCharClass(null);
     };
 
     const onCustomRaceButtonClick = () => {
         setCustomRace(!customRace);
-        setCharRace('');
+        setCharRace(null);
         removeOldValues();
     };
 
@@ -494,7 +507,7 @@ const CharacterCreationPage = () => {
                                         required
                                         type="text"
                                         onChange={onRaceChange}
-                                        value={charRace}
+                                        value={charRace?.name || ""}
                                     />
                                 ) : (
                                     <Dropdown
@@ -529,7 +542,7 @@ const CharacterCreationPage = () => {
                                         required
                                         type="text"
                                         onChange={onClassChange}
-                                        value={charClass}
+                                        value={charClass?.name || ""}
                                     />
                                 ) : (
                                     <Dropdown
@@ -602,11 +615,11 @@ const CharacterCreationPage = () => {
                         <Col md="auto">
                             <h4>Skills</h4>
                             <Alert
-                                show={!customClass && charClass !== ''}
+                                show={!customClass && charClass !== null}
                                 variant="info"
                                 style={{ width: '286px' }}
                             >
-                                <b>{charClass}:</b> {proficienciesInfo}
+                                <b>{charClass?.name}:</b> {proficienciesInfo}
                             </Alert>
                             <Proficiencies
                                 charLvl={charLvl}
@@ -620,12 +633,12 @@ const CharacterCreationPage = () => {
                                 <h4>Stats</h4>
                                 <Row>
                                     <Alert
-                                        show={!customRace && charRace !== ''}
+                                        show={!customRace && charRace !== null}
                                         variant="info"
                                     >
                                         <Row>
                                             <Col className="d-flex my-auto">
-                                                <b>{charRace}</b>: {statInfo()}
+                                                <b>{charRace?.name}</b>: {statInfo()}
                                             </Col>
                                             <Col className="d-flex justify-content-end">
                                                 <Button

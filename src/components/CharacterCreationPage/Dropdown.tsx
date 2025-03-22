@@ -4,14 +4,14 @@ import { Class, Race } from '../../constants/types';
 
 type DropdownProps = {
     options: Class[] | Race[];
-    onOptChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+    onOptChange: (selectedItem: Race | Class | null) => void;
 };
 
 const Dropdown = ({ options, onOptChange }: DropdownProps) => {
     const renderDropdown = () => {
         if (options.length > 0) {
-            return options.map((item: Class | Race) => (
-                <option key={item.index}>{item.name}</option>
+            return options.map((item: Class | Race, index) => (
+                <option key={`dropdown-option-${index}`}>{item.name}</option>
             ));
         }
     };
@@ -21,7 +21,14 @@ const Dropdown = ({ options, onOptChange }: DropdownProps) => {
             required
             defaultValue={''}
             onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                onOptChange(e);
+                const { selectedIndex } = e.target;
+                if (selectedIndex === 0) {
+                    onOptChange(null)
+                }
+                else {
+                    const selectedItem = options[selectedIndex - 1]
+                    onOptChange(selectedItem);
+                }
             }}
         >
             <option key="no-selection"></option>

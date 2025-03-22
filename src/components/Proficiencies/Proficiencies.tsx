@@ -10,7 +10,7 @@ type ProficienciesProps = {
     charLvl: string | number;
     onSwitchChange: (skill: string) => void;
     charSkills: ProficienciesTypes<boolean>;
-    editMode: boolean;
+    editMode?: boolean;
 };
 
 const Proficiencies = ({
@@ -23,7 +23,7 @@ const Proficiencies = ({
     const proficiencyBonus = calculateProficiencyBonus(charLvl);
 
     return (
-        <ListGroup>
+        <ListGroup data-testid={"proficiencies-list"}>
             {stats.map((stat: string) => {
                 return (
                     <ListGroup.Item key={`skills-${stat}`}>
@@ -33,6 +33,7 @@ const Proficiencies = ({
                                 <ListGroup
                                     horizontal
                                     key={`${skill}-switch-listgroup`}
+                                    data-testid={`${skill}-switch-listgroup`}
                                     style={{ margin: '3px 0px' }}
                                 >
                                     <ListGroup.Item
@@ -44,6 +45,7 @@ const Proficiencies = ({
                                         <Form.Check
                                             type="switch"
                                             id={`${skill}-switch`}
+                                            data-testid={`${skill}-switch`}
                                             label={skill}
                                             checked={charSkills[skill]}
                                             onChange={() => {
@@ -57,9 +59,11 @@ const Proficiencies = ({
                                             charSkills[skill] ? 'info' : ''
                                         }
                                     >
-                                        {charSkills[skill]
-                                            ? `+${proficiencyBonus}`
-                                            : '+0'}
+                                        <div data-testid={`${skill}-switch-proficiency-bonus`}>
+                                            {charSkills[skill]
+                                                ? `+${proficiencyBonus}`
+                                                : '+0'}
+                                        </div>
                                     </ListGroup.Item>
                                 </ListGroup>
                             ))}

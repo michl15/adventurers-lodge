@@ -25,11 +25,11 @@ const CharacterCard = ({ characterData }: CharacterCardProps) => {
     };
 
     return (
-        <CharCard border="info" onClick={onCharacterClick}>
+        <CharCard border="info" onClick={onCharacterClick} data-testid="character-card">
             <Card.Body>
-                <h3>{name}</h3>
+                <h3 data-testid="character-card-name">{name}</h3>
                 <p>
-                    Level {charLevel} {charClass}
+                    Level {charLevel} {charClass?.name}
                 </p>
             </Card.Body>
         </CharCard>
