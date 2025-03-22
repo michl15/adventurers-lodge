@@ -129,16 +129,14 @@ const CharacterCreationPage = () => {
             setCharClass({
                 name: event.target.value,
                 index: false,
-                url: false
-            })
+                url: false,
+            });
         } else {
-            setCharClass(null)
+            setCharClass(null);
         }
     };
 
-    const onClassDropdownChange = async (
-        selectedClass: Class | null
-    ) => {
+    const onClassDropdownChange = async (selectedClass: Class | null) => {
         setValidated(false);
         setCharClass(selectedClass);
         if (selectedClass?.url) {
@@ -154,15 +152,11 @@ const CharacterCreationPage = () => {
         }
     };
 
-    const onRaceDropdownChange = async (
-        race: Race | null
-    ) => {
+    const onRaceDropdownChange = async (race: Race | null) => {
         setValidated(false);
         setCharRace(race);
         if (race?.url) {
-            const response = await fetch(
-                `${API_BASE_URL_5E}${race.url}`
-            );
+            const response = await fetch(`${API_BASE_URL_5E}${race.url}`);
             const raceInfo = await response.json();
 
             // Languages from race
@@ -209,8 +203,8 @@ const CharacterCreationPage = () => {
         const newRace = {
             name: event.target.value,
             index: false,
-            url: false
-        }
+            url: false,
+        };
         setCharRace(newRace);
     };
 
@@ -507,7 +501,7 @@ const CharacterCreationPage = () => {
                                         required
                                         type="text"
                                         onChange={onRaceChange}
-                                        value={charRace?.name || ""}
+                                        value={charRace?.name || ''}
                                     />
                                 ) : (
                                     <Dropdown
@@ -542,7 +536,7 @@ const CharacterCreationPage = () => {
                                         required
                                         type="text"
                                         onChange={onClassChange}
-                                        value={charClass?.name || ""}
+                                        value={charClass?.name || ''}
                                     />
                                 ) : (
                                     <Dropdown
@@ -638,7 +632,8 @@ const CharacterCreationPage = () => {
                                     >
                                         <Row>
                                             <Col className="d-flex my-auto">
-                                                <b>{charRace?.name}</b>: {statInfo()}
+                                                <b>{charRace?.name}</b>:{' '}
+                                                {statInfo()}
                                             </Col>
                                             <Col className="d-flex justify-content-end">
                                                 <Button

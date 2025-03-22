@@ -23,7 +23,7 @@ const Proficiencies = ({
     const proficiencyBonus = calculateProficiencyBonus(charLvl);
 
     return (
-        <ListGroup data-testid={"proficiencies-list"}>
+        <ListGroup data-testid={'proficiencies-list'}>
             {stats.map((stat: string) => {
                 return (
                     <ListGroup.Item key={`skills-${stat}`}>
@@ -59,7 +59,9 @@ const Proficiencies = ({
                                             charSkills[skill] ? 'info' : ''
                                         }
                                     >
-                                        <div data-testid={`${skill}-switch-proficiency-bonus`}>
+                                        <div
+                                            data-testid={`${skill}-switch-proficiency-bonus`}
+                                        >
                                             {charSkills[skill]
                                                 ? `+${proficiencyBonus}`
                                                 : '+0'}

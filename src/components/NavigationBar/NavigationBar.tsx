@@ -28,7 +28,12 @@ const NavigationBar = () => {
 
     return (
         showNavBar && (
-            <Navbar bg="info" variant="dark" sticky="top" data-testid="navigation-bar">
+            <Navbar
+                bg="info"
+                variant="dark"
+                sticky="top"
+                data-testid="navigation-bar"
+            >
                 <Container fluid>
                     <Nav>
                         <NavbarBrand as={Link} to="/home">
@@ -51,7 +56,11 @@ const NavigationBar = () => {
                     </Nav>
                     <Nav className="justify-content-end">
                         <Nav.Link>
-                            <Button onClick={onSignOut} variant="outline-light" data-testid="navbar-sign-out-btn">
+                            <Button
+                                onClick={onSignOut}
+                                variant="outline-light"
+                                data-testid="navbar-sign-out-btn"
+                            >
                                 Sign Out
                             </Button>
                         </Nav.Link>

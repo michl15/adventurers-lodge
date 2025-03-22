@@ -23,10 +23,9 @@ const Dropdown = ({ options, onOptChange }: DropdownProps) => {
             onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                 const { selectedIndex } = e.target;
                 if (selectedIndex === 0) {
-                    onOptChange(null)
-                }
-                else {
-                    const selectedItem = options[selectedIndex - 1]
+                    onOptChange(null);
+                } else {
+                    const selectedItem = options[selectedIndex - 1];
                     onOptChange(selectedItem);
                 }
             }}

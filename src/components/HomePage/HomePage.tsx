@@ -25,16 +25,14 @@ const HomePage = () => {
         onAuthStateChanged(firebaseAuth, (u) => {
             setUser(u);
         });
-    }, [])
+    }, []);
 
     return (
         <div data-testid="home-page-container">
             {user !== null && (
                 <>
                     <h2 data-testid="characters-header">My Characters</h2>
-                    <CharacterDisplay
-                        uid={user?.uid}
-                    />
+                    <CharacterDisplay uid={user?.uid} />
                     <h3>My Campaigns</h3>
                 </>
             )}

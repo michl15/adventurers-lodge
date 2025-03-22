@@ -35,9 +35,7 @@ type CharacterDisplayProps = {
     uid: string;
 };
 
-const CharacterDisplay = ({
-    uid,
-}: CharacterDisplayProps) => {
+const CharacterDisplay = ({ uid }: CharacterDisplayProps) => {
     const [characterMap, setCharacterMap] = useState(new Map());
     const navigate = useNavigate();
 
@@ -106,7 +104,10 @@ const CharacterDisplay = ({
         onCharacterCreationClick: MouseEventHandler<HTMLElement>
     ) => {
         return (
-            <Card onClick={onCharacterCreationClick} data-testid="character-creation-card">
+            <Card
+                onClick={onCharacterCreationClick}
+                data-testid="character-creation-card"
+            >
                 <Card.Body>
                     <CreateCardContent>
                         <PlusCircle style={{ marginRight: '10px' }} />
