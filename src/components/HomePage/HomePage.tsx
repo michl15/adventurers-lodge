@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useEffect, useState } from 'react';
 import CharacterDisplay from './CharacterDisplay';
 import { onAuthStateChanged } from 'firebase/auth';
 import { firebaseAuth } from '../../firebase/firebase';
@@ -21,26 +20,19 @@ import { User as FirebaseUser } from 'firebase/auth';
 
 const HomePage = () => {
     const [user, setUser] = useState<FirebaseUser | null>(null);
-    onAuthStateChanged(firebaseAuth, (u) => {
-        setUser(u);
-    });
-    const navigate = useNavigate();
 
-    const signedIn = user !== null;
-
-    const onCharacterCreationClick = () => {
-        navigate('/character_creation');
-    };
+    useEffect(() => {
+        onAuthStateChanged(firebaseAuth, (u) => {
+            setUser(u);
+        });
+    }, []);
 
     return (
-        <div>
-            {signedIn && (
+        <div data-testid="home-page-container">
+            {user !== null && (
                 <>
-                    <h2>My Characters</h2>
-                    <CharacterDisplay
-                        uid={user?.uid}
-                        onCharacterCreationClick={onCharacterCreationClick}
-                    />
+                    <h2 data-testid="characters-header">My Characters</h2>
+                    <CharacterDisplay uid={user?.uid} />
                     <h3>My Campaigns</h3>
                 </>
             )}

@@ -5,6 +5,7 @@ import { Card, Container, Row } from 'react-bootstrap';
 import styled from 'styled-components';
 import { PlusCircle } from 'react-bootstrap-icons';
 import { firebaseDatabase } from '../../../firebase/firebase';
+import { useNavigate } from 'react-router';
 
 const CardContainer = styled(Row)`
     margin: 10px 0px;
@@ -32,14 +33,15 @@ const CreateCardContent = styled.div`
 
 type CharacterDisplayProps = {
     uid: string;
-    onCharacterCreationClick: MouseEventHandler<HTMLElement>;
 };
 
-const CharacterDisplay = ({
-    uid,
-    onCharacterCreationClick,
-}: CharacterDisplayProps) => {
+const CharacterDisplay = ({ uid }: CharacterDisplayProps) => {
     const [characterMap, setCharacterMap] = useState(new Map());
+    const navigate = useNavigate();
+
+    const onCharacterCreationClick = () => {
+        navigate('/character_creation');
+    };
 
     useEffect(() => {
         const getCharacterData = async (characters: object, db: Database) => {
@@ -102,7 +104,10 @@ const CharacterDisplay = ({
         onCharacterCreationClick: MouseEventHandler<HTMLElement>
     ) => {
         return (
-            <Card onClick={onCharacterCreationClick}>
+            <Card
+                onClick={onCharacterCreationClick}
+                data-testid="character-creation-card"
+            >
                 <Card.Body>
                     <CreateCardContent>
                         <PlusCircle style={{ marginRight: '10px' }} />
@@ -114,7 +119,7 @@ const CharacterDisplay = ({
     };
 
     return (
-        <Container fluid>
+        <Container fluid data-testid="character-display-container">
             <CreateAChar>
                 {createACharCard(onCharacterCreationClick)}
             </CreateAChar>

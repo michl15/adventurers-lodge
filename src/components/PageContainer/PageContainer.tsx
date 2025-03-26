@@ -11,7 +11,11 @@ type PageContainerProps = {
     children: JSX.Element;
 };
 const PageContainer = ({ children }: PageContainerProps) => {
-    return <PaddedContainer>{children}</PaddedContainer>;
+    return (
+        <PaddedContainer data-testid="page-container">
+            {children}
+        </PaddedContainer>
+    );
 };
 
 export default PageContainer;

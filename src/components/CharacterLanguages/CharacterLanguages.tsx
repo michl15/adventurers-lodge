@@ -63,9 +63,11 @@ const CharacterLanguages = ({
 
     const onSubmitLang = (event: React.MouseEvent<HTMLElement>) => {
         event?.stopPropagation();
+        const trimmedName = newLanguage.trim();
+        const index = trimmedName.replace(/\s+/g, '-').toLowerCase();
         if (onAddLang) {
             const checkInList = langList?.filter(
-                (lang) => lang.index === newLanguage.toLowerCase()
+                (lang) => lang.index === index
             );
             if (newLanguage.trim() && checkInList?.length === 0) {
                 setValidInput(true);
@@ -92,6 +94,7 @@ const CharacterLanguages = ({
                     backgroundColor: showAddLangForm ? '#cfe2ff' : 'white',
                     color: showAddLangForm ? '#103e87' : 'black',
                 }}
+                data-testid="add-language-btn"
             >
                 <PlusCircle
                     style={{ marginRight: '10px', marginBottom: '4px' }}
@@ -108,20 +111,27 @@ const CharacterLanguages = ({
                                         onClick={(event) => {
                                             event.stopPropagation();
                                         }}
+                                        data-testid="add-language-input"
                                     />
                                     {!validInput && (
-                                        <Form.Text>
+                                        <Form.Text data-testid="invalid-language-input">
                                             Please enter a unique language
                                         </Form.Text>
                                     )}
                                 </Col>
                                 <Col md="auto">
-                                    <Button onClick={onSubmitLang}>Add</Button>
+                                    <Button
+                                        onClick={onSubmitLang}
+                                        data-testid="add-language-submit"
+                                    >
+                                        Add
+                                    </Button>
                                 </Col>
                                 <Col md="auto">
                                     <Button
                                         variant="secondary"
                                         onClick={onCancel}
+                                        data-testid="add-language-cancel"
                                     >
                                         Cancel
                                     </Button>
@@ -135,7 +145,7 @@ const CharacterLanguages = ({
     };
 
     return (
-        <Container>
+        <Container data-testid="languages-container">
             <ListGroup>
                 {langList?.map((language) => (
                     <ListGroup.Item key={language.index}>
@@ -155,6 +165,7 @@ const CharacterLanguages = ({
                                         onClick={() => {
                                             onDeleteLang(language.index);
                                         }}
+                                        data-testid={`delete-language-${language.index}`}
                                     >
                                         <Trash3Fill
                                             style={{ marginBottom: '5px' }}
@@ -166,7 +177,7 @@ const CharacterLanguages = ({
                     </ListGroup.Item>
                 ))}
                 {!langList && (
-                    <ListGroup.Item>
+                    <ListGroup.Item data-testid="no-languages">
                         No languages added for this character
                     </ListGroup.Item>
                 )}

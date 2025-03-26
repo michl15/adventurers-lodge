@@ -4,17 +4,17 @@ type ProficienciesTypes<Value> = {
 
 type CharacterData = {
     name: string;
-    class: string;
-    level: string;
+    class: Class;
+    level: number;
     key: string;
-    inventory: Inventory;
+    inventory: Item[];
     stats: StatsTypes;
     skills: ProficienciesTypes<boolean>;
     image: string | undefined;
     description: string | undefined;
     hp: number;
     maxHP: number;
-    race: string;
+    race: Race;
     languages: Language[];
     traits: Trait[];
 };
@@ -43,14 +43,14 @@ type Inventory = {
 
 type Class = {
     name: string;
-    index: string;
-    url: string;
+    index: string | boolean;
+    url: string | boolean;
 };
 
 type Race = {
-    index: string;
+    index: string | boolean;
     name: string;
-    url: string;
+    url: string | boolean;
 };
 
 type Language = {

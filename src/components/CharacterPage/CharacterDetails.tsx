@@ -36,7 +36,7 @@ const CharacterDetails = ({ details, inventory }: CharacterDetailsProps) => {
                     </Col>
                     <Col xs lg={6} className="my-auto">
                         <h3>{details.name}</h3>
-                        <h4>{`Level ${details.level} ${details.class} ${details.race ? '| ' + details.race : ''}`}</h4>
+                        <h4>{`Level ${details.level} ${details.race ? details.race.name : ''} ${details.class.name} `}</h4>
                     </Col>
                     <Col xs lg={3} className="my-auto">
                         <HPDisplay maxHP={details.maxHP} currHP={details.hp} />

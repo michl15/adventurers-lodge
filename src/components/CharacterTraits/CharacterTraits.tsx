@@ -33,9 +33,13 @@ const CharacterTraits = ({
     const renderTraits = () => {
         return traits?.map((trait) => {
             return (
-                <Accordion.Item eventKey={trait.index} key={trait.index}>
+                <Accordion.Item
+                    eventKey={trait.index}
+                    key={trait.index}
+                    data-testid={`trait-${trait.index}`}
+                >
                     <Accordion.Header>{trait.name}</Accordion.Header>
-                    <Accordion.Body>
+                    <Accordion.Body data-testid={`trait-body-${trait.index}`}>
                         <Row>
                             <Col>
                                 {trait.source && (
@@ -49,14 +53,15 @@ const CharacterTraits = ({
                                 md="auto"
                                 className="d-flex justify-content-end mb-auto mt-1"
                             >
-                                {edit && removeTrait && (
+                                {edit && (
                                     <Button
                                         variant="outline-danger"
                                         size="sm"
                                         style={{ marginRight: '10px' }}
                                         onClick={() => {
-                                            removeTrait(trait.index);
+                                            removeTrait?.(trait.index);
                                         }}
+                                        data-testid={`delete-trait-${trait.index}`}
                                     >
                                         <Trash3Fill
                                             style={{ marginBottom: '5px' }}
@@ -90,7 +95,6 @@ const CharacterTraits = ({
             traits?.filter((trait) => trait.index === index).length === 0
         ) {
             setIsValidName(true);
-            console.log('add');
             const newTrait: Trait = {
                 name: traitName,
                 info: traitInfo,
@@ -110,7 +114,7 @@ const CharacterTraits = ({
 
     const addTrait = () => {
         return (
-            <Accordion.Item eventKey="Add-Trait">
+            <Accordion.Item eventKey="Add-Trait" data-testid="add-trait-btn">
                 <Accordion.Header>
                     <PlusCircle style={{ marginRight: '10px' }} />
                     Add a trait
@@ -123,6 +127,7 @@ const CharacterTraits = ({
                                 type="text"
                                 onChange={onTraitNameChange}
                                 value={traitName}
+                                data-testid="add-trait-input"
                             />
                             {!isValidName && (
                                 <Form.Text>
@@ -139,11 +144,17 @@ const CharacterTraits = ({
                                 as="textarea"
                                 onChange={onTraitInfoChange}
                                 value={traitInfo}
+                                data-testid="add-trait-info-input"
                             />
                         </FormGroup>
                     </Row>
                     <div className="d-flex justify-content-center">
-                        <FormButton onClick={onAddClick}>Add</FormButton>
+                        <FormButton
+                            onClick={onAddClick}
+                            data-testid="add-trait-submit"
+                        >
+                            Add
+                        </FormButton>
                     </div>
                 </Accordion.Body>
             </Accordion.Item>
@@ -151,10 +162,13 @@ const CharacterTraits = ({
     };
 
     return (
-        <Accordion alwaysOpen>
+        <Accordion alwaysOpen data-testid="character-traits-container">
             {renderTraits()}
             {!traits ? (
-                <Accordion.Item eventKey="Empty">
+                <Accordion.Item
+                    eventKey="Empty"
+                    data-testid="no-traits-element"
+                >
                     <Accordion.Header>
                         No traits added to this character
                     </Accordion.Header>

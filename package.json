@@ -24,7 +24,7 @@
         "eject": "react-scripts eject",
         "lint": "eslint",
         "postinstall": "husky",
-        "test:nowatch": "react-scripts test --watchAll=false",
+        "test:nowatch": "react-scripts test --watchAll=false --coverage a",
         "prepare": "husky"
     },
     "eslintConfig": {
