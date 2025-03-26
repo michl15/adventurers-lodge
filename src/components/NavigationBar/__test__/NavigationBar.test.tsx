@@ -6,7 +6,7 @@ import { signOut } from 'firebase/auth';
 jest.mock('firebase/firebase');
 
 const mockedUseNavigate = jest.fn();
-const mockedUseLocation = {
+let mockedUseLocation = {
     pathname: '/home',
     search: '',
     state: {},
@@ -21,6 +21,16 @@ jest.mock('react-router', () => ({
 }));
 
 describe('NavigationBar', () => {
+    beforeEach(() => {
+        mockedUseLocation = {
+            pathname: '/home',
+            search: '',
+            state: {},
+            hash: '',
+            key: '',
+        };
+    });
+
     test('renders component', () => {
         render(
             <BrowserRouter>
@@ -41,7 +51,6 @@ describe('NavigationBar', () => {
     });
 
     test('calls onSignOut on button click', () => {
-        mockedUseLocation.pathname = '/home';
         render(
             <BrowserRouter>
                 <NavigationBar />

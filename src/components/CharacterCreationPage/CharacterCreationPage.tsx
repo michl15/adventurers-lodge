@@ -25,7 +25,7 @@ import { User as FirebaseUser, onAuthStateChanged } from 'firebase/auth';
 import Dropdown from './Dropdown';
 import { API_BASE_URL_5E, API_CLASSES, API_RACES } from '../../constants/api';
 import CharacterLanguages from '../CharacterLanguages';
-import CharacterTraits from '../CharacterTraits/CharacterTraits';
+import CharacterTraits from '../CharacterTraits';
 
 const StatsRowContainer = styled(Row)`
     display: flex;
@@ -200,12 +200,16 @@ const CharacterCreationPage = () => {
 
     const onRaceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValidated(false);
-        const newRace = {
-            name: event.target.value,
-            index: false,
-            url: false,
-        };
-        setCharRace(newRace);
+        if (event.target.value) {
+            const newRace = {
+                name: event.target.value,
+                index: false,
+                url: false,
+            };
+            setCharRace(newRace);
+        } else {
+            setCharRace(null);
+        }
     };
 
     const onHitDieChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -336,7 +340,7 @@ const CharacterCreationPage = () => {
 
     const onAddLanguageClick = (newLang: string) => {
         const newLanguage: Language = {
-            index: newLang.toLowerCase(),
+            index: newLang.trim().replace(/\s+/g, '-').toLowerCase(),
             name: newLang,
             url: false,
             source: false,
@@ -412,8 +416,9 @@ const CharacterCreationPage = () => {
                                 onStatChange(event, stat);
                             }}
                             value={charStats[stat as keyof StatsTypes]}
+                            data-testid={`stats-input-${stat}`}
                         />
-                        <Form.Text>
+                        <Form.Text data-testid={`stats-modifier-${stat}`}>
                             {modifier >= 0 ? `+${modifier}` : `${modifier}`}
                         </Form.Text>
                     </Form.Group>
@@ -462,12 +467,17 @@ const CharacterCreationPage = () => {
     }, []);
 
     return (
-        <div>
+        <div data-testid="character-creation-page-container">
             <Container fluid>
                 <div className="d-flex justify-content-center">
                     <h2>Create a Character</h2>
                 </div>
-                <Form onSubmit={onSubmit} validated={validated} noValidate>
+                <Form
+                    onSubmit={onSubmit}
+                    validated={validated}
+                    noValidate
+                    data-testid="character-creation-form"
+                >
                     <Row style={{ marginBottom: '10px' }}>
                         <h4>Basic Info</h4>
                         <Col sm={8}>
@@ -480,6 +490,7 @@ const CharacterCreationPage = () => {
                                     type="text"
                                     onChange={onNameChange}
                                     value={charName}
+                                    data-testid="char-name-input"
                                 />
                                 <Form.Control.Feedback type="invalid">
                                     Please enter a name for your character.
@@ -493,6 +504,7 @@ const CharacterCreationPage = () => {
                                 </Form.Label>
                                 <SwapToCustomClass
                                     onClick={onCustomRaceButtonClick}
+                                    data-testid="char-custom-race-btn"
                                 >
                                     {showCustomRaceButtonContent()}
                                 </SwapToCustomClass>
@@ -502,11 +514,13 @@ const CharacterCreationPage = () => {
                                         type="text"
                                         onChange={onRaceChange}
                                         value={charRace?.name || ''}
+                                        data-testid="char-race-input"
                                     />
                                 ) : (
                                     <Dropdown
                                         options={raceOptions}
                                         onOptChange={onRaceDropdownChange}
+                                        data-testid="char-race-dropdown"
                                     />
                                 )}
                                 <Form.Control.Feedback type="invalid">
@@ -528,6 +542,7 @@ const CharacterCreationPage = () => {
                                 </Form.Label>
                                 <SwapToCustomClass
                                     onClick={onCustomClassButtonClick}
+                                    data-testid="char-custom-class-btn"
                                 >
                                     {showCustomClassButtonContent()}
                                 </SwapToCustomClass>
@@ -537,11 +552,13 @@ const CharacterCreationPage = () => {
                                         type="text"
                                         onChange={onClassChange}
                                         value={charClass?.name || ''}
+                                        data-testid="char-class-input"
                                     />
                                 ) : (
                                     <Dropdown
                                         options={classOptions}
                                         onOptChange={onClassDropdownChange}
+                                        data-testid="char-class-dropdown"
                                     />
                                 )}
                                 <Form.Control.Feedback type="invalid">
@@ -564,6 +581,7 @@ const CharacterCreationPage = () => {
                                     type="text"
                                     onChange={onLevelChange}
                                     value={charLvl}
+                                    data-testid="char-lvl-input"
                                 />
                                 <Form.Control.Feedback type="invalid">
                                     Please enter a level for your character.
@@ -583,6 +601,7 @@ const CharacterCreationPage = () => {
                                     type="text"
                                     onChange={onMaxHPChange}
                                     value={charMaxHP}
+                                    data-testid="char-max-hp"
                                 />
                                 <Form.Text>{`Max Hit Die + CON modifier`}</Form.Text>
                             </Form.Group>
@@ -595,6 +614,7 @@ const CharacterCreationPage = () => {
                                 <Form.Select
                                     value={`d${hitDie}`}
                                     onChange={onHitDieChange}
+                                    data-testid="hit-die-select"
                                 >
                                     <option key={6}>d6</option>
                                     <option key={8}>d8</option>
@@ -612,6 +632,7 @@ const CharacterCreationPage = () => {
                                 show={!customClass && charClass !== null}
                                 variant="info"
                                 style={{ width: '286px' }}
+                                data-testid="class-info-alert"
                             >
                                 <b>{charClass?.name}:</b> {proficienciesInfo}
                             </Alert>
@@ -629,6 +650,7 @@ const CharacterCreationPage = () => {
                                     <Alert
                                         show={!customRace && charRace !== null}
                                         variant="info"
+                                        data-testid="race-info-alert"
                                     >
                                         <Row>
                                             <Col className="d-flex my-auto">
@@ -637,6 +659,7 @@ const CharacterCreationPage = () => {
                                             </Col>
                                             <Col className="d-flex justify-content-end">
                                                 <Button
+                                                    data-testid="apply-bonus-btn"
                                                     onClick={applyStatBonus}
                                                     variant={
                                                         statsApplied
@@ -659,6 +682,7 @@ const CharacterCreationPage = () => {
                                         <StatsButtons
                                             onClick={onRollStats}
                                             size="sm"
+                                            data-testid="roll-stats"
                                         >
                                             Randomize
                                         </StatsButtons>
@@ -668,6 +692,7 @@ const CharacterCreationPage = () => {
                                             onClick={onResetStats}
                                             size="sm"
                                             variant="danger"
+                                            data-testid="reset-stats"
                                         >
                                             Reset
                                         </StatsButtons>
@@ -705,6 +730,7 @@ const CharacterCreationPage = () => {
                                         onChange={onDescChange}
                                         value={charDesc}
                                         as="textarea"
+                                        data-testid="char-description-input"
                                     />
                                 </Form.Group>
                             </Row>
@@ -734,7 +760,11 @@ const CharacterCreationPage = () => {
                         </Toast.Body>
                     </Toast>
                     <SubmitButtonContainer>
-                        <Button type="submit" size="lg">
+                        <Button
+                            type="submit"
+                            size="lg"
+                            data-testid="create-char-submit"
+                        >
                             Create Character!
                         </Button>
                     </SubmitButtonContainer>

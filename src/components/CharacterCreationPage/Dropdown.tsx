@@ -18,6 +18,7 @@ const Dropdown = ({ options, onOptChange }: DropdownProps) => {
 
     return (
         <Form.Select
+            data-testid="dropdown"
             required
             defaultValue={''}
             onChange={(e: ChangeEvent<HTMLSelectElement>) => {
