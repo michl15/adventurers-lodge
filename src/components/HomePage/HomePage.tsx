@@ -34,6 +34,7 @@ const HomePage = () => {
                     <h2 data-testid="characters-header">My Characters</h2>
                     <CharacterDisplay uid={user?.uid} />
                     <h3>My Campaigns</h3>
+                    <div>Not yet implemented</div>
                 </>
             )}
         </div>

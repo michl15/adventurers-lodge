@@ -63,6 +63,7 @@ const LoginPage = () => {
             <PageContainer>
                 <StyledHeader>Welcome to Adventurer&apos;s Lodge!</StyledHeader>
                 <HeaderImage src="https://pngimg.com/uploads/dragon/dragon_PNG84477.png" />
+                <div>Currently only sign in with Google is supported, please use that option to sign in</div>
                 <StyledForm className="rounded p-4">
                     <Form.Group className="mb-3" controlId="formBasicUsername">
                         <Form.Label>Username</Form.Label>

@@ -4,8 +4,10 @@ import { push, ref, set, get } from 'firebase/database';
 import { Accordion } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import { firebaseDatabase } from '../../firebase/firebase';
-import { CharacterData, Item } from '../../constants/types';
+import { CharacterData, Equipment, EquipmentCategory, Item } from '../../constants/types';
 import CharacterDetails from './CharacterDetails';
+import { API_BASE_URL_5E, API_EQUIPMENT, API_EQUIPMENT_CATEGORIES } from '../../constants/api';
+import ItemModal from '../ItemModal';
 
 const CharacterPage = () => {
     const [itemName, setItemName] = useState('');
@@ -15,6 +17,8 @@ const CharacterPage = () => {
     const [charDetails, setCharDetails] = useState<CharacterData | null>(null);
     const [showItemModal, setShowItemModal] = useState(false);
     const [itemValidated, setItemValidated] = useState(false);
+    const [allEquipment, setAllEquipment] = useState<Equipment[]>([]);
+    const [equipmentCategories, setEquipmentCategories] = useState<EquipmentCategory[]>([]);
 
     const { charId } = useParams();
     const dbPath = 'characters/' + charId + '/inventory';
@@ -91,9 +95,28 @@ const CharacterPage = () => {
         }
     };
 
+    const getAllEquipment = async () => {
+        const response = await fetch(API_EQUIPMENT);
+        if (response.ok) {
+            const equipmentData = await response.json();
+            setAllEquipment(equipmentData.results);
+        }
+    }
+
+    const getEquipmentCategories = async () => {
+        const response = await fetch(API_EQUIPMENT_CATEGORIES);
+        if (response.ok) {
+            const equipmentCategoriesData = await response.json();
+            //console.log(equipmentCategoriesData.results);
+            setEquipmentCategories(equipmentCategoriesData.results);
+        }
+    }
+
     useEffect(() => {
         fetchItem();
         getCharacterDetails();
+        getAllEquipment();
+        getEquipmentCategories();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -165,12 +188,7 @@ const CharacterPage = () => {
                 details={charDetails}
                 inventory={renderInventory}
             />
-            <Modal show={showItemModal} onHide={closeModal}>
-                <Modal.Header closeButton>
-                    <h3>Add an item</h3>
-                </Modal.Header>
-                <Modal.Body>{renderAddItemForm()}</Modal.Body>
-            </Modal>
+            <ItemModal showModal={showItemModal} closeModal={closeModal} allEquipment={allEquipment} categories={equipmentCategories} />
         </div>
     );
 };

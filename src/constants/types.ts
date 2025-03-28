@@ -77,6 +77,32 @@ type AbilityBonus = {
     bonus: number;
 };
 
+type Equipment = {
+    index: string | boolean;
+    name: string;
+    url: string | boolean;
+}
+
+type EquipmentData = {
+    index: string;
+    name: string | boolean;
+    url: string | boolean;
+    cost?: {
+        quantity: number;
+        unit: string;
+    };
+    desc?: string[];
+    equipment_category?: EquipmentCategory;
+    properties?: [];
+    special?: [];
+}
+
+type EquipmentCategory = {
+    index: string | boolean;
+    name: string;
+    url: string | boolean;
+}
+
 export type {
     ProficienciesTypes,
     CharacterData,
@@ -89,4 +115,7 @@ export type {
     Language,
     AbilityBonus,
     Trait,
+    Equipment,
+    EquipmentCategory,
+    EquipmentData
 };
