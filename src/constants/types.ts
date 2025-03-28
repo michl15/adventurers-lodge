@@ -81,7 +81,7 @@ type Equipment = {
     index: string | boolean;
     name: string;
     url: string | boolean;
-}
+};
 
 type EquipmentData = {
     index: string;
@@ -95,13 +95,13 @@ type EquipmentData = {
     equipment_category?: EquipmentCategory;
     properties?: [];
     special?: [];
-}
+};
 
 type EquipmentCategory = {
     index: string | boolean;
     name: string;
     url: string | boolean;
-}
+};
 
 export type {
     ProficienciesTypes,
@@ -117,5 +117,5 @@ export type {
     Trait,
     Equipment,
     EquipmentCategory,
-    EquipmentData
+    EquipmentData,
 };

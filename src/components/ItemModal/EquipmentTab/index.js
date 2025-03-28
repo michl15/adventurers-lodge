@@ -1,3 +1,3 @@
-import EquipmentTab from "./EquipmentTab";
+import EquipmentTab from './EquipmentTab';
 
 export default EquipmentTab;

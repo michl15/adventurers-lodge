@@ -1,3 +1,3 @@
-import ItemModal from "./ItemModal";
+import ItemModal from './ItemModal';
 
 export default ItemModal;

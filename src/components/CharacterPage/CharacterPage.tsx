@@ -4,9 +4,18 @@ import { push, ref, set, get } from 'firebase/database';
 import { Accordion } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import { firebaseDatabase } from '../../firebase/firebase';
-import { CharacterData, Equipment, EquipmentCategory, Item } from '../../constants/types';
+import {
+    CharacterData,
+    Equipment,
+    EquipmentCategory,
+    Item,
+} from '../../constants/types';
 import CharacterDetails from './CharacterDetails';
-import { API_BASE_URL_5E, API_EQUIPMENT, API_EQUIPMENT_CATEGORIES } from '../../constants/api';
+import {
+    API_BASE_URL_5E,
+    API_EQUIPMENT,
+    API_EQUIPMENT_CATEGORIES,
+} from '../../constants/api';
 import ItemModal from '../ItemModal';
 
 const CharacterPage = () => {
@@ -18,7 +27,9 @@ const CharacterPage = () => {
     const [showItemModal, setShowItemModal] = useState(false);
     const [itemValidated, setItemValidated] = useState(false);
     const [allEquipment, setAllEquipment] = useState<Equipment[]>([]);
-    const [equipmentCategories, setEquipmentCategories] = useState<EquipmentCategory[]>([]);
+    const [equipmentCategories, setEquipmentCategories] = useState<
+        EquipmentCategory[]
+    >([]);
 
     const { charId } = useParams();
     const dbPath = 'characters/' + charId + '/inventory';
@@ -101,7 +112,7 @@ const CharacterPage = () => {
             const equipmentData = await response.json();
             setAllEquipment(equipmentData.results);
         }
-    }
+    };
 
     const getEquipmentCategories = async () => {
         const response = await fetch(API_EQUIPMENT_CATEGORIES);
@@ -110,7 +121,7 @@ const CharacterPage = () => {
             //console.log(equipmentCategoriesData.results);
             setEquipmentCategories(equipmentCategoriesData.results);
         }
-    }
+    };
 
     useEffect(() => {
         fetchItem();
@@ -188,7 +199,12 @@ const CharacterPage = () => {
                 details={charDetails}
                 inventory={renderInventory}
             />
-            <ItemModal showModal={showItemModal} closeModal={closeModal} allEquipment={allEquipment} categories={equipmentCategories} />
+            <ItemModal
+                showModal={showItemModal}
+                closeModal={closeModal}
+                allEquipment={allEquipment}
+                categories={equipmentCategories}
+            />
         </div>
     );
 };
