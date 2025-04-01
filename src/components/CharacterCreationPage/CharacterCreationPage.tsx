@@ -15,6 +15,8 @@ import Proficiencies from '../Proficiencies';
 import {
     AbilityBonus,
     Class,
+    Equipment,
+    EquipmentCategory,
     Language,
     ProficienciesTypes,
     Race,
@@ -23,9 +25,20 @@ import {
 } from '../../constants/types';
 import { User as FirebaseUser, onAuthStateChanged } from 'firebase/auth';
 import Dropdown from './Dropdown';
-import { API_BASE_URL_5E, API_CLASSES, API_RACES } from '../../constants/api';
+import {
+    API_BASE_URL_5E,
+    API_CLASSES,
+    API_EQUIPMENT,
+    API_EQUIPMENT_CATEGORIES,
+    API_RACES,
+} from '../../constants/api';
 import CharacterLanguages from '../CharacterLanguages';
 import CharacterTraits from '../CharacterTraits';
+import ItemModal from '../ItemModal';
+import Inventory from '../Inventory';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../redux';
+import { resetInventory } from '../../redux/InventoryReducer';
 
 const StatsRowContainer = styled(Row)`
     display: flex;
@@ -89,6 +102,10 @@ const CharacterCreationPage = () => {
     const [hitDie, setHitDie] = useState(10);
     const [charLanguages, setCharLanguages] = useState<Language[]>([]);
     const [charTraits, setCharTraits] = useState<Trait[]>([]);
+    const [allEquipment, setAllEquipment] = useState<Equipment[]>([]);
+    const [equipmentCategories, setEquipmentCategories] = useState<
+        EquipmentCategory[]
+    >([]);
 
     // flags
     const [validated, setValidated] = useState(false);
@@ -96,6 +113,7 @@ const CharacterCreationPage = () => {
     const [customRace, setCustomRace] = useState(false);
     const [statsApplied, setStatsApplied] = useState(false);
     const [showToast, setShowToast] = useState(false);
+    const [showItemModal, setShowItemModal] = useState(false);
 
     // options for dropdowns
     const [classOptions, setClassOptions] = useState<Class[]>([]);
@@ -108,6 +126,12 @@ const CharacterCreationPage = () => {
     // user data for current user
     const [user, setUser] = useState<FirebaseUser | null>(null);
 
+    // redux
+    const inventory = useSelector(
+        (state: RootState) => state.inventory.inventoryList
+    );
+    const dispatch = useDispatch();
+
     // #endregion State
     // hook for React Router navigation
     const navigate = useNavigate();
@@ -115,6 +139,8 @@ const CharacterCreationPage = () => {
     // Toast toggle utility fn
     const toggleToast = () => setShowToast(true);
     const toggleToastOff = () => setShowToast(false);
+
+    const closeModal = () => setShowItemModal(false);
 
     /* =================================== Input field onChange handlers ===================================== */
     // #region onChange handlers
@@ -306,6 +332,7 @@ const CharacterCreationPage = () => {
                 languages: charLanguages,
                 traits: charTraits,
                 hitDie: hitDie,
+                inventory: inventory,
             };
 
             const newCharKey = push(charRef, charData).key;
@@ -395,6 +422,22 @@ const CharacterCreationPage = () => {
         }
     };
 
+    const getAllEquipment = async () => {
+        const response = await fetch(API_EQUIPMENT);
+        if (response.ok) {
+            const equipmentData = await response.json();
+            setAllEquipment(equipmentData.results);
+        }
+    };
+
+    const getEquipmentCategories = async () => {
+        const response = await fetch(API_EQUIPMENT_CATEGORIES);
+        if (response.ok) {
+            const equipmentCategoriesData = await response.json();
+            setEquipmentCategories(equipmentCategoriesData.results);
+        }
+    };
+
     // #endregion API calls
     /* ===================================== Content rendering/utility ======================================== */
     // #region Rendering/utility
@@ -464,7 +507,16 @@ const CharacterCreationPage = () => {
         });
         getClasses();
         getRaces();
+        getEquipmentCategories();
+        getAllEquipment();
     }, []);
+
+    useEffect(() => {
+        //on unmount, reset inventory
+        return () => {
+            dispatch(resetInventory());
+        };
+    }, [dispatch]);
 
     return (
         <div data-testid="character-creation-page-container">
@@ -721,6 +773,14 @@ const CharacterCreationPage = () => {
                             </Row>
                             <br />
                             <Row>
+                                <h5>Inventory</h5>
+                                <Inventory
+                                    onAddClick={() => setShowItemModal(true)}
+                                    edit
+                                />
+                            </Row>
+                            <br />
+                            <Row>
                                 <Form.Group>
                                     <Form.Label>
                                         <h5>Description/Notes</h5>
@@ -769,6 +829,12 @@ const CharacterCreationPage = () => {
                         </Button>
                     </SubmitButtonContainer>
                 </Form>
+                <ItemModal
+                    showModal={showItemModal}
+                    closeModal={closeModal}
+                    allEquipment={allEquipment}
+                    categories={equipmentCategories}
+                />
             </Container>
         </div>
     );

@@ -1,9 +1,4 @@
-import {
-    findByTestId,
-    fireEvent,
-    render,
-    screen,
-} from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import CharacterLanguages from '../CharacterLanguages';
 import { Language } from '../../../constants/types';
 

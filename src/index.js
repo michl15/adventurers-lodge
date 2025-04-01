@@ -12,28 +12,32 @@ import NavigationBar from './components/NavigationBar';
 import PageContainer from './components/PageContainer';
 import ScrollToTop from './components/ScrollToTop';
 import CharacterPage from './components/CharacterPage';
+import { Provider } from 'react-redux';
+import { store } from './redux';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
         <FirebaseAuthProvider>
             <HashRouter>
-                <NavigationBar />
-                <PageContainer>
-                    <ScrollToTop />
-                    <Routes>
-                        <Route path="/" element={<LoginPage />} />
-                        <Route path="/home" element={<HomePage />} />
-                        <Route
-                            path="/character_creation"
-                            element={<CharacterCreationPage />}
-                        />
-                        <Route
-                            path="/characters/:charId"
-                            element={<CharacterPage />}
-                        />
-                    </Routes>
-                </PageContainer>
+                <Provider store={store}>
+                    <NavigationBar />
+                    <PageContainer>
+                        <ScrollToTop />
+                        <Routes>
+                            <Route path="/" element={<LoginPage />} />
+                            <Route path="/home" element={<HomePage />} />
+                            <Route
+                                path="/character_creation"
+                                element={<CharacterCreationPage />}
+                            />
+                            <Route
+                                path="/characters/:charId"
+                                element={<CharacterPage />}
+                            />
+                        </Routes>
+                    </PageContainer>
+                </Provider>
             </HashRouter>
         </FirebaseAuthProvider>
     </React.StrictMode>
