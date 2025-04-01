@@ -1,18 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form, Spinner } from 'react-bootstrap';
-import { push, ref, set, get } from 'firebase/database';
-import { Accordion } from 'react-bootstrap';
+import { ref, get } from 'firebase/database';
 import { useParams } from 'react-router';
 import { firebaseDatabase } from '../../firebase/firebase';
-import {
-    CharacterData,
-    Equipment,
-    EquipmentCategory,
-    Item,
-} from '../../constants/types';
+import { CharacterData } from '../../constants/types';
 import CharacterDetails from './CharacterDetails';
-import { API_EQUIPMENT, API_EQUIPMENT_CATEGORIES } from '../../constants/api';
-import ItemModal from '../ItemModal';
 import { useDispatch } from 'react-redux';
 import { setInventory } from '../../redux/InventoryReducer';
 import Inventory from '../Inventory';

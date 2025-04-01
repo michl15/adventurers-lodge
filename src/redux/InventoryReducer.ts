@@ -21,10 +21,7 @@ export const inventorySlice = createSlice({
             action: PayloadAction<{ value: number; index: number }>
         ) => {
             if (action.payload.value === 0) {
-                const newList = state.inventoryList.splice(
-                    action.payload.index,
-                    1
-                );
+                state.inventoryList.splice(action.payload.index, 1);
                 state.inventoryList = [...state.inventoryList];
             } else {
                 state.inventoryList[action.payload.index].quantity =

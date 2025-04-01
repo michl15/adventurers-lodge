@@ -29,7 +29,7 @@
         "postinstall": "husky",
         "test:nowatch": "react-scripts test --watchAll=false --coverage a",
         "prepare": "husky",
-        "codegen": "graphql-codegen --config codegen.ts"
+        "pretty": "npx prettier . --write"
     },
     "eslintConfig": {
         "extends": [

@@ -1,5 +1,5 @@
-import { Button, Card, Col, Container, ListGroup, Row } from 'react-bootstrap';
-import { Equipment, EquipmentData } from '../../constants/types';
+import { Card, Container, ListGroup, Row } from 'react-bootstrap';
+import { EquipmentData } from '../../constants/types';
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -144,6 +144,7 @@ const ItemCard = ({ itemData }: ItemCardProps) => {
     };
 
     useEffect(() => {
+        console.log('itemcard rendering');
         const ind = itemData.index;
         let itemIndex = findInInventory(ind);
         if (itemIndex >= 0) {
@@ -151,7 +152,7 @@ const ItemCard = ({ itemData }: ItemCardProps) => {
         } else {
             setItemCounter(0);
         }
-    }, [itemData]);
+    }, []);
 
     return (
         <Item data-testid={`item-card-${itemData.name}`}>

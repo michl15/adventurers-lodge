@@ -1,10 +1,6 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import EquipmentTab from '../EquipmentTab';
-import {
-    Equipment,
-    EquipmentCategory,
-    EquipmentData,
-} from '../../../constants/types';
+import { Equipment, EquipmentCategory } from '../../../constants/types';
 import selectEvent from 'react-select-event';
 import { Provider } from 'react-redux';
 import { store } from '../../../redux';

@@ -8,20 +8,10 @@ import {
 } from 'react-bootstrap';
 import { Equipment } from '../../constants/types';
 import styled from 'styled-components';
-import {
-    DashSquare,
-    PlusCircle,
-    PlusSquare,
-    Trash3Fill,
-} from 'react-bootstrap-icons';
+import { PlusCircle } from 'react-bootstrap-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux';
-import {
-    addItem,
-    resetInventory,
-    updateItemQuantity,
-} from '../../redux/InventoryReducer';
-import { useEffect } from 'react';
+import { updateItemQuantity } from '../../redux/InventoryReducer';
 
 type InventoryProps = {
     onAddClick?: () => void;

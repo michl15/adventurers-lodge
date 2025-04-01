@@ -1,4 +1,4 @@
-import { findByText, fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import ItemModal from '../ItemModal';
 import { Equipment, EquipmentCategory } from '../../../constants/types';
 
