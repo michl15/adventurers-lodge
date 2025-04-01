@@ -5,6 +5,7 @@ const API_TRAITS = 'https://www.dnd5eapi.co/api/2014/traits/';
 const API_EQUIPMENT_CATEGORIES =
     'https://www.dnd5eapi.co/api/2014/equipment-categories';
 const API_EQUIPMENT = 'https://www.dnd5eapi.co/api/2014/equipment';
+const GRAPHQL_URL = "https://www.dnd5eapi.co/graphql/2014"
 
 export {
     API_BASE_URL_5E,
@@ -13,4 +14,5 @@ export {
     API_TRAITS,
     API_EQUIPMENT_CATEGORIES,
     API_EQUIPMENT,
+    GRAPHQL_URL
 };

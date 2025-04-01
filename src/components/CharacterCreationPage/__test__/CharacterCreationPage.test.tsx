@@ -3,6 +3,8 @@ import CharacterCreationPage from '../CharacterCreationPage';
 import { onAuthStateChanged } from 'firebase/auth';
 import { push, set } from 'firebase/database';
 import { rollStat } from '../../../util/calculations';
+import { Provider } from 'react-redux';
+import { store } from '../../../redux';
 
 const mockedUseNavigate = jest.fn();
 window.scrollTo = jest.fn();
@@ -85,7 +87,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('renders component', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(
@@ -96,7 +98,7 @@ describe('CharacterCreationPage', () => {
 
     //#region input onchanges
     test('character name onChange', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
         await waitFor(() => {
             expect(
                 screen.queryByTestId('character-creation-page-container')
@@ -108,7 +110,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('character level onChange', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(
@@ -122,7 +124,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('character level onChange empty', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(
@@ -136,7 +138,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('character level onChange non-number value', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(
@@ -150,7 +152,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('character custom race onChange', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
         await waitFor(() => {
             expect(
                 screen.queryByTestId('character-creation-page-container')
@@ -164,7 +166,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('character custom race onChange empty', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
         await waitFor(() => {
             expect(
                 screen.queryByTestId('character-creation-page-container')
@@ -179,7 +181,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('character custom class onChange', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
         await waitFor(() => {
             expect(
                 screen.queryByTestId('character-creation-page-container')
@@ -195,7 +197,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('character custom class onChange empty', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
         await waitFor(() => {
             expect(
                 screen.queryByTestId('character-creation-page-container')
@@ -212,7 +214,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('character stats onChange positive modifier', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(
@@ -227,7 +229,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('character stats onChange negative modifier', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(
@@ -242,7 +244,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('character stats onChange empty', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(
@@ -257,7 +259,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('character stats onChange non-number value', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(
@@ -272,7 +274,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('max HP onChange', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(
@@ -286,7 +288,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('max HP onChange empty', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(
@@ -300,7 +302,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('max HP onChange non-number string', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(
@@ -314,7 +316,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('description onChange', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(
@@ -328,7 +330,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('switches onChange', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(
@@ -345,7 +347,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('rollStats onClick', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(
@@ -358,7 +360,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('resetStats onClick', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(
@@ -378,7 +380,7 @@ describe('CharacterCreationPage', () => {
 
     //#region dropdown onchange
     test('character race dropdown apply stats', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(
@@ -405,7 +407,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('character race dropdown', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(
@@ -440,7 +442,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('character class dropdown', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
         const classDropdown = screen.getAllByTestId('dropdown')[1];
 
         await waitFor(() => {
@@ -493,7 +495,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('hit die dropdown onchange', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(
@@ -508,7 +510,7 @@ describe('CharacterCreationPage', () => {
 
     //#region add/remove traits/languages
     test('add and delete language', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(
@@ -534,7 +536,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('add and delete trait', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(
@@ -563,7 +565,7 @@ describe('CharacterCreationPage', () => {
 
     //#region submit button tests
     test('submit button click invalid form', async () => {
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             const submitBtn = screen.getByTestId('create-char-submit');
@@ -587,7 +589,7 @@ describe('CharacterCreationPage', () => {
         );
         (set as jest.Mock).mockResolvedValue('');
         (push as jest.Mock).mockReturnValue({ key: 'testkey' });
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(
@@ -619,7 +621,7 @@ describe('CharacterCreationPage', () => {
         );
         (set as jest.Mock).mockRejectedValue('');
         (push as jest.Mock).mockReturnValue({ key: 'testkey' });
-        render(<CharacterCreationPage />);
+        render(<Provider store={store}><CharacterCreationPage /></Provider>);
 
         await waitFor(() => {
             expect(

@@ -1,5 +1,4 @@
 import {
-    findByTestId,
     fireEvent,
     render,
     screen,

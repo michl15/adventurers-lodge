@@ -6,6 +6,8 @@ import {
     EquipmentData,
 } from '../../../constants/types';
 import selectEvent from 'react-select-event';
+import { Provider } from 'react-redux';
+import { store } from '../../../redux';
 
 const mockAllEquipment: Equipment[] = [
     {
@@ -48,10 +50,11 @@ describe('EquipmentTab', () => {
     });
     test('renders component', async () => {
         render(
-            <EquipmentTab
+            <Provider store={store}><EquipmentTab
                 allEquipment={mockAllEquipment}
                 categories={mockCategories}
             />
+            </Provider>
         );
 
         expect(await screen.findByTestId('equipment-tab')).toBeInTheDocument();
@@ -59,10 +62,11 @@ describe('EquipmentTab', () => {
 
     test('select category change', async () => {
         render(
-            <EquipmentTab
+            <Provider store={store}><EquipmentTab
                 allEquipment={mockAllEquipment}
                 categories={mockCategories}
             />
+            </Provider>
         );
 
         expect(await screen.findByTestId('equipment-tab')).toBeInTheDocument();
@@ -73,10 +77,11 @@ describe('EquipmentTab', () => {
     test('submit button click', async () => {
         act(() => {
             render(
-                <EquipmentTab
+                <Provider store={store}><EquipmentTab
                     allEquipment={mockAllEquipment}
                     categories={mockCategories}
                 />
+                </Provider>
             );
         });
 

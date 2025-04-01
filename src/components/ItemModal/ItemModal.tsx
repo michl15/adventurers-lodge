@@ -1,4 +1,4 @@
-import { Modal, Nav } from 'react-bootstrap';
+import { Button, Modal, Nav } from 'react-bootstrap';
 import { Equipment, EquipmentCategory } from '../../constants/types';
 import { useState } from 'react';
 import EquipmentTab from './EquipmentTab';
@@ -38,9 +38,14 @@ const ItemModal = ({
     return (
         <Modal
             show={showModal}
-            onHide={closeModal}
+            onHide={() => {
+                closeModal();
+                setActiveTab("1");
+            }}
             size="xl"
             data-testid="item-modal"
+            scrollable
+            id="item-modal"
         >
             <Modal.Header closeButton>
                 <h4>Add equipment to your inventory</h4>
@@ -70,6 +75,9 @@ const ItemModal = ({
                 </Nav>
                 {renderActiveTab()}
             </Modal.Body>
+            <Modal.Footer>
+                <Button onClick={closeModal} variant='info'>Done</Button>
+            </Modal.Footer>
         </Modal>
     );
 };

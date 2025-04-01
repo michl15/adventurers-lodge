@@ -1,4 +1,4 @@
-import { Button, Card, Container, Form, Row } from 'react-bootstrap';
+import { Button, Card, Col, Collapse, Container, Form, Row } from 'react-bootstrap';
 import styled from 'styled-components';
 import { Equipment, EquipmentCategory } from '../../../constants/types';
 import { useEffect, useState } from 'react';
@@ -6,10 +6,11 @@ import Select, { Options } from 'react-select';
 import { API_BASE_URL_5E } from '../../../constants/api';
 import ItemDisplay from '../../ItemDisplay';
 import { levenshtein } from '../../../util/calculations';
+import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
 
 const SearchContainer = styled(Row)`
     background-color: #cff4fc;
-    margin: 10px 10px;
+    margin: 10px 0px;
     padding: 10px 10px;
     border-radius: 10px;
 `;
@@ -32,6 +33,7 @@ const EquipmentTab = ({ allEquipment, categories }: EquipmentTabProps) => {
         EquipmentCategory[]
     >([]);
     const [searchResults, setSearchResults] = useState<Equipment[]>([]);
+    const [expandSearch, setExpandSearch] = useState(true);
 
     const onSearchByNameChange = (
         event: React.ChangeEvent<HTMLInputElement>
@@ -83,6 +85,7 @@ const EquipmentTab = ({ allEquipment, categories }: EquipmentTabProps) => {
             });
         }
         setSearchResults(newEquipmentList);
+        setExpandSearch(false);
     };
 
     const getCategoriesOptions = () => {
@@ -100,38 +103,55 @@ const EquipmentTab = ({ allEquipment, categories }: EquipmentTabProps) => {
     return (
         <Container data-testid="equipment-tab">
             <SearchContainer>
-                <Form>
-                    <h5>Search</h5>
-                    <Form.Group>
-                        <Form.Label>Search by name</Form.Label>
-                        <Form.Control
-                            type="text"
-                            value={searchByName}
-                            onChange={onSearchByNameChange}
-                            data-testid="search-input"
-                        />
-                    </Form.Group>
-                    <hr />
-                    <h6>Filters</h6>
-                    <Form.Group>
-                        <Form.Label>Category</Form.Label>
-                        <Select
-                            options={categoriesOptions}
-                            isClearable
-                            isSearchable
-                            isMulti
-                            onChange={onCategoriesChange}
-                            data-testid="category-select"
-                            aria-label="Category"
-                        />
-                    </Form.Group>
-                    <Button
-                        onClick={onSearchSubmit}
-                        data-testid="search-submit"
-                    >
-                        Search
-                    </Button>
-                </Form>
+                <Row>
+                    <Col className='d-flex my-auto'><h5>Search</h5></Col>
+                    <Col className='d-flex justify-content-end' style={{ marginRight: "-23px" }}>
+                        <Button
+                            variant='outline-info'
+                            onClick={() => setExpandSearch(!expandSearch)}
+                            style={{ paddingBottom: "10px" }}>
+                            {expandSearch ? <ChevronUp /> : <ChevronDown />}
+                        </Button>
+                    </Col>
+                </Row>
+
+                <Collapse in={expandSearch}>
+                    <Form>
+                        <Form.Group>
+                            <Form.Label>Search by name</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={searchByName}
+                                onChange={onSearchByNameChange}
+                                data-testid="search-input"
+                            />
+                        </Form.Group>
+                        <hr />
+                        <h6>Filters</h6>
+                        <Form.Group>
+                            <Form.Label>Category</Form.Label>
+                            <Select
+                                options={categoriesOptions}
+                                isClearable
+                                isSearchable
+                                isMulti
+                                onChange={onCategoriesChange}
+                                data-testid="category-select"
+                                aria-label="Category"
+                            />
+                        </Form.Group>
+                        <br />
+                        <Row md="auto" className='dflex justify-content-md-center'>
+                            <Button
+                                onClick={onSearchSubmit}
+                                data-testid="search-submit"
+                                variant='info'
+                            >
+                                Search
+                            </Button>
+                        </Row>
+                    </Form>
+                </Collapse>
             </SearchContainer>
             <Row>
                 {searchResults.length > 0 && (

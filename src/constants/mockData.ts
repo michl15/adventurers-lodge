@@ -1,5 +1,5 @@
 import { BASE_STATS, DEFAULT_PROFICIENCIES } from './constants';
-import { CharacterData, Item } from './types';
+import { CharacterData, Equipment, Item } from './types';
 
 const mockCharacterData: CharacterData = {
     name: 'mock char',
@@ -10,7 +10,7 @@ const mockCharacterData: CharacterData = {
     },
     level: 1,
     key: 'mock key',
-    inventory: [] as Item[],
+    inventory: [] as Equipment[],
     stats: BASE_STATS,
     skills: DEFAULT_PROFICIENCIES,
     image: 'mock src',

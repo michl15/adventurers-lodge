@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
+        "@reduxjs/toolkit": "^2.6.1",
         "@testing-library/jest-dom": "^5.17.0",
         "@testing-library/react": "^15.0.6",
         "@testing-library/user-event": "^13.5.0",
@@ -12,6 +13,7 @@
         "react-bootstrap": "^2.10.9",
         "react-bootstrap-icons": "^1.11.5",
         "react-dom": "^18.3.1",
+        "react-redux": "^9.2.0",
         "react-router": "^7.1.5",
         "react-scripts": "5.0.1",
         "react-select": "^5.10.1",
@@ -26,7 +28,8 @@
         "lint": "eslint",
         "postinstall": "husky",
         "test:nowatch": "react-scripts test --watchAll=false --coverage a",
-        "prepare": "husky"
+        "prepare": "husky",
+        "codegen": "graphql-codegen --config codegen.ts"
     },
     "eslintConfig": {
         "extends": [

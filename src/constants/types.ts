@@ -7,7 +7,7 @@ type CharacterData = {
     class: Class;
     level: number;
     key: string;
-    inventory: Item[];
+    inventory: Equipment[];
     stats: StatsTypes;
     skills: ProficienciesTypes<boolean>;
     image: string | undefined;
@@ -78,14 +78,15 @@ type AbilityBonus = {
 };
 
 type Equipment = {
-    index: string | boolean;
+    index: string;
     name: string;
     url: string | boolean;
+    quantity?: number;
 };
 
 type EquipmentData = {
     index: string;
-    name: string | boolean;
+    name: string;
     url: string | boolean;
     cost?: {
         quantity: number;
@@ -95,6 +96,16 @@ type EquipmentData = {
     equipment_category?: EquipmentCategory;
     properties?: [];
     special?: [];
+    weapon_category?: string;
+    armor_category?: string;
+    damage?: {
+        damage_dice: string;
+        damage_type: {
+            name: string;
+            index?: string;
+            url?: string;
+        }
+    }
 };
 
 type EquipmentCategory = {
