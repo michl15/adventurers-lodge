@@ -1,10 +1,10 @@
-import { configureStore } from "@reduxjs/toolkit";
-import InventoryReducer from "./InventoryReducer";
+import { configureStore } from '@reduxjs/toolkit';
+import InventoryReducer from './InventoryReducer';
 
 export const store = configureStore({
     reducer: {
-        inventory: InventoryReducer
-    }
+        inventory: InventoryReducer,
+    },
 });
 
 export type RootState = ReturnType<typeof store.getState>;

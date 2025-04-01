@@ -25,7 +25,13 @@ import {
 } from '../../constants/types';
 import { User as FirebaseUser, onAuthStateChanged } from 'firebase/auth';
 import Dropdown from './Dropdown';
-import { API_BASE_URL_5E, API_CLASSES, API_EQUIPMENT, API_EQUIPMENT_CATEGORIES, API_RACES } from '../../constants/api';
+import {
+    API_BASE_URL_5E,
+    API_CLASSES,
+    API_EQUIPMENT,
+    API_EQUIPMENT_CATEGORIES,
+    API_RACES,
+} from '../../constants/api';
 import CharacterLanguages from '../CharacterLanguages';
 import CharacterTraits from '../CharacterTraits';
 import ItemModal from '../ItemModal';
@@ -121,7 +127,9 @@ const CharacterCreationPage = () => {
     const [user, setUser] = useState<FirebaseUser | null>(null);
 
     // redux
-    const inventory = useSelector((state: RootState) => state.inventory.inventoryList);
+    const inventory = useSelector(
+        (state: RootState) => state.inventory.inventoryList
+    );
     const dispatch = useDispatch();
 
     // #endregion State
@@ -324,7 +332,7 @@ const CharacterCreationPage = () => {
                 languages: charLanguages,
                 traits: charTraits,
                 hitDie: hitDie,
-                inventory: inventory
+                inventory: inventory,
             };
 
             const newCharKey = push(charRef, charData).key;
@@ -507,8 +515,8 @@ const CharacterCreationPage = () => {
         //on unmount, reset inventory
         return () => {
             dispatch(resetInventory());
-        }
-    }, [])
+        };
+    }, []);
 
     return (
         <div data-testid="character-creation-page-container">
@@ -766,7 +774,10 @@ const CharacterCreationPage = () => {
                             <br />
                             <Row>
                                 <h5>Inventory</h5>
-                                <Inventory onAddClick={() => setShowItemModal(true)} edit />
+                                <Inventory
+                                    onAddClick={() => setShowItemModal(true)}
+                                    edit
+                                />
                             </Row>
                             <br />
                             <Row>

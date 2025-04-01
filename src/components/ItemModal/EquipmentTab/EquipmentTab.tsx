@@ -1,4 +1,12 @@
-import { Button, Card, Col, Collapse, Container, Form, Row } from 'react-bootstrap';
+import {
+    Button,
+    Card,
+    Col,
+    Collapse,
+    Container,
+    Form,
+    Row,
+} from 'react-bootstrap';
 import styled from 'styled-components';
 import { Equipment, EquipmentCategory } from '../../../constants/types';
 import { useEffect, useState } from 'react';
@@ -104,12 +112,18 @@ const EquipmentTab = ({ allEquipment, categories }: EquipmentTabProps) => {
         <Container data-testid="equipment-tab">
             <SearchContainer>
                 <Row>
-                    <Col className='d-flex my-auto'><h5>Search</h5></Col>
-                    <Col className='d-flex justify-content-end' style={{ marginRight: "-23px" }}>
+                    <Col className="d-flex my-auto">
+                        <h5>Search</h5>
+                    </Col>
+                    <Col
+                        className="d-flex justify-content-end"
+                        style={{ marginRight: '-23px' }}
+                    >
                         <Button
-                            variant='outline-info'
+                            variant="outline-info"
                             onClick={() => setExpandSearch(!expandSearch)}
-                            style={{ paddingBottom: "10px" }}>
+                            style={{ paddingBottom: '10px' }}
+                        >
                             {expandSearch ? <ChevronUp /> : <ChevronDown />}
                         </Button>
                     </Col>
@@ -141,11 +155,14 @@ const EquipmentTab = ({ allEquipment, categories }: EquipmentTabProps) => {
                             />
                         </Form.Group>
                         <br />
-                        <Row md="auto" className='dflex justify-content-md-center'>
+                        <Row
+                            md="auto"
+                            className="dflex justify-content-md-center"
+                        >
                             <Button
                                 onClick={onSearchSubmit}
                                 data-testid="search-submit"
-                                variant='info'
+                                variant="info"
                             >
                                 Search
                             </Button>

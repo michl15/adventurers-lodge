@@ -104,8 +104,8 @@ type EquipmentData = {
             name: string;
             index?: string;
             url?: string;
-        }
-    }
+        };
+    };
 };
 
 type EquipmentCategory = {

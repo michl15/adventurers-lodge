@@ -50,10 +50,11 @@ describe('EquipmentTab', () => {
     });
     test('renders component', async () => {
         render(
-            <Provider store={store}><EquipmentTab
-                allEquipment={mockAllEquipment}
-                categories={mockCategories}
-            />
+            <Provider store={store}>
+                <EquipmentTab
+                    allEquipment={mockAllEquipment}
+                    categories={mockCategories}
+                />
             </Provider>
         );
 
@@ -62,10 +63,11 @@ describe('EquipmentTab', () => {
 
     test('select category change', async () => {
         render(
-            <Provider store={store}><EquipmentTab
-                allEquipment={mockAllEquipment}
-                categories={mockCategories}
-            />
+            <Provider store={store}>
+                <EquipmentTab
+                    allEquipment={mockAllEquipment}
+                    categories={mockCategories}
+                />
             </Provider>
         );
 
@@ -77,10 +79,11 @@ describe('EquipmentTab', () => {
     test('submit button click', async () => {
         act(() => {
             render(
-                <Provider store={store}><EquipmentTab
-                    allEquipment={mockAllEquipment}
-                    categories={mockCategories}
-                />
+                <Provider store={store}>
+                    <EquipmentTab
+                        allEquipment={mockAllEquipment}
+                        categories={mockCategories}
+                    />
                 </Provider>
             );
         });

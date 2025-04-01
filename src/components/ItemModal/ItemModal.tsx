@@ -40,7 +40,7 @@ const ItemModal = ({
             show={showModal}
             onHide={() => {
                 closeModal();
-                setActiveTab("1");
+                setActiveTab('1');
             }}
             size="xl"
             data-testid="item-modal"
@@ -76,7 +76,9 @@ const ItemModal = ({
                 {renderActiveTab()}
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={closeModal} variant='info'>Done</Button>
+                <Button onClick={closeModal} variant="info">
+                    Done
+                </Button>
             </Modal.Footer>
         </Modal>
     );

@@ -11,10 +11,7 @@ import {
     Item,
 } from '../../constants/types';
 import CharacterDetails from './CharacterDetails';
-import {
-    API_EQUIPMENT,
-    API_EQUIPMENT_CATEGORIES,
-} from '../../constants/api';
+import { API_EQUIPMENT, API_EQUIPMENT_CATEGORIES } from '../../constants/api';
 import ItemModal from '../ItemModal';
 import { useDispatch } from 'react-redux';
 import { setInventory } from '../../redux/InventoryReducer';
@@ -28,7 +25,6 @@ const CharacterPage = () => {
     const database = firebaseDatabase;
     const dispatch = useDispatch();
 
-
     const getCharacterDetails = async () => {
         const charRef = ref(database, characterPath);
         const snapshot = await get(charRef);
@@ -38,13 +34,11 @@ const CharacterPage = () => {
         }
     };
 
-
     useEffect(() => {
         getCharacterDetails();
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
 
     const renderInventory = () => {
         return (
