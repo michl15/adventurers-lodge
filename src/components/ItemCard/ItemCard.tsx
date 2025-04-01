@@ -144,7 +144,6 @@ const ItemCard = ({ itemData }: ItemCardProps) => {
     };
 
     useEffect(() => {
-        console.log('itemcard rendering');
         const ind = itemData.index;
         let itemIndex = findInInventory(ind);
         if (itemIndex >= 0) {
@@ -152,6 +151,7 @@ const ItemCard = ({ itemData }: ItemCardProps) => {
         } else {
             setItemCounter(0);
         }
+        // eslint-disable-next-line
     }, []);
 
     return (

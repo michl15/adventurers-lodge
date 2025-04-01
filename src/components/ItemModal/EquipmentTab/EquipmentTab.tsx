@@ -50,7 +50,7 @@ const EquipmentTab = ({ allEquipment, categories }: EquipmentTabProps) => {
     };
 
     const onCategoriesChange = (option: Options<SelectOptions>) => {
-        let newSelectedCategories: EquipmentCategory[] = [];
+        const newSelectedCategories: EquipmentCategory[] = [];
         option.forEach((opt) => {
             newSelectedCategories.push(opt.value);
         });
@@ -97,7 +97,7 @@ const EquipmentTab = ({ allEquipment, categories }: EquipmentTabProps) => {
     };
 
     const getCategoriesOptions = () => {
-        let newCategoryOpts: SelectOptions[] = [];
+        const newCategoryOpts: SelectOptions[] = [];
         categories.forEach((category) => {
             newCategoryOpts.push({ value: category, label: category.name });
         });
@@ -106,6 +106,7 @@ const EquipmentTab = ({ allEquipment, categories }: EquipmentTabProps) => {
 
     useEffect(() => {
         getCategoriesOptions();
+        // eslint-disable-next-line
     }, []);
 
     return (

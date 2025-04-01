@@ -20,7 +20,9 @@ const ItemDisplay = ({ itemList }: ItemDisplayProps) => {
     const modalBody = modal?.querySelector('.modal-body');
 
     const getEquipmentData = async (reset: boolean) => {
-        let newDataList: EquipmentData[] = reset ? [] : [...equipmentDataList];
+        const newDataList: EquipmentData[] = reset
+            ? []
+            : [...equipmentDataList];
         if (newDataList.length < pageOffset + 7) {
             const upperLimit =
                 pageOffset + 7 <= itemList.length
@@ -68,11 +70,13 @@ const ItemDisplay = ({ itemList }: ItemDisplayProps) => {
         setEquipmentDataList([]);
         setCurrentPageData([]);
         getEquipmentData(true);
+        // eslint-disable-next-line
     }, [itemList]);
 
     useEffect(() => {
         setIsLoading(true);
         getEquipmentData(false);
+        // eslint-disable-next-line
     }, [pageOffset]);
 
     return (

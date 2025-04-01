@@ -516,7 +516,7 @@ const CharacterCreationPage = () => {
         return () => {
             dispatch(resetInventory());
         };
-    }, []);
+    }, [dispatch]);
 
     return (
         <div data-testid="character-creation-page-container">
