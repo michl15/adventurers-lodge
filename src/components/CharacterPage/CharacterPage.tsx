@@ -5,7 +5,7 @@ import { firebaseDatabase } from '../../firebase/firebase';
 import { CharacterData } from '../../constants/types';
 import CharacterDetails from './CharacterDetails';
 import { useDispatch } from 'react-redux';
-import { setInventory } from '../../redux/InventoryReducer';
+import { resetInventory, setInventory } from '../../redux/InventoryReducer';
 import Inventory from '../Inventory';
 
 const CharacterPage = () => {
@@ -30,6 +30,13 @@ const CharacterPage = () => {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+        //on unmount, reset inventory
+        return () => {
+            dispatch(resetInventory());
+        };
+    }, [dispatch]);
 
     const renderInventory = () => {
         return (
