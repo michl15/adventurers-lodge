@@ -19,7 +19,7 @@ const AuthBoundary = (props: PropsWithChildren) => {
                 }
             });
         }
-    }, [pathname]);
+    }, [pathname, navigate, dispatch]);
 
     return props.children;
 };

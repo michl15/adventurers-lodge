@@ -23,7 +23,6 @@ import {
     StatsTypes,
     Trait,
 } from '../../constants/types';
-import { User as FirebaseUser, onAuthStateChanged } from 'firebase/auth';
 import Dropdown from './Dropdown';
 import {
     API_BASE_URL_5E,

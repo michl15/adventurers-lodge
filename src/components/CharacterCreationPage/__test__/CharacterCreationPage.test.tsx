@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import CharacterCreationPage from '../CharacterCreationPage';
-import { onAuthStateChanged, User } from 'firebase/auth';
+import { User } from 'firebase/auth';
 import { push, set } from 'firebase/database';
 import { rollStat } from '../../../util/calculations';
 import { Provider } from 'react-redux';
@@ -496,11 +496,7 @@ describe('CharacterCreationPage', () => {
     });
 
     test('hit die dropdown onchange', async () => {
-        render(
-            <Provider store={store}>
-                <CharacterCreationPage />
-            </Provider>
-        );
+        renderWithProviders(<CharacterCreationPage />);
 
         await waitFor(() => {
             expect(

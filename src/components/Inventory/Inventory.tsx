@@ -77,7 +77,7 @@ const Inventory = ({ onAddClick, edit }: InventoryProps) => {
     };
 
     const renderEquipment = () => {
-        return inventory.map((item) => {
+        return inventory.map((item: Equipment) => {
             return (
                 <ListGroup.Item key={`inventory-${item.index}`}>
                     <Row>
