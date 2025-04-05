@@ -45,33 +45,46 @@ const CharacterDisplay = ({ uid }: CharacterDisplayProps) => {
 
     useEffect(() => {
         const getCharacterData = async (characters: object, db: Database) => {
-            // iterate through characters
-            for (const char of Object.entries(characters)) {
-                const charId = char[0];
-                const charRef = ref(db, `/characters/${charId}`);
+            try {
+                // iterate through characters
+                for (const char of Object.entries(characters)) {
+                    const charId = char[0];
+                    const charRef = ref(db, `/characters/${charId}`);
 
-                const snapshot = await get(charRef);
-                if (snapshot.exists() && !characterMap.has(charId)) {
-                    characterMap.set(charId, {
-                        ...snapshot.val(),
-                        key: charId,
-                    });
+                    const snapshot = await get(charRef);
+                    if (snapshot.exists() && !characterMap.has(charId)) {
+                        characterMap.set(charId, {
+                            ...snapshot.val(),
+                            key: charId,
+                        });
+                    }
                 }
+                setCharacterMap(new Map(characterMap));
+            } catch (error) {
+                console.error('CharacterDisplay', error);
+                console.error(
+                    'The above error occurred while attempting to fetch characterData'
+                );
             }
-            setCharacterMap(new Map(characterMap));
         };
 
         const getCharacterList = async (db: Database) => {
             // fetch list of characters associated with uid
-            const userRef = ref(db, `/users/${uid}/characters`);
-            const snapshot = await get(userRef);
-            if (snapshot.exists()) {
-                // get the data for those characters
-                getCharacterData(snapshot.val(), db);
+            try {
+                const userRef = ref(db, `/users/${uid}/characters`);
+                const snapshot = await get(userRef);
+                if (snapshot.exists()) {
+                    // get the data for those characters
+                    getCharacterData(snapshot.val(), db);
+                }
+            } catch (error) {
+                console.error('CharacterDisplay', error);
+                console.error(
+                    'The above error occurred while attempting to fetch characters associated with user',
+                    uid
+                );
             }
         };
-
-        // get the database - TODO: add db to app context
         const db = firebaseDatabase;
 
         // Call function to get characters

@@ -1,10 +1,11 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import LoginPage from '../LoginPage';
 import {
     GoogleAuthProvider,
     signInWithPopup,
     UserCredential,
 } from 'firebase/auth';
+import { renderWithProviders } from '../../../util/test-utils';
 
 const mockedUsedNavigate = jest.fn();
 
@@ -76,13 +77,13 @@ jest.mock('firebase/auth', () => {
 
 describe('LoginPage.tsx', () => {
     test('renders component', () => {
-        render(<LoginPage />);
+        renderWithProviders(<LoginPage />);
 
         expect(screen.getByTestId('login-page-container')).toBeInTheDocument();
     });
 
     test('Username input updates as expected', () => {
-        render(<LoginPage />);
+        renderWithProviders(<LoginPage />);
 
         const usernameInput: HTMLInputElement =
             screen.getByTestId('username-input');
@@ -92,7 +93,7 @@ describe('LoginPage.tsx', () => {
     });
 
     test('Password input updates as expected', () => {
-        render(<LoginPage />);
+        renderWithProviders(<LoginPage />);
 
         const passwordInput: HTMLInputElement =
             screen.getByTestId('password-input');
@@ -106,7 +107,7 @@ describe('LoginPage.tsx', () => {
     });
 
     test('Login with Google works', async () => {
-        render(<LoginPage />);
+        renderWithProviders(<LoginPage />);
         const mockedSignInPopup = jest.mocked(signInWithPopup);
         mockedSignInPopup.mockResolvedValue(
             new MockUserCredential(mockUser) as UserCredential

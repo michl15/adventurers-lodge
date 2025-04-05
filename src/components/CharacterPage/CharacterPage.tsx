@@ -17,17 +17,24 @@ const CharacterPage = () => {
     const dispatch = useDispatch();
 
     const getCharacterDetails = async () => {
-        const charRef = ref(database, characterPath);
-        const snapshot = await get(charRef);
-        if (snapshot.exists() && snapshot.val()) {
-            setCharDetails(snapshot.val());
-            dispatch(setInventory(snapshot.val().inventory));
+        try {
+            const charRef = ref(database, characterPath);
+            const snapshot = await get(charRef);
+            if (snapshot.exists() && snapshot.val()) {
+                setCharDetails(snapshot.val());
+                dispatch(setInventory(snapshot.val().inventory));
+            }
+        } catch (error) {
+            console.error('CharacterPage', error);
+            console.error(
+                'The above error occured while attempting to fetch character data for',
+                charId
+            );
         }
     };
 
     useEffect(() => {
         getCharacterDetails();
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

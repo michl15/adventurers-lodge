@@ -15,10 +15,11 @@ export default [
         rules: {
             'react/react-in-jsx-scope': 'off',
             'react/prop-types': 'off',
+            'react-hooks/exhaustive-deps': 'warn',
         },
     },
     {
-        ignores: ['build/**/*'],
+        ignores: ['build/**/*', '**/__test__/**'],
     },
     eslintConfigPrettier,
 ];
