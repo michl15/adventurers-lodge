@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { push, ref, set } from 'firebase/database';
 import { Toast } from 'react-bootstrap';
-import { firebaseAuth, firebaseDatabase } from '../../firebase/firebase';
+import { firebaseDatabase } from '../../firebase/firebase';
 import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import { BASE_STATS, DEFAULT_PROFICIENCIES } from '../../constants/constants';
@@ -124,7 +124,8 @@ const CharacterCreationPage = () => {
     const [statBonuses, setStatBonuses] = useState<AbilityBonus[]>([]);
 
     // user data for current user
-    const [user, setUser] = useState<FirebaseUser | null>(null);
+    //const [user, setUser] = useState<FirebaseUser | null>(null);
+    const user = useSelector((state: RootState) => state.user.user);
 
     // redux
     const inventory = useSelector(
@@ -502,9 +503,6 @@ const CharacterCreationPage = () => {
     // #endregion Rendering/utility
 
     useEffect(() => {
-        onAuthStateChanged(firebaseAuth, (u) => {
-            setUser(u);
-        });
         getClasses();
         getRaces();
         getEquipmentCategories();

@@ -18,7 +18,7 @@ export default [
         },
     },
     {
-        ignores: ['build/**/*'],
+        ignores: ['build/**/*', '**/__test__/**'],
     },
     eslintConfigPrettier,
 ];

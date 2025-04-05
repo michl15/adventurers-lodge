@@ -1,43 +1,28 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import HomePage from '../HomePage';
-import { onAuthStateChanged } from 'firebase/auth';
-
+import { renderWithProviders } from '../../../util/test-utils';
+import { setupStore } from '../../../redux';
+import { updateUser } from '../../../redux/UserReducer';
+import { mockUser } from '../../../constants/mockData';
+import { User } from 'firebase/auth';
 const mockedUseNavigate = jest.fn();
 
 jest.mock('react-router', () => ({
-    ...(jest.requireActual('react-router') as any),
+    ...jest.requireActual('react-router'),
     useNavigate: () => mockedUseNavigate,
 }));
 
-jest.mock('firebase/auth', () => {
-    return {
-        getAuth: jest.fn(() => {
-            return { user: 'test user' };
-        }),
-        signOut: jest.fn(),
-        onAuthStateChanged: jest.fn(),
-    };
-});
-
 describe('HomePage', () => {
     test('renders component', () => {
-        const mockedOnAuthState = jest.mocked(onAuthStateChanged);
-        const mockedAuthCallback = (_auth: any, callback: any) => {
-            callback({ user: 'test user' });
-        };
-        mockedOnAuthState.mockImplementation(mockedAuthCallback as any);
-        render(<HomePage />);
+        const store = setupStore();
+        store.dispatch(updateUser(mockUser as User));
+        renderWithProviders(<HomePage />, { store });
         expect(screen.queryByTestId('home-page-container')).toBeInTheDocument();
         expect(screen.queryByTestId('characters-header')).toBeInTheDocument();
     });
 
     test('does not render content if not signed in', () => {
-        const mockedOnAuthState = jest.mocked(onAuthStateChanged);
-        const mockedAuthCallback = (_auth: any, callback: any) => {
-            callback(null);
-        };
-        mockedOnAuthState.mockImplementation(mockedAuthCallback as any);
-        render(<HomePage />);
+        renderWithProviders(<HomePage />);
         expect(screen.queryByTestId('home-page-container')).toBeInTheDocument();
         expect(
             screen.queryByTestId('characters-header')

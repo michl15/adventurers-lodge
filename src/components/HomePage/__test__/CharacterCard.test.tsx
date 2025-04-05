@@ -5,7 +5,7 @@ import { mockCharacterData } from '../../../constants/mockData';
 const mockedUseNavigate = jest.fn();
 
 jest.mock('react-router', () => ({
-    ...(jest.requireActual('react-router') as any),
+    ...jest.requireActual('react-router'),
     useNavigate: () => mockedUseNavigate,
 }));
 

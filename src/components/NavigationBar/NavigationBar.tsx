@@ -23,7 +23,9 @@ const NavigationBar = () => {
     };
 
     useEffect(() => {
-        setShowNavBar(location.pathname !== '/');
+        setShowNavBar(
+            location.pathname !== '/' && location.pathname !== '/auth_error'
+        );
     }, [location.pathname]);
 
     return (

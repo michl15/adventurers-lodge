@@ -10,23 +10,33 @@ import {
     StyledHeader,
 } from './LoginStyles';
 import { firebaseAuth } from '../../firebase/firebase';
+import { useDispatch } from 'react-redux';
+import { updateUser } from '../../redux/UserReducer';
 
 const LoginPage = () => {
     const auth = firebaseAuth;
     const provider = new GoogleAuthProvider();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handleLoginOnClick = async () => {
-        const result = await signInWithPopup(auth, provider);
-        if (result) {
-            const credential = GoogleAuthProvider.credentialFromResult(result);
-            const token = credential?.accessToken;
-            // The signed-in user info.
-            const user = result.user;
-            // IdP data available using getAdditionalUserInfo(result)
+        try {
+            const result = await signInWithPopup(auth, provider);
+            if (result) {
+                //const credential = GoogleAuthProvider.credentialFromResult(result);
+                //const token = credential?.accessToken;
+                // The signed-in user info.
+                const user = result.user;
+                dispatch(updateUser(user));
 
-            console.log(credential, token, user);
-            navigate('home');
+                //console.log(credential, token, user);
+                navigate('home');
+            }
+        } catch (error) {
+            console.error('LoginPage', error);
+            console.error(
+                'The above error occurred while attempting to signInWithPopup'
+            );
         }
         /*         signInWithPopup(auth, provider)
                     .then((result) => {

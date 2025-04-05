@@ -7,39 +7,47 @@ import LoginPage from './components/LoginPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import HomePage from './components/HomePage';
 import CharacterCreationPage from './components/CharacterCreationPage';
-import { FirebaseAuthProvider } from './context/FirebaseAuthContext';
 import NavigationBar from './components/NavigationBar';
 import PageContainer from './components/PageContainer';
 import ScrollToTop from './components/ScrollToTop';
 import CharacterPage from './components/CharacterPage';
 import { Provider } from 'react-redux';
 import { store } from './redux';
+import ErrorBoundary from './components/ErrorBoundary';
+import AuthErrorScreen from './components/AuthErrorScreen';
+import AuthBoundary from './components/AuthBoundary';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
-        <FirebaseAuthProvider>
-            <HashRouter>
-                <Provider store={store}>
-                    <NavigationBar />
-                    <PageContainer>
-                        <ScrollToTop />
-                        <Routes>
-                            <Route path="/" element={<LoginPage />} />
-                            <Route path="/home" element={<HomePage />} />
-                            <Route
-                                path="/character_creation"
-                                element={<CharacterCreationPage />}
-                            />
-                            <Route
-                                path="/characters/:charId"
-                                element={<CharacterPage />}
-                            />
-                        </Routes>
-                    </PageContainer>
-                </Provider>
-            </HashRouter>
-        </FirebaseAuthProvider>
+        <HashRouter>
+            <Provider store={store}>
+                <ErrorBoundary>
+                    <AuthBoundary>
+                        <NavigationBar />
+                        <PageContainer>
+                            <ScrollToTop />
+                            <Routes>
+                                <Route path="/" element={<LoginPage />} />
+                                <Route path="/home" element={<HomePage />} />
+                                <Route
+                                    path="/character_creation"
+                                    element={<CharacterCreationPage />}
+                                />
+                                <Route
+                                    path="/characters/:charId"
+                                    element={<CharacterPage />}
+                                />
+                                <Route
+                                    path="/auth_error"
+                                    element={<AuthErrorScreen />}
+                                />
+                            </Routes>
+                        </PageContainer>
+                    </AuthBoundary>
+                </ErrorBoundary>
+            </Provider>
+        </HashRouter>
     </React.StrictMode>
 );
 

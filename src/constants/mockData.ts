@@ -1,5 +1,5 @@
 import { BASE_STATS, DEFAULT_PROFICIENCIES } from './constants';
-import { CharacterData, Equipment, Item } from './types';
+import { CharacterData, Equipment } from './types';
 
 const mockCharacterData: CharacterData = {
     name: 'mock char',
@@ -26,4 +26,8 @@ const mockCharacterData: CharacterData = {
     traits: [],
 };
 
-export { mockCharacterData };
+const mockUser = {
+    uid: 'mockid',
+};
+
+export { mockCharacterData, mockUser };
