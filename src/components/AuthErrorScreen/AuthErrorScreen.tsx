@@ -17,7 +17,7 @@ const AuthErrorScreen = () => {
         navigate('/');
     };
     return (
-        <AuthErrorContainer>
+        <AuthErrorContainer data-testid="auth-error-screen">
             <Row className="d-flex justify-content-md-center">
                 <h1 style={{ textAlign: 'center' }}>
                     Looks like you&apos;ve been signed out
@@ -30,7 +30,12 @@ const AuthErrorScreen = () => {
             </Row>
             <br />
             <Row className="justify-content-md-center">
-                <Button onClick={onReturnToLogin}>Return to Login</Button>
+                <Button
+                    onClick={onReturnToLogin}
+                    data-testid="return-to-login-btn"
+                >
+                    Return to Login
+                </Button>
             </Row>
         </AuthErrorContainer>
     );

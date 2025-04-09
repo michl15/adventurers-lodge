@@ -1,5 +1,5 @@
 import { BASE_STATS, DEFAULT_PROFICIENCIES } from './constants';
-import { CharacterData, Equipment } from './types';
+import { CharacterData, Equipment, EquipmentData } from './types';
 
 const mockCharacterData: CharacterData = {
     name: 'mock char',
@@ -30,4 +30,45 @@ const mockUser = {
     uid: 'mockid',
 };
 
-export { mockCharacterData, mockUser };
+const mockSword: EquipmentData = {
+    name: 'sword',
+    index: 'sword',
+    url: 'url',
+    cost: {
+        quantity: 10,
+        unit: 'gp',
+    },
+    equipment_category: {
+        name: 'weapon',
+        index: 'weapon',
+        url: 'weapon',
+    },
+    damage: {
+        damage_dice: 'd6',
+        damage_type: {
+            name: 'slashing',
+            index: 'slashing',
+        },
+    },
+    weapon_category: 'sword',
+    desc: ['this is a sword'],
+};
+
+const mockArmor: EquipmentData = {
+    name: 'armor',
+    index: 'armor',
+    url: 'url',
+    cost: {
+        quantity: 10,
+        unit: 'gp',
+    },
+    equipment_category: {
+        name: 'armor',
+        index: 'armor',
+        url: 'armor',
+    },
+    armor_category: 'medium',
+    desc: ['medium armor', 'this is armor'],
+};
+
+export { mockCharacterData, mockUser, mockArmor, mockSword };

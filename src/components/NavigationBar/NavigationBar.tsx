@@ -10,16 +10,20 @@ import {
 import { Link, useLocation, useNavigate } from 'react-router';
 import { firebaseAuth } from '../../firebase/firebase';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { removeUser } from '../../redux/UserReducer';
 
 const NavigationBar = () => {
     const [showNavBar, setShowNavBar] = useState<boolean>(false);
     const navigate = useNavigate();
     const location = useLocation();
+    const dispatch = useDispatch();
 
     const onSignOut = () => {
         signOut(firebaseAuth).then(() => {
             navigate('/');
         });
+        dispatch(removeUser());
     };
 
     useEffect(() => {

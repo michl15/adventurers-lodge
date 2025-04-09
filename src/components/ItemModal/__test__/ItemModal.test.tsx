@@ -39,6 +39,22 @@ describe('ItemModal', () => {
         expect(await screen.findByTestId('item-modal')).toBeInTheDocument();
     });
 
+    test('closes modal', async () => {
+        render(
+            <ItemModal
+                allEquipment={mockAllEquipment}
+                categories={mockCategories}
+                showModal={true}
+                closeModal={mockCloseModal}
+            />
+        );
+
+        expect(await screen.findByTestId('item-modal')).toBeInTheDocument();
+        const closeButton = screen.getByRole('button', { name: /close/i });
+        fireEvent.click(closeButton);
+        expect(mockCloseModal).toHaveBeenCalled();
+    });
+
     test('renders equipment tab', async () => {
         render(
             <ItemModal
