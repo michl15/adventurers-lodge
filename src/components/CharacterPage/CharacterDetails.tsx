@@ -52,7 +52,7 @@ const CharacterDetails = ({ details }: CharacterDetailsProps) => {
                         <h4>Skills</h4>
                         <Proficiencies
                             charLvl={details.level}
-                            onSwitchChange={() => { }}
+                            onSwitchChange={() => {}}
                             charSkills={details.skills || DEFAULT_PROFICIENCIES}
                             editMode={false}
                         />
