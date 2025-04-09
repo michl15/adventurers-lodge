@@ -50,7 +50,9 @@ const ItemCard = ({ itemData }: ItemCardProps) => {
 
                 return (
                     <div>
-                        <ItemDescriptionTag>{firstItem}</ItemDescriptionTag>
+                        <ItemDescriptionTag data-testid="desc-tag">
+                            {firstItem}
+                        </ItemDescriptionTag>
                         {itemData.desc.map((info, index) => (
                             <p key={`item-data-${index}`}>
                                 {index !== 0 && info}
@@ -117,23 +119,28 @@ const ItemCard = ({ itemData }: ItemCardProps) => {
             : {};
     };
 
-    const addItemCounter = () => {
+    const addItemCounter = (index: string) => {
         return (
             <Row className="d-flex justify-content-center">
                 <ListGroup horizontal>
                     <CounterButtons
-                        key="decrement-item"
+                        key={`decrement-item-${index}`}
+                        data-testid={`decrement-item-${index}`}
                         onClick={onDecrementClick}
                         disabled={itemCounter === 0}
                         style={disabledStyle()}
                     >
                         -
                     </CounterButtons>
-                    <ListGroup.Item key="item-quantity">
+                    <ListGroup.Item
+                        key={`item-quantity-${index}`}
+                        data-testid={`item-quantity-${index}`}
+                    >
                         {itemCounter}
                     </ListGroup.Item>
                     <CounterButtons
-                        key="increment-item"
+                        key={`increment-item-${index}`}
+                        data-testid={`increment-item-${index}`}
                         onClick={onIncrementClick}
                     >
                         +
@@ -152,10 +159,10 @@ const ItemCard = ({ itemData }: ItemCardProps) => {
             setItemCounter(0);
         }
         // eslint-disable-next-line
-    }, []);
+    }, [itemData]);
 
     return (
-        <Item data-testid={`item-card-${itemData.name}`}>
+        <Item data-testid={`item-card-${itemData.index}`}>
             <Card.Title>{itemData.name}</Card.Title>
             <Card.Body>
                 <Container>
@@ -186,7 +193,7 @@ const ItemCard = ({ itemData }: ItemCardProps) => {
                     )}
                     {itemData.desc && <Row>{getItemDesc()}</Row>}
 
-                    {addItemCounter()}
+                    {addItemCounter(itemData.index)}
                 </Container>
             </Card.Body>
         </Item>

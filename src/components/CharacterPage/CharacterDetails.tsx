@@ -5,14 +5,13 @@ import styled from 'styled-components';
 import Proficiencies from '../Proficiencies';
 import { DEFAULT_PROFICIENCIES } from '../../constants/constants';
 import StatsDisplay from './StatsDisplay';
-import { JSX } from 'react';
 import HPDisplay from './HPDisplay';
 import CharacterLanguages from '../CharacterLanguages';
 import CharacterTraits from '../CharacterTraits/CharacterTraits';
+import Inventory from '../Inventory';
 
 type CharacterDetailsProps = {
     details: CharacterData | null;
-    inventory: () => JSX.Element;
 };
 
 const CharImage = styled(Image)`
@@ -23,13 +22,13 @@ const EditButton = styled(Button)`
     margin-left: 100%;
 `;
 
-const CharacterDetails = ({ details, inventory }: CharacterDetailsProps) => {
+const CharacterDetails = ({ details }: CharacterDetailsProps) => {
     if (details) {
         const charImage = details.image
             ? details.image
             : '/assets/placeholder-icon.png';
         return (
-            <Container fluid>
+            <Container fluid data-testid="char-details">
                 <Row>
                     <Col md="auto">
                         <CharImage src={charImage} alt="character" />
@@ -53,7 +52,7 @@ const CharacterDetails = ({ details, inventory }: CharacterDetailsProps) => {
                         <h4>Skills</h4>
                         <Proficiencies
                             charLvl={details.level}
-                            onSwitchChange={() => {}}
+                            onSwitchChange={() => { }}
                             charSkills={details.skills || DEFAULT_PROFICIENCIES}
                             editMode={false}
                         />
@@ -80,7 +79,10 @@ const CharacterDetails = ({ details, inventory }: CharacterDetailsProps) => {
                             />
                         </Row>
                         <hr />
-                        <Row>{inventory()}</Row>
+                        <Row>
+                            <h4>Inventory</h4>
+                            <Inventory />
+                        </Row>
                         <hr />
                         <Row className="justify-content-center">
                             <h4>Character Notes/Description</h4>

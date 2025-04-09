@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import NavigationBar from '../NavigationBar';
 import { BrowserRouter, useLocation } from 'react-router';
 import { signOut } from 'firebase/auth';
+import { renderWithProviders } from '../../../util/test-utils';
 
 jest.mock('firebase/firebase');
 
@@ -32,7 +33,7 @@ describe('NavigationBar', () => {
     });
 
     test('renders component', () => {
-        render(
+        renderWithProviders(
             <BrowserRouter>
                 <NavigationBar />
             </BrowserRouter>
@@ -42,7 +43,7 @@ describe('NavigationBar', () => {
 
     test('does not render component on login page', () => {
         mockedUseLocation.pathname = '/';
-        render(
+        renderWithProviders(
             <BrowserRouter>
                 <NavigationBar />
             </BrowserRouter>
@@ -51,7 +52,7 @@ describe('NavigationBar', () => {
     });
 
     test('calls onSignOut on button click', () => {
-        render(
+        renderWithProviders(
             <BrowserRouter>
                 <NavigationBar />
             </BrowserRouter>

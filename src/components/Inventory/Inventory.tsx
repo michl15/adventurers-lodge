@@ -81,7 +81,12 @@ const Inventory = ({ onAddClick, edit }: InventoryProps) => {
             return (
                 <ListGroup.Item key={`inventory-${item.index}`}>
                     <Row>
-                        <LeftCol md="auto">{item.quantity || 1}</LeftCol>
+                        <LeftCol
+                            data-testid={`${item.index}-quantity`}
+                            md="auto"
+                        >
+                            {item.quantity || 1}
+                        </LeftCol>
                         <Col>{item.name}</Col>
                         {edit && (
                             <Col md="auto">
@@ -90,6 +95,7 @@ const Inventory = ({ onAddClick, edit }: InventoryProps) => {
                                         size="sm"
                                         variant="outline-danger"
                                         className="d-flex justify-content-center align-items-center"
+                                        data-testid={`${item.index}-dec-btn`}
                                         onClick={() => {
                                             onDecrementClick(item);
                                         }}
@@ -100,6 +106,7 @@ const Inventory = ({ onAddClick, edit }: InventoryProps) => {
                                         size="sm"
                                         variant="outline-primary"
                                         className="d-flex justify-content-center align-items-center"
+                                        data-testid={`${item.index}-inc-btn`}
                                         onClick={() => {
                                             onIncrementClick(item);
                                         }}
@@ -116,11 +123,14 @@ const Inventory = ({ onAddClick, edit }: InventoryProps) => {
     };
 
     return (
-        <Container>
+        <Container data-testid="inventory-container">
             <ListGroup>
                 {renderEquipment()}
                 {edit && (
-                    <AddButton onClick={onAddClick}>
+                    <AddButton
+                        onClick={onAddClick}
+                        data-testid="add-to-inventory-btn"
+                    >
                         <PlusCircle
                             style={{ marginRight: '10px', marginBottom: '4px' }}
                         />

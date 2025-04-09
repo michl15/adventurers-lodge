@@ -6,10 +6,10 @@ import { CharacterData } from '../../constants/types';
 import CharacterDetails from './CharacterDetails';
 import { useDispatch } from 'react-redux';
 import { resetInventory, setInventory } from '../../redux/InventoryReducer';
-import Inventory from '../Inventory';
 
 const CharacterPage = () => {
     const [charDetails, setCharDetails] = useState<CharacterData | null>(null);
+    const [charFound, setCharFound] = useState(true);
 
     const { charId } = useParams();
     const characterPath = 'characters/' + charId;
@@ -23,6 +23,8 @@ const CharacterPage = () => {
             if (snapshot.exists() && snapshot.val()) {
                 setCharDetails(snapshot.val());
                 dispatch(setInventory(snapshot.val().inventory));
+            } else {
+                throw new Error('No character found');
             }
         } catch (error) {
             console.error('CharacterPage', error);
@@ -30,6 +32,7 @@ const CharacterPage = () => {
                 'The above error occured while attempting to fetch character data for',
                 charId
             );
+            setCharFound(false);
         }
     };
 
@@ -45,21 +48,13 @@ const CharacterPage = () => {
         };
     }, [dispatch]);
 
-    const renderInventory = () => {
-        return (
-            <>
-                <h4>Inventory</h4>
-                <Inventory />
-            </>
-        );
-    };
-
-    return (
-        <div>
-            <CharacterDetails
-                details={charDetails}
-                inventory={renderInventory}
-            />
+    return charFound ? (
+        <div data-testid="character-page">
+            <CharacterDetails details={charDetails} />
+        </div>
+    ) : (
+        <div data-testid="missing-char">
+            <h1>Character not found</h1>
         </div>
     );
 };

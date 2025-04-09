@@ -507,6 +507,19 @@ describe('CharacterCreationPage', () => {
         fireEvent.change(hitDieDropdown, { target: { selectedIndex: 0 } });
         expect(hitDieDropdown).toHaveValue('d6');
     });
+
+    test('add item button opens modal', async () => {
+        renderWithProviders(<CharacterCreationPage />);
+
+        await waitFor(() => {
+            expect(
+                screen.queryByTestId('character-creation-page-container')
+            ).toBeInTheDocument();
+        });
+        const inventoryBtn = screen.getByTestId('add-to-inventory-btn');
+        fireEvent.click(inventoryBtn);
+        expect(screen.queryByTestId('item-modal')).toBeVisible();
+    });
     //#endregion
 
     //#region add/remove traits/languages
