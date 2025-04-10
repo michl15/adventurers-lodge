@@ -2,6 +2,7 @@ import { Button, Modal, Nav } from 'react-bootstrap';
 import { Equipment, EquipmentCategory } from '../../constants/types';
 import { useState } from 'react';
 import EquipmentTab from './EquipmentTab';
+import CustomItemForm from './CustomItemForm';
 
 type ItemModalProps = {
     allEquipment: Equipment[];
@@ -26,6 +27,8 @@ const ItemModal = ({
                     categories={categories}
                 />
             );
+        } else if (activeTab === '3') {
+            return <CustomItemForm categories={categories} />;
         } else {
             return <div>Not yet implemented</div>;
         }

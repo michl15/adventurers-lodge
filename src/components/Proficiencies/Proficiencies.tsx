@@ -20,7 +20,7 @@ const Proficiencies = ({
     editMode = false,
 }: ProficienciesProps) => {
     const stats = Object.keys(SKILLS);
-    const proficiencyBonus = calculateProficiencyBonus(charLvl);
+    const proficiencyBonus = calculateProficiencyBonus(Number(charLvl));
 
     return (
         <ListGroup data-testid={'proficiencies-list'}>

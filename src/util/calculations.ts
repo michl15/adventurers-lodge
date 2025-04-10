@@ -1,4 +1,4 @@
-const calculateProficiencyBonus = (lvl) => {
+const calculateProficiencyBonus = (lvl: number) => {
     if (lvl < 5) {
         return 2;
     } else if (lvl < 9) {
@@ -12,7 +12,7 @@ const calculateProficiencyBonus = (lvl) => {
     }
 };
 
-const calculateStatModifier = (stat) => {
+const calculateStatModifier = (stat: number) => {
     return Math.floor((stat - 10) / 2);
 };
 
@@ -27,7 +27,7 @@ const rollStat = () => {
     return sum;
 };
 
-const levenshtein = (s, t) => {
+const levenshtein = (s: string, t: string) => {
     if (s === t) {
         return 0;
     }

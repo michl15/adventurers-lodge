@@ -38,6 +38,7 @@ import Inventory from '../Inventory';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux';
 import { resetInventory } from '../../redux/InventoryReducer';
+import { SwapToCustomClass } from '../Styled/CustomComponents';
 
 const StatsRowContainer = styled(Row)`
     display: flex;
@@ -70,19 +71,6 @@ const SubmitButtonContainer = styled.div`
     display: flex;
     justify-content: right;
     padding: 10px 10px;
-`;
-
-const SwapToCustomClass = styled.span`
-    font-size: 13px;
-    color: #4287f5;
-    margin-left: 10px;
-    margin-bottom: 25px;
-
-    &:hover {
-        color: #103e87;
-        cursor: pointer;
-        text-decoration: underline;
-    }
 `;
 
 const CharacterCreationPage = () => {
@@ -258,7 +246,9 @@ const CharacterCreationPage = () => {
         }
 
         if (label === 'con' && hitDie) {
-            setCharMaxHP(hitDie + calculateStatModifier(event.target.value));
+            setCharMaxHP(
+                hitDie + calculateStatModifier(Number(event.target.value))
+            );
         }
     };
 
@@ -636,7 +626,7 @@ const CharacterCreationPage = () => {
                                     Please enter a level for your character.
                                 </Form.Control.Feedback>
                                 <Form.Text>
-                                    {`Proficiency Bonus: +${calculateProficiencyBonus(charLvl)}`}
+                                    {`Proficiency Bonus: +${calculateProficiencyBonus(Number(charLvl))}`}
                                 </Form.Text>
                             </Form.Group>
                         </Col>
