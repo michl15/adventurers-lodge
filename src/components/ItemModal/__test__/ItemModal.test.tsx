@@ -101,7 +101,7 @@ describe('ItemModal', () => {
         const tab3 = await screen.findByTestId('tab-3');
         fireEvent.click(tab3);
         expect(
-            await screen.findByText('Not yet implemented')
+            await screen.findByTestId('custom-item-form')
         ).toBeInTheDocument();
     });
 });

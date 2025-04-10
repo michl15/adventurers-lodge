@@ -35,7 +35,7 @@ const CustomItemForm = ({ categories }: CustomItemFormProps) => {
     };
 
     return (
-        <Container>
+        <Container data-testid="custom-item-form">
             <Form>
                 <br />
                 <Row>
