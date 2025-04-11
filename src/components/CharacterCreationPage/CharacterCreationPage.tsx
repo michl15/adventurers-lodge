@@ -38,6 +38,7 @@ import Inventory from '../Inventory';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux';
 import { resetInventory, setInventory } from '../../redux/InventoryReducer';
+import CharacterAccessDenied from './CharacterAccessDenied';
 
 const StatsRowContainer = styled(Row)`
     display: flex;
@@ -117,6 +118,8 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
     const [statsApplied, setStatsApplied] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [showItemModal, setShowItemModal] = useState(false);
+    const [editable, setEditable] = useState(editMode);
+    const [isLoadingInitial, setIsLoadingInitial] = useState(true);
 
     // options for dropdowns
     const [classOptions, setClassOptions] = useState<Class[]>([]);
@@ -320,7 +323,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
         event.stopPropagation();
         setValidated(true);
 
-        if (user && form.checkValidity() && !editMode) {
+        if (user && form.checkValidity() && !editable) {
             const database = firebaseDatabase;
             const charRef = ref(database, 'characters');
 
@@ -355,7 +358,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                     toggleToast();
                     console.error(error);
                 });
-        } else if (editMode && form.checkValidity()) {
+        } else if (editable && form.checkValidity()) {
             const charRef = ref(firebaseDatabase, `characters/${charId}`);
 
             const charData = {
@@ -551,6 +554,12 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                 const response = await get(charRef);
                 if (response.exists()) {
                     const charData = response.val();
+                    if (charData.owner !== user?.uid) {
+                        setEditable(false);
+                        setIsLoadingInitial(false);
+                        return;
+                    }
+                    setEditable(true);
                     setCustomClass(true);
                     setCustomRace(true);
                     setCharName(charData.name);
@@ -566,11 +575,14 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                     if (charData.inventory) {
                         dispatch(setInventory(charData.inventory));
                     }
+                } else {
+                    setEditable(false);
                 }
+                setIsLoadingInitial(false);
             };
             fetchInitialValues();
         }
-    }, [editMode, charId, dispatch]);
+    }, [editMode, charId, dispatch, user?.uid]);
 
     useEffect(() => {
         //on unmount, reset inventory
@@ -581,336 +593,347 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
 
     return (
         <div data-testid="character-creation-page-container">
-            <Container fluid>
-                <div className="d-flex justify-content-center">
-                    <h2>
-                        {editMode ? 'Edit a Character' : 'Create a Character'}
-                    </h2>
-                </div>
-                <Form
-                    onSubmit={onSubmit}
-                    validated={validated}
-                    noValidate
-                    data-testid="character-creation-form"
-                >
-                    <Row style={{ marginBottom: '10px' }}>
-                        <h4>Basic Info</h4>
-                        <Col sm={8}>
-                            <Form.Group>
-                                <Form.Label>
-                                    <h5>Character Name</h5>
-                                </Form.Label>
-                                <NameInput
-                                    required
-                                    type="text"
-                                    onChange={onNameChange}
-                                    value={charName}
-                                    data-testid="char-name-input"
-                                    maxLength={50}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter a name for your character.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                        </Col>
-                        <Col sm={4}>
-                            <Form.Group>
-                                <Form.Label>
-                                    <h5>Character Race</h5>
-                                </Form.Label>
-                                <SwapToCustomClass
-                                    onClick={onCustomRaceButtonClick}
-                                    data-testid="char-custom-race-btn"
-                                >
-                                    {showCustomRaceButtonContent()}
-                                </SwapToCustomClass>
-                                {customRace ? (
-                                    <Form.Control
-                                        required
-                                        type="text"
-                                        onChange={onRaceChange}
-                                        value={charRace?.name || ''}
-                                        data-testid="char-race-input"
-                                    />
-                                ) : (
-                                    <Dropdown
-                                        options={raceOptions}
-                                        onOptChange={onRaceDropdownChange}
-                                        data-testid="char-race-dropdown"
-                                    />
-                                )}
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter a race for your character.
-                                </Form.Control.Feedback>
-                                <Form.Text>
-                                    {!validated &&
-                                        customRace &&
-                                        'Enter the name of your custom race'}
-                                </Form.Text>
-                            </Form.Group>
-                        </Col>
-                    </Row>
-                    <Row className="justify-content-center">
-                        <Col sm={6}>
-                            <Form.Group>
-                                <Form.Label>
-                                    <h5>Character Class</h5>
-                                </Form.Label>
-                                <SwapToCustomClass
-                                    onClick={onCustomClassButtonClick}
-                                    data-testid="char-custom-class-btn"
-                                >
-                                    {showCustomClassButtonContent()}
-                                </SwapToCustomClass>
-                                {customClass ? (
-                                    <Form.Control
-                                        required
-                                        type="text"
-                                        onChange={onClassChange}
-                                        value={charClass?.name || ''}
-                                        data-testid="char-class-input"
-                                    />
-                                ) : (
-                                    <Dropdown
-                                        options={classOptions}
-                                        onOptChange={onClassDropdownChange}
-                                        data-testid="char-class-dropdown"
-                                    />
-                                )}
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter a class for your character.
-                                </Form.Control.Feedback>
-                                <Form.Text>
-                                    {!validated &&
-                                        customClass &&
-                                        'Enter the name of your custom class'}
-                                </Form.Text>
-                            </Form.Group>
-                        </Col>
-                        <Col sm={2}>
-                            <Form.Group>
-                                <Form.Label>
-                                    <h5>Level</h5>
-                                </Form.Label>
-                                <Form.Control
-                                    required
-                                    type="text"
-                                    onChange={onLevelChange}
-                                    value={charLvl}
-                                    data-testid="char-lvl-input"
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter a level for your character.
-                                </Form.Control.Feedback>
-                                <Form.Text>
-                                    {`Proficiency Bonus: +${calculateProficiencyBonus(charLvl)}`}
-                                </Form.Text>
-                            </Form.Group>
-                        </Col>
-                        <Col sm={2}>
-                            <Form.Group>
-                                <Form.Label>
-                                    <h5>Max HP</h5>
-                                </Form.Label>
-                                <Form.Control
-                                    required
-                                    type="text"
-                                    onChange={onMaxHPChange}
-                                    value={charMaxHP}
-                                    data-testid="char-max-hp"
-                                />
-                                <Form.Text>{`Max Hit Die + CON modifier`}</Form.Text>
-                            </Form.Group>
-                        </Col>
-                        <Col sm={2}>
-                            <Form.Group>
-                                <Form.Label>
-                                    <h5>Hit Die</h5>
-                                </Form.Label>
-                                <Form.Select
-                                    value={`d${hitDie}`}
-                                    onChange={onHitDieChange}
-                                    data-testid="hit-die-select"
-                                >
-                                    <option key={6}>d6</option>
-                                    <option key={8}>d8</option>
-                                    <option key={10}>d10</option>
-                                    <option key={12}>d12</option>
-                                </Form.Select>
-                            </Form.Group>
-                        </Col>
-                    </Row>
-                    <hr />
-                    <Row>
-                        <Col md="auto">
-                            <h4>Skills</h4>
-                            <Alert
-                                show={!customClass && charClass !== null}
-                                variant="info"
-                                style={{ width: '286px' }}
-                                data-testid="class-info-alert"
-                            >
-                                <b>{charClass?.name}:</b> {proficienciesInfo}
-                            </Alert>
-                            <Proficiencies
-                                charLvl={charLvl}
-                                charSkills={charSkills}
-                                onSwitchChange={onSwitchChange}
-                                editMode={true}
-                            />
-                        </Col>
-                        <Col>
-                            <StatsRowContainer>
-                                <h4>Stats</h4>
-                                <Row>
-                                    <Alert
-                                        show={!customRace && charRace !== null}
-                                        variant="info"
-                                        data-testid="race-info-alert"
-                                    >
-                                        <Row>
-                                            <Col className="d-flex my-auto">
-                                                <b>{charRace?.name}</b>:{' '}
-                                                {statInfo()}
-                                            </Col>
-                                            <Col className="d-flex justify-content-end">
-                                                <Button
-                                                    data-testid="apply-bonus-btn"
-                                                    onClick={applyStatBonus}
-                                                    variant={
-                                                        statsApplied
-                                                            ? 'outline-info'
-                                                            : 'info'
-                                                    }
-                                                    disabled={statsApplied}
-                                                >
-                                                    {statsApplied
-                                                        ? 'Bonuses Applied'
-                                                        : 'Apply Bonuses'}
-                                                </Button>
-                                            </Col>
-                                        </Row>
-                                    </Alert>
-                                </Row>
-                                {renderStatsForm()}
-                                <Row>
-                                    <Col className="d-flex justify-content-end">
-                                        <StatsButtons
-                                            onClick={onRollStats}
-                                            size="sm"
-                                            data-testid="roll-stats"
-                                        >
-                                            Randomize
-                                        </StatsButtons>
-                                    </Col>
-                                    <Col>
-                                        <StatsButtons
-                                            onClick={onResetStats}
-                                            size="sm"
-                                            variant="danger"
-                                            data-testid="reset-stats"
-                                        >
-                                            Reset
-                                        </StatsButtons>
-                                    </Col>
-                                </Row>
-                            </StatsRowContainer>
-                            <h4>Other</h4>
-                            <Row>
-                                <h5>Traits</h5>
-                                <CharacterTraits
-                                    traits={charTraits}
-                                    edit
-                                    addNewTrait={onAddTraitClick}
-                                    removeTrait={onRemoveTraitClick}
-                                />
-                            </Row>
-                            <br />
-                            <Row>
-                                <h5>Languages</h5>
-                                <CharacterLanguages
-                                    langList={charLanguages}
-                                    edit={true}
-                                    onAddLang={onAddLanguageClick}
-                                    onRemoveLang={onRemoveLanguageClick}
-                                />
-                            </Row>
-                            <br />
-                            <Row>
-                                <h5>Inventory</h5>
-                                <Inventory
-                                    onAddClick={() => setShowItemModal(true)}
-                                    edit
-                                />
-                            </Row>
-                            <br />
-                            <Row>
+            {editMode && !editable && !isLoadingInitial ? (
+                <CharacterAccessDenied />
+            ) : (
+                <Container fluid>
+                    <div className="d-flex justify-content-center">
+                        <h2>
+                            {editMode
+                                ? 'Edit a Character'
+                                : 'Create a Character'}
+                        </h2>
+                    </div>
+                    <Form
+                        onSubmit={onSubmit}
+                        validated={validated}
+                        noValidate
+                        data-testid="character-creation-form"
+                    >
+                        <Row style={{ marginBottom: '10px' }}>
+                            <h4>Basic Info</h4>
+                            <Col sm={8}>
                                 <Form.Group>
                                     <Form.Label>
-                                        <h5>Description/Notes</h5>
+                                        <h5>Character Name</h5>
                                     </Form.Label>
-                                    <DescriptionBox
+                                    <NameInput
+                                        required
                                         type="text"
-                                        onChange={onDescChange}
-                                        value={charDesc}
-                                        as="textarea"
-                                        data-testid="char-description-input"
+                                        onChange={onNameChange}
+                                        value={charName}
+                                        data-testid="char-name-input"
+                                        maxLength={50}
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        Please enter a name for your character.
+                                    </Form.Control.Feedback>
                                 </Form.Group>
-                            </Row>
-                            <Row>
-                                <Form.Group
-                                    controlId="formFileLg"
-                                    className="mb-3"
-                                >
+                            </Col>
+                            <Col sm={4}>
+                                <Form.Group>
                                     <Form.Label>
-                                        Upload an image (TODO)
+                                        <h5>Character Race</h5>
+                                    </Form.Label>
+                                    <SwapToCustomClass
+                                        onClick={onCustomRaceButtonClick}
+                                        data-testid="char-custom-race-btn"
+                                    >
+                                        {showCustomRaceButtonContent()}
+                                    </SwapToCustomClass>
+                                    {customRace ? (
+                                        <Form.Control
+                                            required
+                                            type="text"
+                                            onChange={onRaceChange}
+                                            value={charRace?.name || ''}
+                                            data-testid="char-race-input"
+                                        />
+                                    ) : (
+                                        <Dropdown
+                                            options={raceOptions}
+                                            onOptChange={onRaceDropdownChange}
+                                            data-testid="char-race-dropdown"
+                                        />
+                                    )}
+                                    <Form.Control.Feedback type="invalid">
+                                        Please enter a race for your character.
+                                    </Form.Control.Feedback>
+                                    <Form.Text>
+                                        {!validated &&
+                                            customRace &&
+                                            'Enter the name of your custom race'}
+                                    </Form.Text>
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                        <Row className="justify-content-center">
+                            <Col sm={6}>
+                                <Form.Group>
+                                    <Form.Label>
+                                        <h5>Character Class</h5>
+                                    </Form.Label>
+                                    <SwapToCustomClass
+                                        onClick={onCustomClassButtonClick}
+                                        data-testid="char-custom-class-btn"
+                                    >
+                                        {showCustomClassButtonContent()}
+                                    </SwapToCustomClass>
+                                    {customClass ? (
+                                        <Form.Control
+                                            required
+                                            type="text"
+                                            onChange={onClassChange}
+                                            value={charClass?.name || ''}
+                                            data-testid="char-class-input"
+                                        />
+                                    ) : (
+                                        <Dropdown
+                                            options={classOptions}
+                                            onOptChange={onClassDropdownChange}
+                                            data-testid="char-class-dropdown"
+                                        />
+                                    )}
+                                    <Form.Control.Feedback type="invalid">
+                                        Please enter a class for your character.
+                                    </Form.Control.Feedback>
+                                    <Form.Text>
+                                        {!validated &&
+                                            customClass &&
+                                            'Enter the name of your custom class'}
+                                    </Form.Text>
+                                </Form.Group>
+                            </Col>
+                            <Col sm={2}>
+                                <Form.Group>
+                                    <Form.Label>
+                                        <h5>Level</h5>
                                     </Form.Label>
                                     <Form.Control
-                                        type="file"
-                                        accept=".png,.jpeg"
-                                        disabled
+                                        required
+                                        type="text"
+                                        onChange={onLevelChange}
+                                        value={charLvl}
+                                        data-testid="char-lvl-input"
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        Please enter a level for your character.
+                                    </Form.Control.Feedback>
+                                    <Form.Text>
+                                        {`Proficiency Bonus: +${calculateProficiencyBonus(charLvl)}`}
+                                    </Form.Text>
                                 </Form.Group>
-                            </Row>
-                        </Col>
-                    </Row>
-                    <Toast show={showToast} onClose={toggleToastOff}>
-                        <Toast.Header>
-                            <strong className="me-auto">Error</strong>
-                        </Toast.Header>
-                        <Toast.Body>
-                            Something went wrong, please try again
-                        </Toast.Body>
-                    </Toast>
-                    <SubmitButtonContainer>
-                        <Button
-                            type="submit"
-                            size="lg"
-                            data-testid="create-char-submit"
-                            style={{ marginRight: '10px' }}
-                        >
-                            {editMode ? 'Save' : 'Create Character!'}
-                        </Button>
-                        {editMode ? (
+                            </Col>
+                            <Col sm={2}>
+                                <Form.Group>
+                                    <Form.Label>
+                                        <h5>Max HP</h5>
+                                    </Form.Label>
+                                    <Form.Control
+                                        required
+                                        type="text"
+                                        onChange={onMaxHPChange}
+                                        value={charMaxHP}
+                                        data-testid="char-max-hp"
+                                    />
+                                    <Form.Text>{`Max Hit Die + CON modifier`}</Form.Text>
+                                </Form.Group>
+                            </Col>
+                            <Col sm={2}>
+                                <Form.Group>
+                                    <Form.Label>
+                                        <h5>Hit Die</h5>
+                                    </Form.Label>
+                                    <Form.Select
+                                        value={`d${hitDie}`}
+                                        onChange={onHitDieChange}
+                                        data-testid="hit-die-select"
+                                    >
+                                        <option key={6}>d6</option>
+                                        <option key={8}>d8</option>
+                                        <option key={10}>d10</option>
+                                        <option key={12}>d12</option>
+                                    </Form.Select>
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                        <hr />
+                        <Row>
+                            <Col md="auto">
+                                <h4>Skills</h4>
+                                <Alert
+                                    show={!customClass && charClass !== null}
+                                    variant="info"
+                                    style={{ width: '286px' }}
+                                    data-testid="class-info-alert"
+                                >
+                                    <b>{charClass?.name}:</b>{' '}
+                                    {proficienciesInfo}
+                                </Alert>
+                                <Proficiencies
+                                    charLvl={charLvl}
+                                    charSkills={charSkills}
+                                    onSwitchChange={onSwitchChange}
+                                    editMode={true}
+                                />
+                            </Col>
+                            <Col>
+                                <StatsRowContainer>
+                                    <h4>Stats</h4>
+                                    <Row>
+                                        <Alert
+                                            show={
+                                                !customRace && charRace !== null
+                                            }
+                                            variant="info"
+                                            data-testid="race-info-alert"
+                                        >
+                                            <Row>
+                                                <Col className="d-flex my-auto">
+                                                    <b>{charRace?.name}</b>:{' '}
+                                                    {statInfo()}
+                                                </Col>
+                                                <Col className="d-flex justify-content-end">
+                                                    <Button
+                                                        data-testid="apply-bonus-btn"
+                                                        onClick={applyStatBonus}
+                                                        variant={
+                                                            statsApplied
+                                                                ? 'outline-info'
+                                                                : 'info'
+                                                        }
+                                                        disabled={statsApplied}
+                                                    >
+                                                        {statsApplied
+                                                            ? 'Bonuses Applied'
+                                                            : 'Apply Bonuses'}
+                                                    </Button>
+                                                </Col>
+                                            </Row>
+                                        </Alert>
+                                    </Row>
+                                    {renderStatsForm()}
+                                    <Row>
+                                        <Col className="d-flex justify-content-end">
+                                            <StatsButtons
+                                                onClick={onRollStats}
+                                                size="sm"
+                                                data-testid="roll-stats"
+                                            >
+                                                Randomize
+                                            </StatsButtons>
+                                        </Col>
+                                        <Col>
+                                            <StatsButtons
+                                                onClick={onResetStats}
+                                                size="sm"
+                                                variant="danger"
+                                                data-testid="reset-stats"
+                                            >
+                                                Reset
+                                            </StatsButtons>
+                                        </Col>
+                                    </Row>
+                                </StatsRowContainer>
+                                <h4>Other</h4>
+                                <Row>
+                                    <h5>Traits</h5>
+                                    <CharacterTraits
+                                        traits={charTraits}
+                                        edit
+                                        addNewTrait={onAddTraitClick}
+                                        removeTrait={onRemoveTraitClick}
+                                    />
+                                </Row>
+                                <br />
+                                <Row>
+                                    <h5>Languages</h5>
+                                    <CharacterLanguages
+                                        langList={charLanguages}
+                                        edit={true}
+                                        onAddLang={onAddLanguageClick}
+                                        onRemoveLang={onRemoveLanguageClick}
+                                    />
+                                </Row>
+                                <br />
+                                <Row>
+                                    <h5>Inventory</h5>
+                                    <Inventory
+                                        onAddClick={() =>
+                                            setShowItemModal(true)
+                                        }
+                                        edit
+                                    />
+                                </Row>
+                                <br />
+                                <Row>
+                                    <Form.Group>
+                                        <Form.Label>
+                                            <h5>Description/Notes</h5>
+                                        </Form.Label>
+                                        <DescriptionBox
+                                            type="text"
+                                            onChange={onDescChange}
+                                            value={charDesc}
+                                            as="textarea"
+                                            data-testid="char-description-input"
+                                        />
+                                    </Form.Group>
+                                </Row>
+                                <Row>
+                                    <Form.Group
+                                        controlId="formFileLg"
+                                        className="mb-3"
+                                    >
+                                        <Form.Label>
+                                            Upload an image (TODO)
+                                        </Form.Label>
+                                        <Form.Control
+                                            type="file"
+                                            accept=".png,.jpeg"
+                                            disabled
+                                        />
+                                    </Form.Group>
+                                </Row>
+                            </Col>
+                        </Row>
+                        <Toast show={showToast} onClose={toggleToastOff}>
+                            <Toast.Header>
+                                <strong className="me-auto">Error</strong>
+                            </Toast.Header>
+                            <Toast.Body>
+                                Something went wrong, please try again
+                            </Toast.Body>
+                        </Toast>
+                        <SubmitButtonContainer>
                             <Button
+                                type="submit"
                                 size="lg"
-                                variant="outline-secondary"
-                                onClick={onCancelEdit}
-                                data-testid="edit-cancel-btn"
+                                data-testid="create-char-submit"
+                                style={{ marginRight: '10px' }}
                             >
-                                Cancel
+                                {editMode ? 'Save' : 'Create Character!'}
                             </Button>
-                        ) : null}
-                    </SubmitButtonContainer>
-                </Form>
-                <ItemModal
-                    showModal={showItemModal}
-                    closeModal={closeModal}
-                    allEquipment={allEquipment}
-                    categories={equipmentCategories}
-                />
-            </Container>
+                            {editMode ? (
+                                <Button
+                                    size="lg"
+                                    variant="outline-secondary"
+                                    onClick={onCancelEdit}
+                                    data-testid="edit-cancel-btn"
+                                >
+                                    Cancel
+                                </Button>
+                            ) : null}
+                        </SubmitButtonContainer>
+                    </Form>
+                    <ItemModal
+                        showModal={showItemModal}
+                        closeModal={closeModal}
+                        allEquipment={allEquipment}
+                        categories={equipmentCategories}
+                    />
+                </Container>
+            )}
         </div>
     );
 };

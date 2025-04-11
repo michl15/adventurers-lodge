@@ -734,5 +734,36 @@ describe('CharacterCreationPage', () => {
             expect(update).not.toHaveBeenCalled();
         });
     });
+
+    test('edit form with mismatched uid', async () => {
+        const store = setupStore();
+        const diffUser = { ...mockUser, uid: 'diffId' };
+        store.dispatch(updateUser(diffUser as CurrentUser));
+        (get as jest.Mock).mockResolvedValue({
+            exists: () => true,
+            val: () => mockCharacterData,
+        });
+        (update as jest.Mock).mockResolvedValue('');
+        renderWithProviders(<CharacterCreationPage editMode />, { store });
+
+        expect(
+            await screen.findByTestId('character-access-denied')
+        ).toBeInTheDocument();
+    });
+
+    test('edit form with invalid charId', async () => {
+        const store = setupStore();
+        store.dispatch(updateUser(mockUser as CurrentUser));
+        (get as jest.Mock).mockResolvedValue({
+            exists: () => false,
+            val: () => mockCharacterData,
+        });
+        (update as jest.Mock).mockResolvedValue('');
+        renderWithProviders(<CharacterCreationPage editMode />, { store });
+
+        expect(
+            await screen.findByTestId('character-access-denied')
+        ).toBeInTheDocument();
+    });
     //#endregion
 });
