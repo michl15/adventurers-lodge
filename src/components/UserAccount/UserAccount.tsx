@@ -12,7 +12,6 @@ import {
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
 import { PencilSquare } from 'react-bootstrap-icons';
-import { getAuth } from 'firebase/auth';
 import { ref, update } from 'firebase/database';
 import { firebaseDatabase } from '../../firebase/firebase';
 import { updateDisplayName } from '../../redux/UserReducer';

@@ -1,13 +1,12 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import CharacterCreationPage from '../CharacterCreationPage';
-import { User } from 'firebase/auth';
 import { push, set } from 'firebase/database';
 import { rollStat } from '../../../util/calculations';
-import { Provider } from 'react-redux';
-import { setupStore, store } from '../../../redux';
+import { setupStore } from '../../../redux';
 import { renderWithProviders } from '../../../util/test-utils';
 import { updateUser } from '../../../redux/UserReducer';
 import { mockUser } from '../../../constants/mockData';
+import { CurrentUser } from '../../../constants/types';
 
 const mockedUseNavigate = jest.fn();
 window.scrollTo = jest.fn();
@@ -596,7 +595,7 @@ describe('CharacterCreationPage', () => {
 
     test('submit button click valid form', async () => {
         const store = setupStore();
-        store.dispatch(updateUser(mockUser as User));
+        store.dispatch(updateUser(mockUser as CurrentUser));
         (set as jest.Mock).mockResolvedValue('');
         (push as jest.Mock).mockReturnValue({ key: 'testkey' });
         renderWithProviders(<CharacterCreationPage />, { store });
@@ -624,7 +623,7 @@ describe('CharacterCreationPage', () => {
 
     test('submit button click valid form with error', async () => {
         const store = setupStore();
-        store.dispatch(updateUser(mockUser as User));
+        store.dispatch(updateUser(mockUser as CurrentUser));
         (set as jest.Mock).mockRejectedValue('');
         (push as jest.Mock).mockReturnValue({ key: 'testkey' });
         renderWithProviders(<CharacterCreationPage />, { store });

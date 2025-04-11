@@ -1,4 +1,4 @@
-import { PropsWithChildren, useEffect, useState } from 'react';
+import { PropsWithChildren, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { firebaseAuth, firebaseDatabase } from '../../firebase/firebase';
 import { useDispatch } from 'react-redux';
@@ -11,30 +11,31 @@ const AuthBoundary = (props: PropsWithChildren) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const setUserData = async (currUser: CurrentUser) => {
-        if (currUser.uid) {
-            const userRef = ref(
-                firebaseDatabase,
-                `users/${currUser?.uid}/userData`
-            );
-            const snapshot = await get(userRef);
-
-            const userData: CurrentUser = snapshot.val();
-            const newUserData: CurrentUser = {
-                uid: userData?.uid || currUser.uid,
-                displayName: userData?.displayName || currUser.displayName,
-                email: userData?.email || currUser.email,
-                emailVerified:
-                    userData?.emailVerified || currUser.emailVerified,
-                photoURL: userData?.photoURL || currUser.photoURL,
-            };
-            update(userRef, newUserData);
-            dispatch(updateUser(newUserData));
-        }
-    };
-
     useEffect(() => {
         if (pathname !== '/') {
+            const setUserData = async (currUser: CurrentUser) => {
+                if (currUser.uid) {
+                    const userRef = ref(
+                        firebaseDatabase,
+                        `users/${currUser?.uid}/userData`
+                    );
+                    const snapshot = await get(userRef);
+
+                    const userData: CurrentUser = snapshot.val();
+                    const newUserData: CurrentUser = {
+                        uid: userData?.uid || currUser.uid,
+                        displayName:
+                            userData?.displayName || currUser.displayName,
+                        email: userData?.email || currUser.email,
+                        emailVerified:
+                            userData?.emailVerified || currUser.emailVerified,
+                        photoURL: userData?.photoURL || currUser.photoURL,
+                    };
+                    update(userRef, newUserData);
+                    dispatch(updateUser(newUserData));
+                }
+            };
+
             firebaseAuth.onAuthStateChanged((user) => {
                 if (!user) {
                     navigate('/auth_error');
@@ -50,7 +51,7 @@ const AuthBoundary = (props: PropsWithChildren) => {
                 }
             });
         }
-    }, [pathname, navigate, dispatch, setUserData]);
+    }, [pathname, navigate, dispatch]);
 
     return props.children;
 };
