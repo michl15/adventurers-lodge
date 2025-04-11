@@ -16,6 +16,8 @@ import { store } from './redux';
 import ErrorBoundary from './components/ErrorBoundary';
 import AuthErrorScreen from './components/AuthErrorScreen';
 import AuthBoundary from './components/AuthBoundary';
+import UserProfile from './components/UserProfile';
+import UserAccount from './components/UserAccount';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -41,6 +43,14 @@ root.render(
                                 <Route
                                     path="/auth_error"
                                     element={<AuthErrorScreen />}
+                                />
+                                <Route
+                                    path="/profile/:uid"
+                                    element={<UserProfile />}
+                                />
+                                <Route
+                                    path="/account"
+                                    element={<UserAccount />}
                                 />
                             </Routes>
                         </PageContainer>

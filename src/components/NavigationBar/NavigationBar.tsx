@@ -1,7 +1,8 @@
 import { signOut } from 'firebase/auth';
 import {
-    Button,
     Container,
+    Dropdown,
+    DropdownButton,
     Nav,
     Navbar,
     NavbarBrand,
@@ -10,20 +11,31 @@ import {
 import { Link, useLocation, useNavigate } from 'react-router';
 import { firebaseAuth } from '../../firebase/firebase';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { removeUser } from '../../redux/UserReducer';
+import { PersonCircle } from 'react-bootstrap-icons';
+import { RootState } from '../../redux';
 
 const NavigationBar = () => {
     const [showNavBar, setShowNavBar] = useState<boolean>(false);
     const navigate = useNavigate();
     const location = useLocation();
     const dispatch = useDispatch();
+    const user = useSelector((state: RootState) => state.user.user);
 
     const onSignOut = () => {
         signOut(firebaseAuth).then(() => {
             navigate('/');
         });
         dispatch(removeUser());
+    };
+
+    const onAccountClick = () => {
+        navigate(`/profile/${user?.uid}`);
+    };
+
+    const onSettingsClick = () => {
+        navigate(`/account`);
     };
 
     useEffect(() => {
@@ -39,6 +51,7 @@ const NavigationBar = () => {
                 variant="dark"
                 sticky="top"
                 data-testid="navigation-bar"
+                style={{ padding: '15px 0px' }}
             >
                 <Container fluid>
                     <Nav>
@@ -60,17 +73,41 @@ const NavigationBar = () => {
                             </NavDropdown.Item>
                         </NavDropdown>
                     </Nav>
-                    <Nav className="justify-content-end">
-                        <Nav.Link>
-                            <Button
-                                onClick={onSignOut}
-                                variant="outline-light"
-                                data-testid="navbar-sign-out-btn"
-                            >
-                                Sign Out
-                            </Button>
-                        </Nav.Link>
-                    </Nav>
+                    <DropdownButton
+                        className="justify-content-end"
+                        variant="outline-light"
+                        data-testid="navbar-dropdown-btn"
+                        title={
+                            <>
+                                <PersonCircle
+                                    style={{ margin: '0px 5px 3px 0px' }}
+                                />
+                                {user?.displayName
+                                    ? user.displayName
+                                    : 'Profile'}
+                            </>
+                        }
+                        align="end"
+                    >
+                        <Dropdown.Item
+                            onClick={onAccountClick}
+                            data-testid="profile-btn"
+                        >
+                            View Profile
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                            onClick={onSettingsClick}
+                            data-testid="account-btn"
+                        >
+                            Account Settings
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                            onClick={onSignOut}
+                            data-testid="signout-btn"
+                        >
+                            Sign Out
+                        </Dropdown.Item>
+                    </DropdownButton>
                 </Container>
             </Navbar>
         )

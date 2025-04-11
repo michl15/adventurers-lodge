@@ -9,9 +9,11 @@ import {
     StyledForm,
     StyledHeader,
 } from './LoginStyles';
-import { firebaseAuth } from '../../firebase/firebase';
+import { firebaseAuth, firebaseDatabase } from '../../firebase/firebase';
 import { useDispatch } from 'react-redux';
 import { updateUser } from '../../redux/UserReducer';
+import { CurrentUser } from '../../constants/types';
+import { get, ref, update } from 'firebase/database';
 
 const LoginPage = () => {
     const auth = firebaseAuth;
@@ -27,9 +29,35 @@ const LoginPage = () => {
                 //const token = credential?.accessToken;
                 // The signed-in user info.
                 const user = result.user;
-                dispatch(updateUser(user));
+                const userRef = ref(
+                    firebaseDatabase,
+                    `users/${user.uid}/userData`
+                );
+                const snapshot = await get(userRef);
+                let userData;
+                if (snapshot.exists()) {
+                    userData = snapshot.val();
+                } else {
+                    const newUserData: CurrentUser = {
+                        uid: user.uid,
+                        displayName: user.displayName,
+                        email: user.email,
+                        emailVerified: user.emailVerified,
+                        photoURL: user.photoURL,
+                    };
+                    update(userRef, newUserData);
+                }
 
-                //console.log(credential, token, user);
+                const newUser: CurrentUser = {
+                    uid: userData?.uid || user.uid,
+                    displayName: userData?.displayName || user.displayName,
+                    email: userData?.email || user.email,
+                    emailVerified:
+                        userData?.emailVerified || user.emailVerified,
+                    photoURL: userData?.emailVerified || user.photoURL,
+                };
+                dispatch(updateUser(newUser));
+
                 navigate('home');
             }
         } catch (error) {
@@ -38,34 +66,6 @@ const LoginPage = () => {
                 'The above error occurred while attempting to signInWithPopup'
             );
         }
-        /*         signInWithPopup(auth, provider)
-                    .then((result) => {
-                        // This gives you a Google Access Token. You can use it to access the Google API.
-                        const credential =
-                            GoogleAuthProvider.credentialFromResult(result);
-                        const token = credential?.accessToken;
-                        // The signed-in user info.
-                        const user = result.user;
-                        // IdP data available using getAdditionalUserInfo(result)
-        
-                        console.log(credential, token, user);
-                        navigate('home');
-        
-                        // ...
-                    })
-                    .catch((error) => {
-                        // Handle Errors here.
-                        const errorCode = error.code;
-                        const errorMessage = error.message;
-                        // The email of the user's account used.
-                        const email = error.customData.email;
-                        // The AuthCredential type that was used.
-                        const credential =
-                            GoogleAuthProvider.credentialFromError(error);
-        
-                        console.log(errorCode, errorMessage, email, credential);
-                        // ...
-                    }); */
     };
 
     return (

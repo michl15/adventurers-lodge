@@ -3,6 +3,7 @@ import { Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import { CharacterData } from '../../../constants/types';
+import { shortenString } from '../../../util/stringFormatting';
 
 const CharCard = styled(Card)`
     padding: 10px;
@@ -13,16 +14,16 @@ type CharacterCardProps = {
 };
 
 const CharacterCard = ({ characterData }: CharacterCardProps) => {
-    const name = characterData.name;
+    const { name, race, level, key } = characterData;
     const charClass = characterData.class;
-    const charLevel = characterData.level;
-    const charId = characterData.key;
 
     const navigate = useNavigate();
 
     const onCharacterClick = () => {
-        navigate(`/characters/${charId}`);
+        navigate(`/characters/${key}`);
     };
+
+    const descriptionString = `Level ${level} ${race.name} ${charClass.name}`;
 
     return (
         <CharCard
@@ -31,10 +32,10 @@ const CharacterCard = ({ characterData }: CharacterCardProps) => {
             data-testid="character-card"
         >
             <Card.Body>
-                <h3 data-testid="character-card-name">{name}</h3>
-                <p>
-                    Level {charLevel} {charClass?.name}
-                </p>
+                <h4 data-testid="character-card-name">
+                    {shortenString(name, 15)}
+                </h4>
+                <p>{shortenString(descriptionString, 30)}</p>
             </Card.Body>
         </CharCard>
     );

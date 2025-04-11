@@ -1,5 +1,5 @@
 import { BASE_STATS, DEFAULT_PROFICIENCIES } from './constants';
-import { CharacterData, Equipment, EquipmentData } from './types';
+import { CharacterData, CurrentUser, Equipment, EquipmentData } from './types';
 
 const mockCharacterData: CharacterData = {
     name: 'mock char',
@@ -26,8 +26,12 @@ const mockCharacterData: CharacterData = {
     traits: [],
 };
 
-const mockUser = {
+const mockUser: CurrentUser = {
     uid: 'mockid',
+    displayName: 'test',
+    photoURL: 'test',
+    email: 'test',
+    emailVerified: false,
 };
 
 const mockSword: EquipmentData = {

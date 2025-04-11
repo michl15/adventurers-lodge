@@ -114,6 +114,14 @@ type EquipmentCategory = {
     url: string | boolean;
 };
 
+type CurrentUser = {
+    uid: string;
+    displayName: string | null;
+    email: string | null;
+    emailVerified: boolean;
+    photoURL: string | null;
+};
+
 export type {
     ProficienciesTypes,
     CharacterData,
@@ -129,4 +137,5 @@ export type {
     Equipment,
     EquipmentCategory,
     EquipmentData,
+    CurrentUser,
 };
