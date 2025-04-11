@@ -17,6 +17,7 @@ type CharacterData = {
     race: Race;
     languages: Language[];
     traits: Trait[];
+    owner: string;
 };
 
 type Item = {

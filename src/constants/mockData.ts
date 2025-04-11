@@ -24,6 +24,7 @@ const mockCharacterData: CharacterData = {
     },
     languages: [],
     traits: [],
+    owner: 'test uid',
 };
 
 const mockUser: CurrentUser = {

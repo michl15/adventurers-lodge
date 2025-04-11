@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, Button, Col, Container, Form, Row } from 'react-bootstrap';
-import { push, ref, set } from 'firebase/database';
+import { get, push, ref, set, update } from 'firebase/database';
 import { Toast } from 'react-bootstrap';
 import { firebaseDatabase } from '../../firebase/firebase';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import styled from 'styled-components';
 import { BASE_STATS, DEFAULT_PROFICIENCIES } from '../../constants/constants';
 import {
@@ -37,7 +37,7 @@ import ItemModal from '../ItemModal';
 import Inventory from '../Inventory';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux';
-import { resetInventory } from '../../redux/InventoryReducer';
+import { resetInventory, setInventory } from '../../redux/InventoryReducer';
 
 const StatsRowContainer = styled(Row)`
     display: flex;
@@ -85,7 +85,11 @@ const SwapToCustomClass = styled.span`
     }
 `;
 
-const CharacterCreationPage = () => {
+type CharacterCreationPageProps = {
+    editMode?: boolean;
+};
+
+const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
     // #region State
     // Character input fields
     const [charName, setCharName] = useState<string>('');
@@ -123,7 +127,6 @@ const CharacterCreationPage = () => {
     const [statBonuses, setStatBonuses] = useState<AbilityBonus[]>([]);
 
     // user data for current user
-    //const [user, setUser] = useState<FirebaseUser | null>(null);
     const user = useSelector((state: RootState) => state.user.user);
 
     // redux
@@ -141,6 +144,8 @@ const CharacterCreationPage = () => {
     const toggleToastOff = () => setShowToast(false);
 
     const closeModal = () => setShowItemModal(false);
+
+    const { charId } = useParams();
 
     /* =================================== Input field onChange handlers ===================================== */
     // #region onChange handlers
@@ -315,7 +320,7 @@ const CharacterCreationPage = () => {
         event.stopPropagation();
         setValidated(true);
 
-        if (user && form.checkValidity()) {
+        if (user && form.checkValidity() && !editMode) {
             const database = firebaseDatabase;
             const charRef = ref(database, 'characters');
 
@@ -333,6 +338,7 @@ const CharacterCreationPage = () => {
                 traits: charTraits,
                 hitDie: hitDie,
                 inventory: inventory,
+                owner: user.uid,
             };
 
             const newCharKey = push(charRef, charData).key;
@@ -344,6 +350,32 @@ const CharacterCreationPage = () => {
             set(userRef, true)
                 .then(() => {
                     navigate(`/characters/${newCharKey}`);
+                })
+                .catch((error) => {
+                    toggleToast();
+                    console.error(error);
+                });
+        } else if (editMode && form.checkValidity()) {
+            const charRef = ref(firebaseDatabase, `characters/${charId}`);
+
+            const charData = {
+                name: charName,
+                class: charClass,
+                stats: charStats,
+                level: charLvl,
+                skills: charSkills,
+                hp: charMaxHP,
+                maxHP: charMaxHP,
+                description: charDesc,
+                race: charRace,
+                languages: charLanguages,
+                traits: charTraits,
+                hitDie: hitDie,
+                inventory: inventory,
+            };
+            update(charRef, charData)
+                .then(() => {
+                    navigate(`/characters/${charId}`);
                 })
                 .catch((error) => {
                     toggleToast();
@@ -401,6 +433,10 @@ const CharacterCreationPage = () => {
         }
         setCharStats(newCharStats);
         setStatsApplied(true);
+    };
+
+    const onCancelEdit = () => {
+        navigate(`/characters/${charId}`);
     };
 
     // #endregion onClick handlers
@@ -509,6 +545,34 @@ const CharacterCreationPage = () => {
     }, []);
 
     useEffect(() => {
+        if (editMode) {
+            const fetchInitialValues = async () => {
+                const charRef = ref(firebaseDatabase, `/characters/${charId}`);
+                const response = await get(charRef);
+                if (response.exists()) {
+                    const charData = response.val();
+                    setCustomClass(true);
+                    setCustomRace(true);
+                    setCharName(charData.name);
+                    setCharRace(charData.race);
+                    setCharClass(charData.class);
+                    setCharDesc(charData.description);
+                    setCharLvl(charData.level);
+                    setCharStats(charData.stats);
+                    setCharMaxHP(charData.maxHP);
+                    setCharLanguages(charData.languages);
+                    setCharTraits(charData.traits);
+                    setCharSkills(charData.skills);
+                    if (charData.inventory) {
+                        dispatch(setInventory(charData.inventory));
+                    }
+                }
+            };
+            fetchInitialValues();
+        }
+    }, [editMode, charId, dispatch]);
+
+    useEffect(() => {
         //on unmount, reset inventory
         return () => {
             dispatch(resetInventory());
@@ -519,7 +583,9 @@ const CharacterCreationPage = () => {
         <div data-testid="character-creation-page-container">
             <Container fluid>
                 <div className="d-flex justify-content-center">
-                    <h2>Create a Character</h2>
+                    <h2>
+                        {editMode ? 'Edit a Character' : 'Create a Character'}
+                    </h2>
                 </div>
                 <Form
                     onSubmit={onSubmit}
@@ -822,9 +888,20 @@ const CharacterCreationPage = () => {
                             type="submit"
                             size="lg"
                             data-testid="create-char-submit"
+                            style={{ marginRight: '10px' }}
                         >
-                            Create Character!
+                            {editMode ? 'Save' : 'Create Character!'}
                         </Button>
+                        {editMode ? (
+                            <Button
+                                size="lg"
+                                variant="outline-secondary"
+                                onClick={onCancelEdit}
+                                data-testid="edit-cancel-btn"
+                            >
+                                Cancel
+                            </Button>
+                        ) : null}
                     </SubmitButtonContainer>
                 </Form>
                 <ItemModal

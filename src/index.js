@@ -52,6 +52,10 @@ root.render(
                                     path="/account"
                                     element={<UserAccount />}
                                 />
+                                <Route
+                                    path="/characters/:charId/edit"
+                                    element={<CharacterCreationPage editMode />}
+                                />
                             </Routes>
                         </PageContainer>
                     </AuthBoundary>

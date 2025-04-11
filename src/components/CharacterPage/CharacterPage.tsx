@@ -21,7 +21,10 @@ const CharacterPage = () => {
             const charRef = ref(database, characterPath);
             const snapshot = await get(charRef);
             if (snapshot.exists() && snapshot.val()) {
-                setCharDetails(snapshot.val());
+                setCharDetails({
+                    ...snapshot.val(),
+                    key: charId,
+                });
                 if (snapshot.val().inventory) {
                     dispatch(setInventory(snapshot.val().inventory));
                 }
