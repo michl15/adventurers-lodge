@@ -1,13 +1,19 @@
 import { Database, get, ref } from 'firebase/database';
-import React, { MouseEventHandler, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CharacterCard from '../CharacterCard';
-import { Card, Container, Row } from 'react-bootstrap';
+import {
+    Button,
+    Col,
+    Collapse,
+    Container,
+    Row,
+    Spinner,
+} from 'react-bootstrap';
 import styled from 'styled-components';
-import { PlusCircle } from 'react-bootstrap-icons';
 import { firebaseDatabase } from '../../../firebase/firebase';
-import { useNavigate } from 'react-router';
+import { ChevronDoubleDown, ChevronDoubleUp } from 'react-bootstrap-icons';
 
-const CardContainer = styled(Row)`
+const CardContainer = styled(Col)`
     margin: 10px 0px;
     :hover {
         background-color: #d9f6ff;
@@ -16,19 +22,9 @@ const CardContainer = styled(Row)`
     }
 `;
 
-const CreateAChar = styled(Row)`
-    margin: 10px 0px;
-
-    :hover {
-        background-color: lightgrey;
-        cursor: pointer;
-        border-radius: 5px;
-    }
-`;
-
-const CreateCardContent = styled.div`
-    display: flex;
-    align-items: center;
+const MidLine = styled.div`
+    border-bottom: 1px solid lightgrey;
+    padding-top: 15px;
 `;
 
 type CharacterDisplayProps = {
@@ -37,11 +33,8 @@ type CharacterDisplayProps = {
 
 const CharacterDisplay = ({ uid }: CharacterDisplayProps) => {
     const [characterMap, setCharacterMap] = useState(new Map());
-    const navigate = useNavigate();
-
-    const onCharacterCreationClick = () => {
-        navigate('/character_creation');
-    };
+    const [showAllChars, setShowAllChars] = useState(false);
+    const [charsLoading, setCharsLoading] = useState(true);
 
     useEffect(() => {
         const getCharacterData = async (characters: object, db: Database) => {
@@ -65,6 +58,8 @@ const CharacterDisplay = ({ uid }: CharacterDisplayProps) => {
                 console.error(
                     'The above error occurred while attempting to fetch characterData'
                 );
+            } finally {
+                setCharsLoading(false);
             }
         };
 
@@ -76,6 +71,8 @@ const CharacterDisplay = ({ uid }: CharacterDisplayProps) => {
                 if (snapshot.exists()) {
                     // get the data for those characters
                     getCharacterData(snapshot.val(), db);
+                } else {
+                    setCharsLoading(false);
                 }
             } catch (error) {
                 console.error('CharacterDisplay', error);
@@ -99,44 +96,70 @@ const CharacterDisplay = ({ uid }: CharacterDisplayProps) => {
      * Maps the characterMap to comoponents for rendering
      * @returns all card elements for characters
      */
-    const renderCharacterCards = () => {
-        return [...characterMap.values()].map((char) => (
-            <CardContainer key={char.key}>
+    const renderStartingCards = () => {
+        return [...characterMap.values()].splice(0, 4).map((char) => (
+            <CardContainer key={char.key} md="3">
                 <CharacterCard characterData={char} />
             </CardContainer>
         ));
     };
 
-    /**
-     * Create the card element to add a new character
-     * separated out for readability
-     * @param {Function} onCharacterCreationClick
-     * @returns
-     */
-    const createACharCard = (
-        onCharacterCreationClick: MouseEventHandler<HTMLElement>
-    ) => {
-        return (
-            <Card
-                onClick={onCharacterCreationClick}
-                data-testid="character-creation-card"
-            >
-                <Card.Body>
-                    <CreateCardContent>
-                        <PlusCircle style={{ marginRight: '10px' }} />
-                        <span>Create a new Character</span>
-                    </CreateCardContent>
-                </Card.Body>
-            </Card>
-        );
+    const renderAllCards = () => {
+        return [...characterMap.values()].splice(4).map((char) => (
+            <CardContainer key={char.key} md="3">
+                <CharacterCard characterData={char} />
+            </CardContainer>
+        ));
     };
 
-    return (
+    return !charsLoading ? (
         <Container fluid data-testid="character-display-container">
-            <CreateAChar>
-                {createACharCard(onCharacterCreationClick)}
-            </CreateAChar>
-            {renderCharacterCards()}
+            <Row>{renderStartingCards()}</Row>
+            {characterMap.size > 4 ? (
+                <>
+                    <Row>
+                        <Col>
+                            <MidLine />
+                        </Col>
+                        <Col md="auto">
+                            <Button
+                                size="sm"
+                                onClick={() => setShowAllChars(!showAllChars)}
+                                variant="outline-secondary"
+                                style={{ borderRadius: '100%' }}
+                            >
+                                {!showAllChars ? (
+                                    <ChevronDoubleDown
+                                        style={{ marginBottom: '3px' }}
+                                    />
+                                ) : (
+                                    <ChevronDoubleUp
+                                        style={{ marginBottom: '5px' }}
+                                    />
+                                )}
+                            </Button>
+                        </Col>
+                        <Col>
+                            <MidLine />
+                        </Col>
+                    </Row>
+                    <Collapse in={showAllChars}>
+                        <Row>{renderAllCards()}</Row>
+                    </Collapse>{' '}
+                </>
+            ) : null}
+        </Container>
+    ) : (
+        <Container>
+            <Row
+                className="d-flex justify-content-center"
+                style={{ padding: '10px 0px' }}
+            >
+                <Spinner
+                    variant="info"
+                    style={{ width: '70px', height: '70px' }}
+                />
+            </Row>
         </Container>
     );
 };

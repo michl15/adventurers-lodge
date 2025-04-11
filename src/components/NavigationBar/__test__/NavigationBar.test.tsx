@@ -1,4 +1,10 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import {
+    findByTestId,
+    fireEvent,
+    render,
+    screen,
+    within,
+} from '@testing-library/react';
 import NavigationBar from '../NavigationBar';
 import { BrowserRouter, useLocation } from 'react-router';
 import { signOut } from 'firebase/auth';
@@ -51,18 +57,64 @@ describe('NavigationBar', () => {
         expect(screen.queryByTestId('navigation-bar')).not.toBeInTheDocument();
     });
 
-    test('calls onSignOut on button click', () => {
+    test('goes to account settings page onclick', async () => {
         renderWithProviders(
             <BrowserRouter>
                 <NavigationBar />
             </BrowserRouter>
         );
+        expect(screen.queryByTestId('navigation-bar')).toBeInTheDocument();
 
+        const dropdownElement = await screen.findByTestId(
+            'navbar-dropdown-btn'
+        );
+        const dropdownBtn = await within(dropdownElement).findByRole('button');
+
+        fireEvent.click(dropdownBtn);
+        const accountBtn =
+            await within(dropdownElement).findByTestId('account-btn');
+        fireEvent.click(accountBtn);
+        expect(mockedUseNavigate).toHaveBeenCalledWith('/account');
+    });
+
+    test('goes to account settings page onclick', async () => {
+        renderWithProviders(
+            <BrowserRouter>
+                <NavigationBar />
+            </BrowserRouter>
+        );
+        expect(screen.queryByTestId('navigation-bar')).toBeInTheDocument();
+
+        const dropdownElement = await screen.findByTestId(
+            'navbar-dropdown-btn'
+        );
+        const dropdownBtn = await within(dropdownElement).findByRole('button');
+
+        fireEvent.click(dropdownBtn);
+        const accountBtn =
+            await within(dropdownElement).findByTestId('profile-btn');
+        fireEvent.click(accountBtn);
+        expect(mockedUseNavigate).toHaveBeenCalledWith('/profile/undefined');
+    });
+
+    test('signs out onclick', async () => {
         const mockedSignout = jest.mocked(signOut);
         mockedSignout.mockResolvedValue();
-        const signOutBtn = screen.getByTestId('navbar-sign-out-btn');
-        expect(signOutBtn).toBeInTheDocument();
+        renderWithProviders(
+            <BrowserRouter>
+                <NavigationBar />
+            </BrowserRouter>
+        );
+        expect(screen.queryByTestId('navigation-bar')).toBeInTheDocument();
+
+        const dropdownElement = await screen.findByTestId(
+            'navbar-dropdown-btn'
+        );
+        const dropdownBtn = await within(dropdownElement).findByRole('button');
+
+        fireEvent.click(dropdownBtn);
+        const signOutBtn =
+            await within(dropdownElement).findByTestId('signout-btn');
         fireEvent.click(signOutBtn);
-        expect(signOut).toHaveBeenCalled();
     });
 });

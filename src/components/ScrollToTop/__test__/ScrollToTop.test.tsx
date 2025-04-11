@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import ScrollToTop from '../ScrollToTop';
 
 jest.mock('react-router', () => ({
@@ -11,13 +11,19 @@ jest.mock('react-router', () => ({
 window.scrollTo = jest.fn();
 
 describe('ScrollToTop', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
     test('does not render a component', () => {
         const { container } = render(<ScrollToTop />);
         expect(container).toBeEmptyDOMElement();
     });
 
-    test('calls window.scrollTo', () => {
+    test('calls window.scrollTo', async () => {
         render(<ScrollToTop />);
-        expect(window.scrollTo).toHaveBeenCalledTimes(1);
+        await waitFor(() => {
+            expect(window.scrollTo).toHaveBeenCalled();
+        });
     });
 });

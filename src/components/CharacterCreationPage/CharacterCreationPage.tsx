@@ -540,6 +540,7 @@ const CharacterCreationPage = () => {
                                     onChange={onNameChange}
                                     value={charName}
                                     data-testid="char-name-input"
+                                    maxLength={50}
                                 />
                                 <Form.Control.Feedback type="invalid">
                                     Please enter a name for your character.

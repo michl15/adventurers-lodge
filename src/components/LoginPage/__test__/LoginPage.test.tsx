@@ -75,6 +75,17 @@ jest.mock('firebase/auth', () => {
     };
 });
 
+jest.mock('firebase/database', () => {
+    const mockGet = jest.fn();
+    return {
+        get: mockGet,
+        update: jest.fn(),
+        getDatabase: jest.fn(),
+        ref: jest.fn(),
+        mockGet,
+    };
+});
+
 describe('LoginPage.tsx', () => {
     test('renders component', () => {
         renderWithProviders(<LoginPage />);
@@ -115,9 +126,59 @@ describe('LoginPage.tsx', () => {
         const mockedAuthProvider = jest.mocked(GoogleAuthProvider);
         mockedAuthProvider.credentialFromResult = jest.fn();
 
+        const { mockGet } = require('firebase/database');
+        mockGet.mockResolvedValue({
+            exists: () => true,
+            val: () => ({}),
+        });
+
         const googleSignInButton = screen.getByTestId('google-login-button');
         fireEvent.click(googleSignInButton);
         expect(signInWithPopup).toHaveBeenCalledTimes(1);
         await waitFor(() => expect(mockedUsedNavigate).toHaveBeenCalled());
+    });
+
+    test('Login with Google updates new user', async () => {
+        renderWithProviders(<LoginPage />);
+        const mockedSignInPopup = jest.mocked(signInWithPopup);
+        mockedSignInPopup.mockResolvedValue(
+            new MockUserCredential(mockUser) as UserCredential
+        );
+        const mockedAuthProvider = jest.mocked(GoogleAuthProvider);
+        mockedAuthProvider.credentialFromResult = jest.fn();
+
+        const { mockGet } = require('firebase/database');
+        mockGet.mockResolvedValue({
+            exists: () => false,
+            val: () => {},
+        });
+
+        const googleSignInButton = screen.getByTestId('google-login-button');
+        fireEvent.click(googleSignInButton);
+        expect(signInWithPopup).toHaveBeenCalledTimes(1);
+        await waitFor(() => expect(mockedUsedNavigate).toHaveBeenCalled());
+    });
+
+    test('Login with Google handles error', async () => {
+        const errorSpy = jest
+            .spyOn(console, 'error')
+            .mockImplementation(() => {});
+
+        renderWithProviders(<LoginPage />);
+        const mockedSignInPopup = jest.mocked(signInWithPopup);
+        mockedSignInPopup.mockResolvedValue(
+            new MockUserCredential(mockUser) as UserCredential
+        );
+        const mockedAuthProvider = jest.mocked(GoogleAuthProvider);
+        mockedAuthProvider.credentialFromResult = jest.fn();
+
+        const { mockGet } = require('firebase/database');
+        mockGet.mockResolvedValue(new Error('test error'));
+
+        const googleSignInButton = screen.getByTestId('google-login-button');
+        fireEvent.click(googleSignInButton);
+        await waitFor(() => {
+            expect(errorSpy).toHaveBeenCalled();
+        });
     });
 });

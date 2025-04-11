@@ -21,7 +21,7 @@ describe('CharacterDisplay', () => {
             exists: mockExists.mockReturnValue(true),
             val: mockData
                 .mockReturnValueOnce({ 'test char': true })
-                .mockReturnValueOnce({ mockCharacterData }),
+                .mockReturnValueOnce(mockCharacterData),
         });
     });
 
@@ -43,7 +43,7 @@ describe('CharacterDisplay', () => {
             exists: mockExists.mockReturnValue(false),
             val: mockData
                 .mockReturnValueOnce({ 'test char': true })
-                .mockReturnValueOnce({ mockCharacterData }),
+                .mockReturnValueOnce(mockCharacterData),
         });
         render(<CharacterDisplay uid={'mock uid'} />);
         await waitFor(() =>
@@ -60,7 +60,7 @@ describe('CharacterDisplay', () => {
                 .mockReturnValueOnce(false),
             val: mockData
                 .mockReturnValueOnce({ 'test char': true })
-                .mockReturnValueOnce({ mockCharacterData }),
+                .mockReturnValueOnce(mockCharacterData),
         });
         render(<CharacterDisplay uid={'mock uid'} />);
         await waitFor(() =>
@@ -68,19 +68,5 @@ describe('CharacterDisplay', () => {
                 screen.queryByTestId('character-display-container')
             ).toBeInTheDocument()
         );
-    });
-
-    test('calls onClick', async () => {
-        render(<CharacterDisplay uid={'mock uid'} />);
-        await waitFor(() => {
-            expect(
-                screen.queryByTestId('character-display-container')
-            ).toBeInTheDocument();
-            const createACharCard = screen.getByTestId(
-                'character-creation-card'
-            );
-            fireEvent.click(createACharCard);
-            expect(mockedUseNavigate).toHaveBeenCalled();
-        });
     });
 });

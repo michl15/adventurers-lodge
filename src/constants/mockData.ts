@@ -28,6 +28,8 @@ const mockCharacterData: CharacterData = {
 
 const mockUser = {
     uid: 'mockid',
+    displayName: 'test',
+    imageURL: 'test',
 };
 
 const mockSword: EquipmentData = {

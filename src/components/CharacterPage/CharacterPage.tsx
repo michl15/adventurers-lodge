@@ -22,7 +22,9 @@ const CharacterPage = () => {
             const snapshot = await get(charRef);
             if (snapshot.exists() && snapshot.val()) {
                 setCharDetails(snapshot.val());
-                dispatch(setInventory(snapshot.val().inventory));
+                if (snapshot.val().inventory) {
+                    dispatch(setInventory(snapshot.val().inventory));
+                }
             } else {
                 throw new Error('No character found');
             }
