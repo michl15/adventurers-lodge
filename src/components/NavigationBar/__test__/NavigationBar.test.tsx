@@ -39,30 +39,18 @@ describe('NavigationBar', () => {
     });
 
     test('renders component', () => {
-        renderWithProviders(
-            <BrowserRouter>
-                <NavigationBar />
-            </BrowserRouter>
-        );
+        renderWithProviders(<NavigationBar />);
         expect(screen.queryByTestId('navigation-bar')).toBeInTheDocument();
     });
 
     test('does not render component on login page', () => {
         mockedUseLocation.pathname = '/';
-        renderWithProviders(
-            <BrowserRouter>
-                <NavigationBar />
-            </BrowserRouter>
-        );
+        renderWithProviders(<NavigationBar />);
         expect(screen.queryByTestId('navigation-bar')).not.toBeInTheDocument();
     });
 
     test('goes to account settings page onclick', async () => {
-        renderWithProviders(
-            <BrowserRouter>
-                <NavigationBar />
-            </BrowserRouter>
-        );
+        renderWithProviders(<NavigationBar />);
         expect(screen.queryByTestId('navigation-bar')).toBeInTheDocument();
 
         const dropdownElement = await screen.findByTestId(
@@ -78,11 +66,7 @@ describe('NavigationBar', () => {
     });
 
     test('goes to account settings page onclick', async () => {
-        renderWithProviders(
-            <BrowserRouter>
-                <NavigationBar />
-            </BrowserRouter>
-        );
+        renderWithProviders(<NavigationBar />);
         expect(screen.queryByTestId('navigation-bar')).toBeInTheDocument();
 
         const dropdownElement = await screen.findByTestId(
@@ -100,11 +84,7 @@ describe('NavigationBar', () => {
     test('signs out onclick', async () => {
         const mockedSignout = jest.mocked(signOut);
         mockedSignout.mockResolvedValue();
-        renderWithProviders(
-            <BrowserRouter>
-                <NavigationBar />
-            </BrowserRouter>
-        );
+        renderWithProviders(<NavigationBar />);
         expect(screen.queryByTestId('navigation-bar')).toBeInTheDocument();
 
         const dropdownElement = await screen.findByTestId(

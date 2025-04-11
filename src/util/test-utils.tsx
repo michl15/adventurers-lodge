@@ -2,6 +2,7 @@ import { render, RenderOptions } from '@testing-library/react';
 import { AppStore, RootState, setupStore } from '../redux';
 import { PropsWithChildren } from 'react';
 import { Provider } from 'react-redux';
+import { HashRouter } from 'react-router';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
     preloadedState?: Partial<RootState>;
@@ -20,7 +21,9 @@ export const renderWithProviders = (
     } = extendedRenderOptions;
 
     const Wrapper = ({ children }: PropsWithChildren) => (
-        <Provider store={store}>{children}</Provider>
+        <HashRouter>
+            <Provider store={store}>{children}</Provider>
+        </HashRouter>
     );
 
     return {

@@ -1,11 +1,11 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import CharacterCreationPage from '../CharacterCreationPage';
-import { push, set } from 'firebase/database';
+import { get, push, set, update } from 'firebase/database';
 import { rollStat } from '../../../util/calculations';
 import { setupStore } from '../../../redux';
 import { renderWithProviders } from '../../../util/test-utils';
 import { updateUser } from '../../../redux/UserReducer';
-import { mockUser } from '../../../constants/mockData';
+import { mockCharacterData, mockUser } from '../../../constants/mockData';
 import { CurrentUser } from '../../../constants/types';
 
 const mockedUseNavigate = jest.fn();
@@ -646,6 +646,124 @@ describe('CharacterCreationPage', () => {
             });
             expect(console.error).toHaveBeenCalled();
         });
+    });
+
+    test('submit button click edit form', async () => {
+        const store = setupStore();
+        store.dispatch(updateUser(mockUser as CurrentUser));
+        (get as jest.Mock).mockResolvedValue({
+            exists: () => true,
+            val: () => mockCharacterData,
+        });
+        (update as jest.Mock).mockResolvedValue('');
+        renderWithProviders(<CharacterCreationPage editMode />, { store });
+
+        await waitFor(() => {
+            expect(
+                screen.queryByTestId('character-creation-page-container')
+            ).toBeInTheDocument();
+            const form = screen.getByTestId('character-creation-form') as any;
+            form.checkValidity = jest.fn(() => {
+                return true;
+            });
+            const submitBtn = screen.getByTestId('create-char-submit');
+            fireEvent.click(submitBtn, {
+                currentTarget: {
+                    checkValidity: () => {
+                        return true;
+                    },
+                },
+            });
+            expect(update).toHaveBeenCalled();
+            expect(mockedUseNavigate).toHaveBeenCalled();
+        });
+    });
+
+    test('submit button click edit form handles error', async () => {
+        const store = setupStore();
+        store.dispatch(updateUser(mockUser as CurrentUser));
+        (get as jest.Mock).mockResolvedValue({
+            exists: () => true,
+            val: () => mockCharacterData,
+        });
+        (update as jest.Mock).mockRejectedValue('');
+        renderWithProviders(<CharacterCreationPage editMode />, { store });
+
+        await waitFor(() => {
+            expect(
+                screen.queryByTestId('character-creation-page-container')
+            ).toBeInTheDocument();
+            const form = screen.getByTestId('character-creation-form') as any;
+            form.checkValidity = jest.fn(() => {
+                return true;
+            });
+            const submitBtn = screen.getByTestId('create-char-submit');
+            fireEvent.click(submitBtn, {
+                currentTarget: {
+                    checkValidity: () => {
+                        return true;
+                    },
+                },
+            });
+            expect(mockedUseNavigate).not.toHaveBeenCalled();
+            expect(console.error).toHaveBeenCalled();
+        });
+    });
+
+    test('cancel edit form', async () => {
+        const store = setupStore();
+        store.dispatch(updateUser(mockUser as CurrentUser));
+        (get as jest.Mock).mockResolvedValue({
+            exists: () => true,
+            val: () => mockCharacterData,
+        });
+        (update as jest.Mock).mockResolvedValue('');
+        renderWithProviders(<CharacterCreationPage editMode />, { store });
+
+        await waitFor(() => {
+            expect(
+                screen.queryByTestId('character-creation-page-container')
+            ).toBeInTheDocument();
+            const form = screen.getByTestId('character-creation-form') as any;
+            form.checkValidity = jest.fn(() => {
+                return true;
+            });
+            const cancelBtn = screen.getByTestId('edit-cancel-btn');
+            fireEvent.click(cancelBtn);
+            expect(mockedUseNavigate).toHaveBeenCalled();
+            expect(update).not.toHaveBeenCalled();
+        });
+    });
+
+    test('edit form with mismatched uid', async () => {
+        const store = setupStore();
+        const diffUser = { ...mockUser, uid: 'diffId' };
+        store.dispatch(updateUser(diffUser as CurrentUser));
+        (get as jest.Mock).mockResolvedValue({
+            exists: () => true,
+            val: () => mockCharacterData,
+        });
+        (update as jest.Mock).mockResolvedValue('');
+        renderWithProviders(<CharacterCreationPage editMode />, { store });
+
+        expect(
+            await screen.findByTestId('character-access-denied')
+        ).toBeInTheDocument();
+    });
+
+    test('edit form with invalid charId', async () => {
+        const store = setupStore();
+        store.dispatch(updateUser(mockUser as CurrentUser));
+        (get as jest.Mock).mockResolvedValue({
+            exists: () => false,
+            val: () => mockCharacterData,
+        });
+        (update as jest.Mock).mockResolvedValue('');
+        renderWithProviders(<CharacterCreationPage editMode />, { store });
+
+        expect(
+            await screen.findByTestId('character-access-denied')
+        ).toBeInTheDocument();
     });
     //#endregion
 });

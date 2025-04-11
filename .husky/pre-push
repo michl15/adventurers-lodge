@@ -1,3 +1,4 @@
 #!/usr/bin/env sh
 yarn test:nowatch
 yarn lint
+yarn build

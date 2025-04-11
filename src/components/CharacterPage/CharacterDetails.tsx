@@ -9,6 +9,9 @@ import HPDisplay from './HPDisplay';
 import CharacterLanguages from '../CharacterLanguages';
 import CharacterTraits from '../CharacterTraits/CharacterTraits';
 import Inventory from '../Inventory';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux';
+import { useNavigate } from 'react-router';
 
 type CharacterDetailsProps = {
     details: CharacterData | null;
@@ -23,7 +26,15 @@ const EditButton = styled(Button)`
 `;
 
 const CharacterDetails = ({ details }: CharacterDetailsProps) => {
+    const user = useSelector((state: RootState) => state.user.user);
+    const navigate = useNavigate();
+
+    const onEditClick = () => {
+        navigate(`/characters/${details?.key}/edit`);
+    };
+
     if (details) {
+        const editable = details.owner === user?.uid;
         const charImage = details.image
             ? details.image
             : '/assets/placeholder-icon.png';
@@ -40,11 +51,16 @@ const CharacterDetails = ({ details }: CharacterDetailsProps) => {
                     <Col xs lg={3} className="my-auto">
                         <HPDisplay maxHP={details.maxHP} currHP={details.hp} />
                     </Col>
-                    <Col xs lg={1} className="my-auto">
-                        <EditButton variant="outline-info">
-                            Edit (TODO)
-                        </EditButton>
-                    </Col>
+                    {editable ? (
+                        <Col xs lg={1} className="my-auto">
+                            <EditButton
+                                variant="outline-info"
+                                onClick={onEditClick}
+                            >
+                                Edit
+                            </EditButton>
+                        </Col>
+                    ) : null}
                 </Row>
                 <hr />
                 <Row>
