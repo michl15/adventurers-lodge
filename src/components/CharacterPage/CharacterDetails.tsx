@@ -1,5 +1,13 @@
-import React from 'react';
-import { Button, Card, Col, Container, Image, Row } from 'react-bootstrap';
+import React, { useState } from 'react';
+import {
+    Button,
+    Card,
+    Col,
+    Container,
+    Image,
+    Modal,
+    Row,
+} from 'react-bootstrap';
 import { CharacterData } from '../../constants/types';
 import styled from 'styled-components';
 import Proficiencies from '../Proficiencies';
@@ -12,6 +20,8 @@ import Inventory from '../Inventory';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux';
 import { useNavigate } from 'react-router';
+import { ref, remove } from 'firebase/database';
+import { firebaseDatabase } from '../../firebase/firebase';
 
 type CharacterDetailsProps = {
     details: CharacterData | null;
@@ -22,15 +32,39 @@ const CharImage = styled(Image)`
 `;
 
 const EditButton = styled(Button)`
-    margin-left: 100%;
+    margin-left: 10px;
 `;
 
 const CharacterDetails = ({ details }: CharacterDetailsProps) => {
     const user = useSelector((state: RootState) => state.user.user);
     const navigate = useNavigate();
 
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+
     const onEditClick = () => {
         navigate(`/characters/${details?.key}/edit`);
+    };
+
+    const onDeleteCharClick = () => {
+        setShowDeleteModal(true);
+    };
+
+    const onModalCancel = () => {
+        setShowDeleteModal(false);
+    };
+
+    const onModalConfirm = () => {
+        const charRef = ref(firebaseDatabase, `/characters/${details?.key}`);
+        const userRef = ref(
+            firebaseDatabase,
+            `users/${user?.uid}/characters/${details?.key}`
+        );
+
+        remove(charRef).then(() => {
+            remove(userRef).then(() => {
+                navigate('/home');
+            });
+        });
     };
 
     if (details) {
@@ -44,20 +78,31 @@ const CharacterDetails = ({ details }: CharacterDetailsProps) => {
                     <Col md="auto">
                         <CharImage src={charImage} alt="character" />
                     </Col>
-                    <Col xs lg={6} className="my-auto">
+                    <Col className="my-auto">
                         <h3>{details.name}</h3>
                         <h4>{`Level ${details.level} ${details.race ? details.race.name : ''} ${details.class.name} `}</h4>
                     </Col>
-                    <Col xs lg={3} className="my-auto">
+                    <Col className="my-auto d-flex justify-content-center">
                         <HPDisplay maxHP={details.maxHP} currHP={details.hp} />
                     </Col>
                     {editable ? (
-                        <Col xs lg={1} className="my-auto">
+                        <Col
+                            md="auto"
+                            className="my-auto d-flex justify-content-end"
+                        >
                             <EditButton
                                 variant="outline-info"
                                 onClick={onEditClick}
+                                data-testid="char-edit-btn"
                             >
                                 Edit
+                            </EditButton>
+                            <EditButton
+                                variant="danger"
+                                onClick={onDeleteCharClick}
+                                data-testid="char-delete-btn"
+                            >
+                                Delete
                             </EditButton>
                         </Col>
                     ) : null}
@@ -112,6 +157,36 @@ const CharacterDetails = ({ details }: CharacterDetailsProps) => {
                         </Row>
                     </Col>
                 </Row>
+                <Modal
+                    show={showDeleteModal}
+                    variant="danger"
+                    onHide={() => setShowDeleteModal(false)}
+                    centered
+                    data-testid="char-delete-modal"
+                >
+                    <Modal.Header closeButton>
+                        <Modal.Title>Delete this character?</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p>This action cannot be undone.</p>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button
+                            variant="outline-secondary"
+                            onClick={onModalCancel}
+                            data-testid="modal-cancel-btn"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="danger"
+                            onClick={onModalConfirm}
+                            data-testid="modal-confirm-btn"
+                        >
+                            Yes, delete character
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
             </Container>
         );
     }
