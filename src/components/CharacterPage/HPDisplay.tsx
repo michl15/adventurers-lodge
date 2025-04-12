@@ -29,14 +29,6 @@ const HPDisplay = ({ maxHP, currHP }: HPDisplayProps) => {
                     </Row>
                 </Container>
             </ListGroupItem>
-            <ListGroupItem>
-                <Container fluid>
-                    <Row className="text-center">Temp HP</Row>
-                    <Row className="text-center">
-                        <h4>0</h4>
-                    </Row>
-                </Container>
-            </ListGroupItem>
         </ListGroup>
     );
 };
