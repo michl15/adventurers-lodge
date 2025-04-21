@@ -51,4 +51,20 @@ const STATS_MAP: statsMap<string> = {
     cha: 'Charisma',
 };
 
-export { BASE_STATS, SKILLS, STATS_MAP, DEFAULT_PROFICIENCIES };
+const EXTRA_EQUIPMENT = [
+    'wand',
+    'potion',
+    'staff',
+    'rod',
+    'ring',
+    'scroll',
+    'wondrous-items',
+];
+
+export {
+    BASE_STATS,
+    SKILLS,
+    STATS_MAP,
+    DEFAULT_PROFICIENCIES,
+    EXTRA_EQUIPMENT,
+};

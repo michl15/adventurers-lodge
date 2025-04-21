@@ -1,31 +1,20 @@
 import { Button, Modal, Nav } from 'react-bootstrap';
-import { Equipment, EquipmentCategory } from '../../constants/types';
+import { EquipmentCategory } from '../../constants/types';
 import { useState } from 'react';
 import EquipmentTab from './EquipmentTab';
 
 type ItemModalProps = {
-    allEquipment: Equipment[];
     categories: EquipmentCategory[];
     showModal: boolean;
     closeModal: () => void;
 };
 
-const ItemModal = ({
-    allEquipment,
-    categories,
-    showModal,
-    closeModal,
-}: ItemModalProps) => {
+const ItemModal = ({ categories, showModal, closeModal }: ItemModalProps) => {
     const [activeTab, setActiveTab] = useState('1');
 
     const renderActiveTab = () => {
         if (activeTab === '1') {
-            return (
-                <EquipmentTab
-                    allEquipment={allEquipment}
-                    categories={categories}
-                />
-            );
+            return <EquipmentTab categories={categories} />;
         } else {
             return <div>Not yet implemented</div>;
         }
@@ -64,11 +53,6 @@ const ItemModal = ({
                     </Nav.Item>
                     <Nav.Item>
                         <Nav.Link eventKey="2" data-testid="tab-2">
-                            Magical Items (DnD 5e)
-                        </Nav.Link>
-                    </Nav.Item>
-                    <Nav.Item>
-                        <Nav.Link eventKey="3" data-testid="tab-3">
                             Custom Item
                         </Nav.Link>
                     </Nav.Item>

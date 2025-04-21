@@ -6,16 +6,18 @@ import {
     ListGroup,
     Row,
 } from 'react-bootstrap';
-import { Equipment } from '../../constants/types';
+import { Equipment, EquipmentCategory } from '../../constants/types';
 import styled from 'styled-components';
 import { PlusCircle } from 'react-bootstrap-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux';
 import { updateItemQuantity } from '../../redux/InventoryReducer';
+import ItemModal from '../ItemModal';
+import { useState } from 'react';
 
 type InventoryProps = {
-    onAddClick?: () => void;
     edit?: boolean;
+    categories?: EquipmentCategory[];
 };
 
 const LeftCol = styled(Col)`
@@ -35,7 +37,9 @@ const AddButton = styled(ListGroup.Item)`
     }
 `;
 
-const Inventory = ({ onAddClick, edit }: InventoryProps) => {
+const Inventory = ({ edit, categories }: InventoryProps) => {
+    const [showItemModal, setShowItemModal] = useState(false);
+
     const inventory = useSelector(
         (state: RootState) => state.inventory.inventoryList
     );
@@ -128,7 +132,7 @@ const Inventory = ({ onAddClick, edit }: InventoryProps) => {
                 {renderEquipment()}
                 {edit && (
                     <AddButton
-                        onClick={onAddClick}
+                        onClick={() => setShowItemModal(true)}
                         data-testid="add-to-inventory-btn"
                     >
                         <PlusCircle
@@ -138,6 +142,11 @@ const Inventory = ({ onAddClick, edit }: InventoryProps) => {
                     </AddButton>
                 )}
             </ListGroup>
+            <ItemModal
+                categories={categories || []}
+                showModal={showItemModal}
+                closeModal={() => setShowItemModal(false)}
+            />
         </Container>
     );
 };

@@ -1,20 +1,22 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 import EquipmentTab from '../EquipmentTab';
-import { Equipment, EquipmentCategory } from '../../../constants/types';
+import { EquipmentCategory, EquipmentData } from '../../../constants/types';
 import selectEvent from 'react-select-event';
-import { Provider } from 'react-redux';
-import { store } from '../../../redux';
+import { renderWithProviders } from '../../../util/test-utils';
+import { setupStore } from '../../../redux';
+import { setEquipment } from '../../../redux/EquipmentReducer';
 
-const mockAllEquipment: Equipment[] = [
+const mockAllEquipment: EquipmentData[] = [
     {
         name: 'Bow',
         index: 'bow',
-        url: 'mockUrl',
+        weapon_category: {
+            name: 'Weapon',
+        },
     },
     {
         name: 'Sword',
         index: 'sword',
-        url: 'mockUrl',
     },
 ];
 
@@ -45,27 +47,13 @@ describe('EquipmentTab', () => {
         jest.clearAllMocks();
     });
     test('renders component', async () => {
-        render(
-            <Provider store={store}>
-                <EquipmentTab
-                    allEquipment={mockAllEquipment}
-                    categories={mockCategories}
-                />
-            </Provider>
-        );
+        renderWithProviders(<EquipmentTab categories={mockCategories} />);
 
         expect(await screen.findByTestId('equipment-tab')).toBeInTheDocument();
     });
 
     test('select category change', async () => {
-        render(
-            <Provider store={store}>
-                <EquipmentTab
-                    allEquipment={mockAllEquipment}
-                    categories={mockCategories}
-                />
-            </Provider>
-        );
+        renderWithProviders(<EquipmentTab categories={mockCategories} />);
 
         expect(await screen.findByTestId('equipment-tab')).toBeInTheDocument();
         const selectElement = await screen.findByLabelText('Category');
@@ -73,15 +61,12 @@ describe('EquipmentTab', () => {
     });
 
     test('submit button click', async () => {
+        const store = setupStore();
+        store.dispatch(setEquipment(mockAllEquipment));
         act(() => {
-            render(
-                <Provider store={store}>
-                    <EquipmentTab
-                        allEquipment={mockAllEquipment}
-                        categories={mockCategories}
-                    />
-                </Provider>
-            );
+            renderWithProviders(<EquipmentTab categories={mockCategories} />, {
+                store,
+            });
         });
 
         expect(await screen.findByTestId('equipment-tab')).toBeInTheDocument();
@@ -97,8 +82,6 @@ describe('EquipmentTab', () => {
             fireEvent.click(searchButton);
         });
 
-        expect(
-            await screen.findByTestId('item-card-undefined')
-        ).toBeInTheDocument();
+        expect(await screen.findByTestId('item-card-bow')).toBeInTheDocument();
     });
 });

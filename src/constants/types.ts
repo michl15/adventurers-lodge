@@ -81,14 +81,13 @@ type AbilityBonus = {
 type Equipment = {
     index: string;
     name: string;
-    url: string | boolean;
     quantity?: number;
 };
 
 type EquipmentData = {
     index: string;
     name: string;
-    url: string | boolean;
+    url?: string | boolean;
     cost?: {
         quantity: number;
         unit: string;
@@ -97,8 +96,15 @@ type EquipmentData = {
     equipment_category?: EquipmentCategory;
     properties?: [];
     special?: [];
-    weapon_category?: string;
-    armor_category?: string;
+    weapon_category?: {
+        name: string;
+    };
+    armor_category?: {
+        name: string;
+    };
+    gear_category?: {
+        name: string;
+    };
     damage?: {
         damage_dice: string;
         damage_type: {
@@ -107,6 +113,16 @@ type EquipmentData = {
             url?: string;
         };
     };
+    tool_category?: {
+        name: string;
+    };
+    category_range?: {
+        name: string;
+    };
+    vehicle_category?: {
+        name: string;
+    };
+    quantity?: number;
 };
 
 type EquipmentCategory = {

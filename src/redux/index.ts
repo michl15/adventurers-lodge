@@ -1,10 +1,12 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import InventoryReducer from './InventoryReducer';
 import UserReducer from './UserReducer';
+import EquipmentReducer from './EquipmentReducer';
 
 const rootReducer = combineReducers({
     inventory: InventoryReducer,
     user: UserReducer,
+    equipment: EquipmentReducer,
 });
 
 export const store = configureStore({
