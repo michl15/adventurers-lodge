@@ -55,7 +55,7 @@ const mockSword: EquipmentData = {
             index: 'slashing',
         },
     },
-    weapon_category: 'sword',
+    weapon_category: { name: 'sword' },
     desc: ['this is a sword'],
 };
 
@@ -72,7 +72,7 @@ const mockArmor: EquipmentData = {
         index: 'armor',
         url: 'armor',
     },
-    armor_category: 'medium',
+    armor_category: { name: 'medium' },
     desc: ['medium armor', 'this is armor'],
 };
 

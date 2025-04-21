@@ -16,7 +16,6 @@ describe('Inventory', () => {
             addItem({
                 name: 'mockItem',
                 index: 'mockitem',
-                url: 'mockurl',
                 quantity: 1,
             })
         );

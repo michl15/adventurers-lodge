@@ -1,17 +1,16 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import ItemModal from '../ItemModal';
 import { Equipment, EquipmentCategory } from '../../../constants/types';
+import { renderWithProviders } from '../../../util/test-utils';
 
 const mockAllEquipment: Equipment[] = [
     {
         name: 'Bow',
         index: 'bow',
-        url: 'mockUrl',
     },
     {
         name: 'Sword',
         index: 'sword',
-        url: 'mockUrl',
     },
 ];
 
@@ -27,9 +26,8 @@ const mockCloseModal = jest.fn();
 
 describe('ItemModal', () => {
     test('renders component', async () => {
-        render(
+        renderWithProviders(
             <ItemModal
-                allEquipment={mockAllEquipment}
                 categories={mockCategories}
                 showModal={true}
                 closeModal={mockCloseModal}
@@ -40,9 +38,8 @@ describe('ItemModal', () => {
     });
 
     test('closes modal', async () => {
-        render(
+        renderWithProviders(
             <ItemModal
-                allEquipment={mockAllEquipment}
                 categories={mockCategories}
                 showModal={true}
                 closeModal={mockCloseModal}
@@ -56,9 +53,8 @@ describe('ItemModal', () => {
     });
 
     test('renders equipment tab', async () => {
-        render(
+        renderWithProviders(
             <ItemModal
-                allEquipment={mockAllEquipment}
                 categories={mockCategories}
                 showModal={true}
                 closeModal={mockCloseModal}
@@ -69,10 +65,9 @@ describe('ItemModal', () => {
         expect(await screen.findByTestId('equipment-tab')).toBeInTheDocument();
     });
 
-    test('renders magic items tab', async () => {
-        render(
+    test('renders custom items tab', async () => {
+        renderWithProviders(
             <ItemModal
-                allEquipment={mockAllEquipment}
                 categories={mockCategories}
                 showModal={true}
                 closeModal={mockCloseModal}
@@ -82,24 +77,6 @@ describe('ItemModal', () => {
         expect(await screen.findByTestId('item-modal')).toBeInTheDocument();
         const tab2 = await screen.findByTestId('tab-2');
         fireEvent.click(tab2);
-        expect(
-            await screen.findByText('Not yet implemented')
-        ).toBeInTheDocument();
-    });
-
-    test('renders custom item tab', async () => {
-        render(
-            <ItemModal
-                allEquipment={mockAllEquipment}
-                categories={mockCategories}
-                showModal={true}
-                closeModal={mockCloseModal}
-            />
-        );
-
-        expect(await screen.findByTestId('item-modal')).toBeInTheDocument();
-        const tab3 = await screen.findByTestId('tab-3');
-        fireEvent.click(tab3);
         expect(
             await screen.findByText('Not yet implemented')
         ).toBeInTheDocument();

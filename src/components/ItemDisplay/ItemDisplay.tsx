@@ -1,87 +1,58 @@
 import { useEffect, useState } from 'react';
-import { Equipment, EquipmentData } from '../../constants/types';
+import { EquipmentData } from '../../constants/types';
 import ItemCard from '../ItemCard';
-import { API_BASE_URL_5E } from '../../constants/api';
 import { Button, Col, Container, Row, Spinner } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux';
 
 type ItemDisplayProps = {
-    itemList: Equipment[];
+    itemList: EquipmentData[];
 };
 
 const ItemDisplay = ({ itemList }: ItemDisplayProps) => {
-    const [pageOffset, setPageOffset] = useState(0);
-    const [equipmentDataList, setEquipmentDataList] = useState<EquipmentData[]>(
-        []
-    );
-    const [isLoading, setIsLoading] = useState(true);
+    const pageSize = 5;
+
+    const [startIndex, setStartIndex] = useState(0);
+    const [endIndex, setEndIndex] = useState(pageSize);
     const [currentPageData, setCurrentPageData] = useState<EquipmentData[]>([]);
 
     const modal = document.getElementById('item-modal'); // Replace 'yourModalId'
     const modalBody = modal?.querySelector('.modal-body');
 
-    const getEquipmentData = async (reset: boolean) => {
-        const newDataList: EquipmentData[] = reset
-            ? []
-            : [...equipmentDataList];
-        if (newDataList.length < pageOffset + 7) {
-            const upperLimit =
-                pageOffset + 7 <= itemList.length
-                    ? pageOffset + 7
-                    : itemList.length;
-            for (let i = pageOffset; i < upperLimit; i++) {
-                const item = itemList[i];
-                if (typeof item.url === 'string') {
-                    const response = await fetch(
-                        `${API_BASE_URL_5E}${item.url}`
-                    );
-                    if (response.ok) {
-                        const data = await response.json();
-                        newDataList.push(data);
-                    }
-                }
-            }
-            setEquipmentDataList(newDataList);
-            setCurrentPageData(newDataList.slice(pageOffset, pageOffset + 7));
-        } else {
-            setCurrentPageData(
-                equipmentDataList.slice(pageOffset, pageOffset + 7)
-            );
-        }
-        setIsLoading(false);
-    };
+    const { equipmentIsLoading } = useSelector(
+        (state: RootState) => state.equipment
+    );
+    const totalResults = itemList.length;
 
     const onNextClick = () => {
-        setPageOffset(pageOffset + 7);
+        setStartIndex(startIndex + pageSize);
+        setEndIndex(endIndex + pageSize);
         if (modalBody) {
             modalBody.scrollTop = 0;
         }
     };
 
     const onPrevClick = () => {
-        setPageOffset(pageOffset - 7);
+        setStartIndex(Math.max(startIndex - pageSize, 0));
+        setEndIndex(endIndex - pageSize);
         if (modalBody) {
             modalBody.scrollTop = 0;
         }
     };
 
     useEffect(() => {
-        setIsLoading(true);
-        setPageOffset(0);
-        setEquipmentDataList([]);
-        setCurrentPageData([]);
-        getEquipmentData(true);
+        setCurrentPageData(itemList.slice(startIndex, endIndex));
         // eslint-disable-next-line
-    }, [itemList]);
+    }, [itemList, startIndex, endIndex]);
 
     useEffect(() => {
-        setIsLoading(true);
-        getEquipmentData(false);
-        // eslint-disable-next-line
-    }, [pageOffset]);
+        setStartIndex(0);
+        setEndIndex(pageSize);
+    }, [itemList]);
 
     return (
         <>
-            {isLoading ? (
+            {equipmentIsLoading ? (
                 <Container>
                     <Row
                         className="d-flex justify-content-center"
@@ -100,7 +71,7 @@ const ItemDisplay = ({ itemList }: ItemDisplayProps) => {
                     })}
                     <Row>
                         <Col className="d-flex justify-content-start">
-                            {pageOffset > 0 ? (
+                            {startIndex > 0 ? (
                                 <Button
                                     onClick={onPrevClick}
                                     variant="outline-info"
@@ -110,7 +81,7 @@ const ItemDisplay = ({ itemList }: ItemDisplayProps) => {
                             ) : null}
                         </Col>
                         <Col className="d-flex justify-content-end">
-                            {pageOffset + 7 < itemList.length ? (
+                            {endIndex < totalResults ? (
                                 <Button
                                     onClick={onNextClick}
                                     variant="outline-info"

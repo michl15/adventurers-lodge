@@ -36,11 +36,20 @@ const ItemCard = ({ itemData }: ItemCardProps) => {
     const dispatch = useDispatch();
 
     const getItemCategory = () => {
-        if (itemData.weapon_category) {
-            return `(${itemData.weapon_category})`;
+        if (itemData.category_range) {
+            return `(${itemData.category_range.name})`;
         } else if (itemData.armor_category) {
-            return `(${itemData.armor_category})`;
+            return `(${itemData.armor_category.name})`;
+        } else if (itemData.tool_category) {
+            return `(${itemData.tool_category.name})`;
+        } else if (itemData.gear_category) {
+            return `(${itemData.gear_category.name})`;
+        } else if (itemData.weapon_category) {
+            return `(${itemData.weapon_category.name})`;
+        } else if (itemData.vehicle_category) {
+            return `(${itemData.vehicle_category.name})`;
         }
+        return '';
     };
 
     const getItemDesc = () => {
@@ -88,10 +97,8 @@ const ItemCard = ({ itemData }: ItemCardProps) => {
             dispatch(updateItemQuantity({ value: newCount, index: itemIndex }));
         } else {
             const newItem = {
-                name: itemData.name,
-                index: itemData.index,
+                ...itemData,
                 quantity: newCount,
-                url: itemData.url,
             };
             dispatch(addItem(newItem));
         }

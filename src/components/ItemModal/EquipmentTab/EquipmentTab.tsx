@@ -8,13 +8,14 @@ import {
     Row,
 } from 'react-bootstrap';
 import styled from 'styled-components';
-import { Equipment, EquipmentCategory } from '../../../constants/types';
+import { EquipmentCategory, EquipmentData } from '../../../constants/types';
 import { useEffect, useState } from 'react';
 import Select, { Options } from 'react-select';
-import { API_BASE_URL_5E } from '../../../constants/api';
 import ItemDisplay from '../../ItemDisplay';
 import { levenshtein } from '../../../util/calculations';
 import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux';
 
 const SearchContainer = styled(Row)`
     background-color: #cff4fc;
@@ -24,7 +25,6 @@ const SearchContainer = styled(Row)`
 `;
 
 type EquipmentTabProps = {
-    allEquipment: Equipment[];
     categories: EquipmentCategory[];
 };
 
@@ -33,15 +33,19 @@ type SelectOptions = {
     label: string;
 };
 
-const EquipmentTab = ({ allEquipment, categories }: EquipmentTabProps) => {
+const EquipmentTab = ({ categories }: EquipmentTabProps) => {
     const [searchByName, setSearchByName] = useState('');
     const [categoriesOptions, setCategoriesOptions] =
         useState<SelectOptions[]>();
     const [selectedCategories, setSelectedCategories] = useState<
         EquipmentCategory[]
     >([]);
-    const [searchResults, setSearchResults] = useState<Equipment[]>([]);
+    const [searchResults, setSearchResults] = useState<EquipmentData[]>([]);
     const [expandSearch, setExpandSearch] = useState(true);
+
+    const { equipmentList } = useSelector(
+        (state: RootState) => state.equipment
+    );
 
     const onSearchByNameChange = (
         event: React.ChangeEvent<HTMLInputElement>
@@ -57,30 +61,34 @@ const EquipmentTab = ({ allEquipment, categories }: EquipmentTabProps) => {
         setSelectedCategories(newSelectedCategories);
     };
 
-    const fetchEquipmentByCategory = async (url: string) => {
-        const response = await fetch(`${API_BASE_URL_5E}${url}`);
-        if (response.ok) {
-            const data = await response.json();
-            return data.equipment;
-        }
+    const matchCategory = (
+        searchCategory: string,
+        equipment: EquipmentData
+    ) => {
+        return (
+            searchCategory === equipment.equipment_category?.name ||
+            searchCategory === equipment.armor_category?.name ||
+            searchCategory === equipment.gear_category?.name ||
+            searchCategory === equipment.weapon_category?.name ||
+            searchCategory === equipment.tool_category?.name ||
+            searchCategory === equipment.vehicle_category?.name ||
+            equipment.category_range?.name.includes(searchCategory)
+        );
     };
 
     const onSearchSubmit = async () => {
-        let newEquipmentList: Equipment[] = [];
+        let newEquipmentList: EquipmentData[] = [];
         if (selectedCategories.length > 0) {
             for (let i = 0; i < selectedCategories.length; i++) {
-                const category = selectedCategories[i];
-                if (typeof category.url === 'string') {
-                    const equipmentList = await fetchEquipmentByCategory(
-                        category.url
-                    );
-                    if (equipmentList) {
-                        newEquipmentList.push(...equipmentList);
-                    }
-                }
+                const category = selectedCategories[i].name;
+                newEquipmentList.push(
+                    ...equipmentList.filter((equip: EquipmentData) =>
+                        matchCategory(category, equip)
+                    )
+                );
             }
         } else {
-            newEquipmentList.push(...allEquipment);
+            newEquipmentList.push(...equipmentList);
         }
 
         const searchQuery = searchByName.trim().toLowerCase();

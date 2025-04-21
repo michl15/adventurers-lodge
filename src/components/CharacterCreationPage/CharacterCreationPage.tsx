@@ -5,7 +5,11 @@ import { Toast } from 'react-bootstrap';
 import { firebaseDatabase } from '../../firebase/firebase';
 import { useNavigate, useParams } from 'react-router';
 import styled from 'styled-components';
-import { BASE_STATS, DEFAULT_PROFICIENCIES } from '../../constants/constants';
+import {
+    BASE_STATS,
+    DEFAULT_PROFICIENCIES,
+    EXTRA_EQUIPMENT,
+} from '../../constants/constants';
 import {
     calculateProficiencyBonus,
     calculateStatModifier,
@@ -15,7 +19,6 @@ import Proficiencies from '../Proficiencies';
 import {
     AbilityBonus,
     Class,
-    Equipment,
     EquipmentCategory,
     Language,
     ProficienciesTypes,
@@ -27,18 +30,24 @@ import Dropdown from './Dropdown';
 import {
     API_BASE_URL_5E,
     API_CLASSES,
-    API_EQUIPMENT,
     API_EQUIPMENT_CATEGORIES,
     API_RACES,
 } from '../../constants/api';
 import CharacterLanguages from '../CharacterLanguages';
 import CharacterTraits from '../CharacterTraits';
-import ItemModal from '../ItemModal';
 import Inventory from '../Inventory';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux';
 import { resetInventory, setInventory } from '../../redux/InventoryReducer';
 import CharacterAccessDenied from './CharacterAccessDenied';
+import { graphQuery } from '../../graphql/queryUtil';
+import { equipmentQuery, equipmentQueryByIndex } from '../../graphql/queries';
+import {
+    addEquipment,
+    setEquipment,
+    setEquipmentIsLoading,
+    setExtraEquipmentFetched,
+} from '../../redux/EquipmentReducer';
 
 const StatsRowContainer = styled(Row)`
     display: flex;
@@ -106,7 +115,6 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
     const [hitDie, setHitDie] = useState(10);
     const [charLanguages, setCharLanguages] = useState<Language[]>([]);
     const [charTraits, setCharTraits] = useState<Trait[]>([]);
-    const [allEquipment, setAllEquipment] = useState<Equipment[]>([]);
     const [equipmentCategories, setEquipmentCategories] = useState<
         EquipmentCategory[]
     >([]);
@@ -117,7 +125,6 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
     const [customRace, setCustomRace] = useState(false);
     const [statsApplied, setStatsApplied] = useState(false);
     const [showToast, setShowToast] = useState(false);
-    const [showItemModal, setShowItemModal] = useState(false);
     const [editable, setEditable] = useState(editMode);
     const [isLoadingInitial, setIsLoadingInitial] = useState(true);
 
@@ -136,6 +143,9 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
     const inventory = useSelector(
         (state: RootState) => state.inventory.inventoryList
     );
+
+    const { equipmentList, equipmentIsLoading, extraEquipmentFetched } =
+        useSelector((state: RootState) => state.equipment);
     const dispatch = useDispatch();
 
     // #endregion State
@@ -145,8 +155,6 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
     // Toast toggle utility fn
     const toggleToast = () => setShowToast(true);
     const toggleToastOff = () => setShowToast(false);
-
-    const closeModal = () => setShowItemModal(false);
 
     const { charId } = useParams();
 
@@ -462,10 +470,27 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
     };
 
     const getAllEquipment = async () => {
-        const response = await fetch(API_EQUIPMENT);
-        if (response.ok) {
-            const equipmentData = await response.json();
-            setAllEquipment(equipmentData.results);
+        if (!equipmentIsLoading && !(equipmentList.length > 0)) {
+            dispatch(setEquipmentIsLoading(true));
+            const graphResponse = await graphQuery(equipmentQuery());
+            if (graphResponse) {
+                dispatch(setEquipment(graphResponse.equipments));
+            }
+
+            if (!extraEquipmentFetched) {
+                for (let i in EXTRA_EQUIPMENT) {
+                    const extraResp = await graphQuery(
+                        equipmentQueryByIndex(EXTRA_EQUIPMENT[i])
+                    );
+                    if (extraResp) {
+                        dispatch(
+                            addEquipment(extraResp.equipmentCategory.equipment)
+                        );
+                    }
+                }
+                dispatch(setExtraEquipmentFetched(true));
+            }
+            dispatch(setEquipmentIsLoading(false));
         }
     };
 
@@ -545,6 +570,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
         getRaces();
         getEquipmentCategories();
         getAllEquipment();
+        // eslint-disable-next-line
     }, []);
 
     useEffect(() => {
@@ -859,9 +885,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                                 <Row>
                                     <h5>Inventory</h5>
                                     <Inventory
-                                        onAddClick={() =>
-                                            setShowItemModal(true)
-                                        }
+                                        categories={equipmentCategories}
                                         edit
                                     />
                                 </Row>
@@ -926,12 +950,6 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                             ) : null}
                         </SubmitButtonContainer>
                     </Form>
-                    <ItemModal
-                        showModal={showItemModal}
-                        closeModal={closeModal}
-                        allEquipment={allEquipment}
-                        categories={equipmentCategories}
-                    />
                 </Container>
             )}
         </div>
