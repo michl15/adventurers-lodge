@@ -139,6 +139,43 @@ type CurrentUser = {
     photoURL: string | null;
 };
 
+type Spell = {
+    index: string;
+    area_of_effect?: {
+        type: string;
+        size: number;
+    };
+    attack_type?: string;
+    casting_time?: string;
+    classes?: {
+        name: string;
+    }[];
+    components?: string[];
+    concentration?: boolean;
+    damage?: {
+        damage_type?: {
+            name: string;
+        };
+    };
+    dc?: {
+        desc?: string;
+        success: string;
+        type: {
+            full_name: string;
+        };
+    };
+    desc?: string[];
+    duration?: string;
+    higher_level?: string[];
+    level: number;
+    name: string;
+    range?: string;
+    ritual?: boolean;
+    school?: {
+        name: string;
+    };
+};
+
 export type {
     ProficienciesTypes,
     CharacterData,
@@ -155,4 +192,5 @@ export type {
     EquipmentCategory,
     EquipmentData,
     CurrentUser,
+    Spell,
 };

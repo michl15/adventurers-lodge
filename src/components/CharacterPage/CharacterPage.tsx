@@ -6,6 +6,7 @@ import { CharacterData } from '../../constants/types';
 import CharacterDetails from './CharacterDetails';
 import { useDispatch } from 'react-redux';
 import { resetInventory, setInventory } from '../../redux/InventoryReducer';
+import { setCharSpells } from '../../redux/SpellsReducer';
 
 const CharacterPage = () => {
     const [charDetails, setCharDetails] = useState<CharacterData | null>(null);
@@ -27,6 +28,9 @@ const CharacterPage = () => {
                 });
                 if (snapshot.val().inventory) {
                     dispatch(setInventory(snapshot.val().inventory));
+                }
+                if (snapshot.val().spells) {
+                    dispatch(setCharSpells(snapshot.val().spells));
                 }
             } else {
                 throw new Error('No character found');
