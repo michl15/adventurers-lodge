@@ -93,30 +93,6 @@ describe('LoginPage.tsx', () => {
         expect(screen.getByTestId('login-page-container')).toBeInTheDocument();
     });
 
-    test('Username input updates as expected', () => {
-        renderWithProviders(<LoginPage />);
-
-        const usernameInput: HTMLInputElement =
-            screen.getByTestId('username-input');
-        expect(usernameInput).toBeInTheDocument();
-        fireEvent.change(usernameInput, { target: { value: 'Test Username' } });
-        expect(usernameInput.value).toBe('Test Username');
-    });
-
-    test('Password input updates as expected', () => {
-        renderWithProviders(<LoginPage />);
-
-        const passwordInput: HTMLInputElement =
-            screen.getByTestId('password-input');
-        expect(passwordInput).toBeInTheDocument();
-        fireEvent.change(passwordInput, { target: { value: 'Test Password' } });
-        expect(passwordInput.value).toBe('Test Password');
-    });
-
-    test.skip('Submit button logs in user', () => {
-        // TODO: Implement when email/password login is implemented
-    });
-
     test('Login with Google works', async () => {
         renderWithProviders(<LoginPage />);
         const mockedSignInPopup = jest.mocked(signInWithPopup);

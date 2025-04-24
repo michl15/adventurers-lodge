@@ -1,6 +1,6 @@
 import React from 'react';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { Button } from 'react-bootstrap';
+import { Alert, Button, Row } from 'react-bootstrap';
 import { Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 import {
@@ -14,6 +14,7 @@ import { useDispatch } from 'react-redux';
 import { updateUser } from '../../redux/UserReducer';
 import { CurrentUser } from '../../constants/types';
 import { get, ref, update } from 'firebase/database';
+import { ExclamationTriangleFill } from 'react-bootstrap-icons';
 
 const LoginPage = () => {
     const auth = firebaseAuth;
@@ -58,7 +59,7 @@ const LoginPage = () => {
                 };
                 dispatch(updateUser(newUser));
 
-                navigate('home');
+                navigate('/home');
             }
         } catch (error) {
             console.error('LoginPage', error);
@@ -68,50 +69,49 @@ const LoginPage = () => {
         }
     };
 
+    const onBackClick = () => {
+        navigate('/');
+    };
+
     return (
         <div data-testid="login-page-container">
             <PageContainer>
-                <StyledHeader>Welcome to Adventurer&apos;s Lodge!</StyledHeader>
-                <HeaderImage src="https://pngimg.com/uploads/dragon/dragon_PNG84477.png" />
-                <div>
-                    Currently only sign in with Google is supported, please use
-                    that option to sign in
-                </div>
+                <StyledHeader>Sign In to Adventurer&apos;s Lodge</StyledHeader>
+                <span>placeholder image</span>
+                <HeaderImage src="https://www.awesomedice.com/cdn/shop/articles/The_Tavern_by_Johannes_Sundlov.jpg?v=1721745413" />
+                <Alert variant="warning">
+                    <ExclamationTriangleFill /> Currently only sign in with
+                    Google is supported, please use that option to sign in
+                </Alert>
                 <StyledForm className="rounded p-4">
-                    <Form.Group className="mb-3" controlId="formBasicUsername">
-                        <Form.Label>Username</Form.Label>
-                        <Form.Control
-                            type="username"
-                            placeholder="Enter Username"
-                            data-testid="username-input"
-                        />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="formBasicPassword">
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control
-                            type="password"
-                            placeholder="Enter Password"
-                            data-testid="password-input"
-                        />
-                    </Form.Group>
-
                     <Form.Group>
-                        <Button
-                            className="m-1"
-                            variant="primary"
-                            type="submit"
-                            data-testid="login-submit-button"
-                        >
-                            Submit
-                        </Button>
                         <Button
                             onClick={handleLoginOnClick}
                             data-testid="google-login-button"
+                            size="lg"
+                            variant="outline-primary"
+                            style={{ borderRadius: '500px' }}
                         >
-                            Sign in with Google
+                            <span>
+                                <img
+                                    src="https://www.gstatic.com/marketing-cms/assets/images/d5/dc/cfe9ce8b4425b410b49b7f2dd3f3/g.webp=s96-fcrop64=1,00000000ffffffff-rw"
+                                    style={{
+                                        width: '30px',
+                                        height: '30px',
+                                        marginRight: '10px',
+                                        marginBottom: '3px',
+                                    }}
+                                    alt="placeholder for login"
+                                />
+                                Sign in with Google
+                            </span>
                         </Button>
                     </Form.Group>
+                    <Row>
+                        <Button onClick={onBackClick} variant="link">
+                            ← Back
+                        </Button>
+                    </Row>
                 </StyledForm>
             </PageContainer>
         </div>

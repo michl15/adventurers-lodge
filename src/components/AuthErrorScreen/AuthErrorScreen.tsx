@@ -14,6 +14,10 @@ const AuthErrorScreen = () => {
     const navigate = useNavigate();
 
     const onReturnToLogin = () => {
+        navigate('/login');
+    };
+
+    const onReturnToLanding = () => {
         navigate('/');
     };
     return (
@@ -29,12 +33,21 @@ const AuthErrorScreen = () => {
                 </p>
             </Row>
             <br />
-            <Row className="justify-content-md-center">
+            <Row className="justify-content-md-center" md="auto">
                 <Button
                     onClick={onReturnToLogin}
                     data-testid="return-to-login-btn"
                 >
-                    Return to Login
+                    Sign in
+                </Button>
+            </Row>
+            <br />
+            <Row className="justify-content-md-center" md="auto">
+                <Button
+                    onClick={onReturnToLanding}
+                    data-testid="return-to-home-btn"
+                >
+                    Return to Home
                 </Button>
             </Row>
         </AuthErrorContainer>

@@ -11,7 +11,6 @@ export const PageContainer = styled.div`
 
 export const StyledForm = styled(Form)`
     margin: 10px 0px;
-    background-color: lightgrey;
 `;
 
 export const StyledHeader = styled.h1`
@@ -20,4 +19,5 @@ export const StyledHeader = styled.h1`
 
 export const HeaderImage = styled.img`
     width: 600px;
+    margin: 10px 0px;
 `;
