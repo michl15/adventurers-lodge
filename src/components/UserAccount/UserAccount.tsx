@@ -15,6 +15,7 @@ import { PencilSquare } from 'react-bootstrap-icons';
 import { ref, update } from 'firebase/database';
 import { firebaseDatabase } from '../../firebase/firebase';
 import { updateDisplayName } from '../../redux/UserReducer';
+import UnderConstruction from '../UnderConstruction';
 
 const ProfilePhoto = styled(Image)`
     height: 90px;
@@ -87,6 +88,7 @@ const UserAccount = () => {
 
     return (
         <Container data-testid="user-account-settings">
+            <UnderConstruction />
             <Form>
                 <Row>
                     <Col md="auto" className="my-auto">
