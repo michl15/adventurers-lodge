@@ -18,6 +18,7 @@ import AuthErrorScreen from './components/AuthErrorScreen';
 import AuthBoundary from './components/AuthBoundary';
 import UserProfile from './components/UserProfile';
 import UserAccount from './components/UserAccount';
+import UnderConstruction from './components/UnderConstruction';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -55,6 +56,10 @@ root.render(
                                 <Route
                                     path="/characters/:charId/edit"
                                     element={<CharacterCreationPage editMode />}
+                                />
+                                <Route
+                                    path="/campaign_creation"
+                                    element={<UnderConstruction />}
                                 />
                             </Routes>
                         </PageContainer>

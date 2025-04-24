@@ -3,6 +3,7 @@ import { RootState } from '../../redux';
 import { useEffect } from 'react';
 import { Col, Container, Image, Row } from 'react-bootstrap';
 import styled from 'styled-components';
+import UnderConstruction from '../UnderConstruction';
 
 const ProfilePhoto = styled(Image)`
     height: 120px;
@@ -23,6 +24,7 @@ const UserProfile = () => {
 
     return (
         <Container data-testid="user-public-profile">
+            <UnderConstruction />
             <Row className="d-flex justify-content-center">
                 <Col md="auto" className="my-auto">
                     <ProfilePhoto src={image} />
