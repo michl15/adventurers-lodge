@@ -48,6 +48,12 @@ import {
     setEquipmentIsLoading,
     setExtraEquipmentFetched,
 } from '../../redux/EquipmentReducer';
+import CharacterSpells from '../CharacterSpells';
+import {
+    resetCharSpells,
+    resetSelectedSpellState,
+    setCharSpells,
+} from '../../redux/SpellsReducer';
 
 const StatsRowContainer = styled(Row)`
     display: flex;
@@ -143,9 +149,9 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
     const inventory = useSelector(
         (state: RootState) => state.inventory.inventoryList
     );
-
     const { equipmentList, equipmentIsLoading, extraEquipmentFetched } =
         useSelector((state: RootState) => state.equipment);
+    const { charSpells } = useSelector((state: RootState) => state.spells);
     const dispatch = useDispatch();
 
     // #endregion State
@@ -350,6 +356,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                 hitDie: hitDie,
                 inventory: inventory,
                 owner: user.uid,
+                spells: charSpells,
             };
 
             const newCharKey = push(charRef, charData).key;
@@ -383,6 +390,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                 traits: charTraits,
                 hitDie: hitDie,
                 inventory: inventory,
+                spells: charSpells,
             };
             update(charRef, charData)
                 .then(() => {
@@ -601,6 +609,10 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                     if (charData.inventory) {
                         dispatch(setInventory(charData.inventory));
                     }
+                    if (charData.spells) {
+                        console.log(charData.spells);
+                        dispatch(setCharSpells(charData.spells));
+                    }
                 } else {
                     setEditable(false);
                 }
@@ -614,6 +626,8 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
         //on unmount, reset inventory
         return () => {
             dispatch(resetInventory());
+            dispatch(resetCharSpells());
+            dispatch(resetSelectedSpellState());
         };
     }, [dispatch]);
 
@@ -863,6 +877,22 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                                 </StatsRowContainer>
                                 <h4>Other</h4>
                                 <Row>
+                                    <h5>Inventory</h5>
+                                    <Inventory
+                                        categories={equipmentCategories}
+                                        edit
+                                    />
+                                </Row>
+                                <br />
+                                <Row>
+                                    <h5>Spells</h5>
+                                    <CharacterSpells
+                                        charClass={charClass?.name || ''}
+                                        edit
+                                    />
+                                </Row>
+                                <br />
+                                <Row>
                                     <h5>Traits</h5>
                                     <CharacterTraits
                                         traits={charTraits}
@@ -879,14 +909,6 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                                         edit={true}
                                         onAddLang={onAddLanguageClick}
                                         onRemoveLang={onRemoveLanguageClick}
-                                    />
-                                </Row>
-                                <br />
-                                <Row>
-                                    <h5>Inventory</h5>
-                                    <Inventory
-                                        categories={equipmentCategories}
-                                        edit
                                     />
                                 </Row>
                                 <br />

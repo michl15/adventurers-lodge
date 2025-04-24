@@ -22,6 +22,7 @@ import { RootState } from '../../redux';
 import { useNavigate } from 'react-router';
 import { ref, remove } from 'firebase/database';
 import { firebaseDatabase } from '../../firebase/firebase';
+import CharacterSpells from '../CharacterSpells';
 
 type CharacterDetailsProps = {
     details: CharacterData | null;
@@ -125,6 +126,16 @@ const CharacterDetails = ({ details }: CharacterDetailsProps) => {
                         </Row>
                         <hr />
                         <Row>
+                            <h4>Inventory</h4>
+                            <Inventory />
+                        </Row>
+                        <hr />
+                        <Row>
+                            <h4>Spells</h4>
+                            <CharacterSpells charClass={details.class.name} />
+                        </Row>
+                        <hr />
+                        <Row>
                             <h4>Traits</h4>
                             <CharacterTraits
                                 traits={details.traits}
@@ -138,11 +149,6 @@ const CharacterDetails = ({ details }: CharacterDetailsProps) => {
                                 langList={details.languages}
                                 edit={false}
                             />
-                        </Row>
-                        <hr />
-                        <Row>
-                            <h4>Inventory</h4>
-                            <Inventory />
                         </Row>
                         <hr />
                         <Row className="justify-content-center">
