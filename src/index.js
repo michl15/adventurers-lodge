@@ -19,6 +19,7 @@ import AuthBoundary from './components/AuthBoundary';
 import UserProfile from './components/UserProfile';
 import UserAccount from './components/UserAccount';
 import UnderConstruction from './components/UnderConstruction';
+import LandingPage from './components/LandingPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -31,7 +32,8 @@ root.render(
                         <PageContainer>
                             <ScrollToTop />
                             <Routes>
-                                <Route path="/" element={<LoginPage />} />
+                                <Route path="/" element={<LandingPage />} />
+                                <Route path="/login" element={<LoginPage />} />
                                 <Route path="/home" element={<HomePage />} />
                                 <Route
                                     path="/character_creation"
@@ -59,6 +61,10 @@ root.render(
                                 />
                                 <Route
                                     path="/campaign_creation"
+                                    element={<UnderConstruction />}
+                                />
+                                <Route
+                                    path="/browse"
                                     element={<UnderConstruction />}
                                 />
                             </Routes>

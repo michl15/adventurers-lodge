@@ -12,7 +12,7 @@ const AuthBoundary = (props: PropsWithChildren) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (pathname !== '/') {
+        if (pathname !== '/login') {
             const setUserData = async (currUser: CurrentUser) => {
                 if (currUser.uid) {
                     const userRef = ref(
@@ -38,7 +38,9 @@ const AuthBoundary = (props: PropsWithChildren) => {
 
             firebaseAuth.onAuthStateChanged((user) => {
                 if (!user) {
-                    navigate('/auth_error');
+                    if (pathname !== '/' && pathname !== '/browse') {
+                        navigate('/auth_error');
+                    }
                 } else {
                     const newUser: CurrentUser = {
                         uid: user.uid,

@@ -40,7 +40,8 @@ const NavigationBar = () => {
 
     useEffect(() => {
         setShowNavBar(
-            location.pathname !== '/' && location.pathname !== '/auth_error'
+            location.pathname !== '/auth_error' &&
+                location.pathname !== '/login'
         );
     }, [location.pathname]);
 
@@ -55,59 +56,71 @@ const NavigationBar = () => {
             >
                 <Container fluid>
                     <Nav>
-                        <NavbarBrand as={Link} to="/home">
+                        <NavbarBrand as={Link} to="/">
                             Adventurer&apos;s Lodge
                         </NavbarBrand>
-                        <Nav.Link as={Link} to="/home">
-                            Home
+                        {user && (
+                            <Nav.Link as={Link} to="/home">
+                                Home
+                            </Nav.Link>
+                        )}
+                        <Nav.Link as={Link} to="/browse">
+                            Browse
                         </Nav.Link>
-                        <NavDropdown title="Create">
-                            <NavDropdown.Item
-                                as={Link}
-                                to="/character_creation"
-                            >
-                                Create a Character
-                            </NavDropdown.Item>
-                            <NavDropdown.Item as={Link} to="/campaign_creation">
-                                Create a Campaign (TODO)
-                            </NavDropdown.Item>
-                        </NavDropdown>
+                        {user && (
+                            <NavDropdown title="Create">
+                                <NavDropdown.Item
+                                    as={Link}
+                                    to="/character_creation"
+                                >
+                                    Create a Character
+                                </NavDropdown.Item>
+                                <NavDropdown.Item
+                                    as={Link}
+                                    to="/campaign_creation"
+                                >
+                                    Create a Campaign (TODO)
+                                </NavDropdown.Item>
+                            </NavDropdown>
+                        )}
                     </Nav>
-                    <DropdownButton
-                        className="justify-content-end"
-                        variant="outline-light"
-                        data-testid="navbar-dropdown-btn"
-                        title={
-                            <>
-                                <PersonCircle
-                                    style={{ margin: '0px 5px 3px 0px' }}
-                                />
-                                {user?.displayName
-                                    ? user.displayName
-                                    : 'Profile'}
-                            </>
-                        }
-                        align="end"
-                    >
-                        <Dropdown.Item
-                            onClick={onAccountClick}
-                            data-testid="profile-btn"
+                    {user && (
+                        <DropdownButton
+                            className="justify-content-end"
+                            variant="outline-light"
+                            data-testid="navbar-dropdown-btn"
+                            title={
+                                <>
+                                    <PersonCircle
+                                        style={{ margin: '0px 5px 3px 0px' }}
+                                    />
+                                    {user?.displayName
+                                        ? user.displayName
+                                        : 'Profile'}
+                                </>
+                            }
+                            align="end"
                         >
-                            View Profile
-                        </Dropdown.Item>
-                        <Dropdown.Item
-                            onClick={onSettingsClick}
-                            data-testid="account-btn"
-                        >
-                            Account Settings
-                        </Dropdown.Item>
-                        <Dropdown.Item
-                            onClick={onSignOut}
-                            data-testid="signout-btn"
-                        >
-                            Sign Out
-                        </Dropdown.Item>
-                    </DropdownButton>
+                            <Dropdown.Item
+                                onClick={onAccountClick}
+                                data-testid="profile-btn"
+                            >
+                                View Profile
+                            </Dropdown.Item>
+                            <Dropdown.Item
+                                onClick={onSettingsClick}
+                                data-testid="account-btn"
+                            >
+                                Account Settings
+                            </Dropdown.Item>
+                            <Dropdown.Item
+                                onClick={onSignOut}
+                                data-testid="signout-btn"
+                            >
+                                Sign Out
+                            </Dropdown.Item>
+                        </DropdownButton>
+                    )}
                 </Container>
             </Navbar>
         )
