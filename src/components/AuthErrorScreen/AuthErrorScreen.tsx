@@ -45,7 +45,7 @@ const AuthErrorScreen = () => {
             <Row className="justify-content-md-center" md="auto">
                 <Button
                     onClick={onReturnToLanding}
-                    data-testid="return-to-login-btn"
+                    data-testid="return-to-home-btn"
                 >
                     Return to Home
                 </Button>

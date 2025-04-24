@@ -62,7 +62,7 @@ describe('AuthBoundary', () => {
     });
 
     test('does not check auth on login screen', () => {
-        mockedUseLocation.pathname = '/';
+        mockedUseLocation.pathname = '/login';
         const { mockOnAuthStateChanged } = require('firebase/auth');
         renderWithProviders(<AuthBoundary />);
         expect(mockOnAuthStateChanged).not.toHaveBeenCalled();

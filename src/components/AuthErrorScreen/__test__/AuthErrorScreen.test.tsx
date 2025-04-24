@@ -20,6 +20,6 @@ describe('AuthErrorScreen', () => {
         const btn = screen.getByTestId('return-to-login-btn');
         fireEvent.click(btn);
 
-        expect(mockedUseNavigate).toHaveBeenCalledWith('/');
+        expect(mockedUseNavigate).toHaveBeenCalledWith('/login');
     });
 });

@@ -1,14 +1,9 @@
-import {
-    findByTestId,
-    fireEvent,
-    render,
-    screen,
-    within,
-} from '@testing-library/react';
+import { fireEvent, screen, within } from '@testing-library/react';
 import NavigationBar from '../NavigationBar';
-import { BrowserRouter, useLocation } from 'react-router';
 import { signOut } from 'firebase/auth';
 import { renderWithProviders } from '../../../util/test-utils';
+import { setupStore } from '../../../redux';
+import { updateUser } from '../../../redux/UserReducer';
 
 jest.mock('firebase/firebase');
 
@@ -38,19 +33,49 @@ describe('NavigationBar', () => {
         };
     });
 
-    test('renders component', () => {
-        renderWithProviders(<NavigationBar />);
-        expect(screen.queryByTestId('navigation-bar')).toBeInTheDocument();
+    test('renders component', async () => {
+        const store = setupStore();
+        store.dispatch(
+            updateUser({
+                displayName: 'mock user',
+                uid: 'mock id',
+                email: 'mockemail',
+                emailVerified: true,
+                photoURL: 'none',
+            })
+        );
+        renderWithProviders(<NavigationBar />, { store });
+        expect(await screen.findByTestId('navigation-bar')).toBeInTheDocument();
     });
 
     test('does not render component on login page', () => {
-        mockedUseLocation.pathname = '/';
-        renderWithProviders(<NavigationBar />);
+        const store = setupStore();
+        store.dispatch(
+            updateUser({
+                displayName: 'mock user',
+                uid: 'mock id',
+                email: 'mockemail',
+                emailVerified: true,
+                photoURL: 'none',
+            })
+        );
+        mockedUseLocation.pathname = '/login';
+        renderWithProviders(<NavigationBar />, { store });
         expect(screen.queryByTestId('navigation-bar')).not.toBeInTheDocument();
     });
 
     test('goes to account settings page onclick', async () => {
-        renderWithProviders(<NavigationBar />);
+        const store = setupStore();
+        store.dispatch(
+            updateUser({
+                displayName: 'mock user',
+                uid: 'mock id',
+                email: 'mockemail',
+                emailVerified: true,
+                photoURL: 'none',
+            })
+        );
+        renderWithProviders(<NavigationBar />, { store });
         expect(screen.queryByTestId('navigation-bar')).toBeInTheDocument();
 
         const dropdownElement = await screen.findByTestId(
@@ -66,7 +91,17 @@ describe('NavigationBar', () => {
     });
 
     test('goes to account settings page onclick', async () => {
-        renderWithProviders(<NavigationBar />);
+        const store = setupStore();
+        store.dispatch(
+            updateUser({
+                displayName: 'mock user',
+                uid: 'mock id',
+                email: 'mockemail',
+                emailVerified: true,
+                photoURL: 'none',
+            })
+        );
+        renderWithProviders(<NavigationBar />, { store });
         expect(screen.queryByTestId('navigation-bar')).toBeInTheDocument();
 
         const dropdownElement = await screen.findByTestId(
@@ -78,13 +113,23 @@ describe('NavigationBar', () => {
         const accountBtn =
             await within(dropdownElement).findByTestId('profile-btn');
         fireEvent.click(accountBtn);
-        expect(mockedUseNavigate).toHaveBeenCalledWith('/profile/undefined');
+        expect(mockedUseNavigate).toHaveBeenCalledWith('/profile/mock id');
     });
 
     test('signs out onclick', async () => {
         const mockedSignout = jest.mocked(signOut);
         mockedSignout.mockResolvedValue();
-        renderWithProviders(<NavigationBar />);
+        const store = setupStore();
+        store.dispatch(
+            updateUser({
+                displayName: 'mock user',
+                uid: 'mock id',
+                email: 'mockemail',
+                emailVerified: true,
+                photoURL: 'none',
+            })
+        );
+        renderWithProviders(<NavigationBar />, { store });
         expect(screen.queryByTestId('navigation-bar')).toBeInTheDocument();
 
         const dropdownElement = await screen.findByTestId(
