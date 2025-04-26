@@ -5,9 +5,10 @@ import { Class, Race } from '../../constants/types';
 type DropdownProps = {
     options: Class[] | Race[];
     onOptChange: (selectedItem: Race | Class | null) => void;
+    defaultValue?: string;
 };
 
-const Dropdown = ({ options, onOptChange }: DropdownProps) => {
+const Dropdown = ({ options, onOptChange, defaultValue }: DropdownProps) => {
     const renderDropdown = () => {
         if (options.length > 0) {
             return options.map((item: Class | Race, index) => (
@@ -20,7 +21,7 @@ const Dropdown = ({ options, onOptChange }: DropdownProps) => {
         <Form.Select
             data-testid="dropdown"
             required
-            defaultValue={''}
+            value={defaultValue || ''}
             onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                 const { selectedIndex } = e.target;
                 if (selectedIndex === 0) {

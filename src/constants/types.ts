@@ -44,12 +44,12 @@ type Inventory = {
 
 type Class = {
     name: string;
-    index: string | boolean;
+    index: string;
     url: string | boolean;
 };
 
 type Race = {
-    index: string | boolean;
+    index: string;
     name: string;
     url: string | boolean;
 };
@@ -148,7 +148,7 @@ type Spell = {
     attack_type?: string;
     casting_time?: string;
     classes?: {
-        name: string;
+        index: string;
     }[];
     components?: string[];
     concentration?: boolean;
@@ -176,6 +176,32 @@ type Spell = {
     };
 };
 
+type SpellsKnown = {
+    cantrips_known: number;
+    spell_slots_level_1: number;
+    spell_slots_level_2: number;
+    spell_slots_level_3: number;
+    spell_slots_level_4: number;
+    spell_slots_level_5: number;
+    spell_slots_level_6: number;
+    spell_slots_level_7: number;
+    spell_slots_level_8: number;
+    spell_slots_level_9: number;
+    spells_known: number;
+};
+
+type SpellCastingInfo = {
+    info?: {
+        desc?: string[];
+        name?: string;
+    };
+    spellcasting_ability?: {
+        desc?: string[];
+        full_name?: string;
+        index?: string;
+    };
+};
+
 export type {
     ProficienciesTypes,
     CharacterData,
@@ -193,4 +219,6 @@ export type {
     EquipmentData,
     CurrentUser,
     Spell,
+    SpellsKnown,
+    SpellCastingInfo,
 };
