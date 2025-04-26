@@ -52,8 +52,11 @@ import CharacterSpells from '../CharacterSpells';
 import {
     resetCharSpells,
     resetSelectedSpellState,
+    resetSpellcasting,
+    resetSpellSlots,
     setCharSpells,
 } from '../../redux/SpellsReducer';
+import { getIndexFromString } from '../../util/stringFormatting';
 
 const StatsRowContainer = styled(Row)`
     display: flex;
@@ -133,6 +136,8 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
     const [showToast, setShowToast] = useState(false);
     const [editable, setEditable] = useState(editMode);
     const [isLoadingInitial, setIsLoadingInitial] = useState(true);
+    const [isLoadingClasses, setIsLoadingClasses] = useState(true);
+    const [isLoadingRaces, setIsLoadingRaces] = useState(true);
 
     // options for dropdowns
     const [classOptions, setClassOptions] = useState<Class[]>([]);
@@ -176,7 +181,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
         if (event.target.value) {
             setCharClass({
                 name: event.target.value,
-                index: false,
+                index: getIndexFromString(event.target.value),
                 url: false,
             });
         } else {
@@ -251,7 +256,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
         if (event.target.value) {
             const newRace = {
                 name: event.target.value,
-                index: false,
+                index: getIndexFromString(event.target.value),
                 url: false,
             };
             setCharRace(newRace);
@@ -467,6 +472,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
             const data = await response.json();
             setClassOptions(data.results);
         }
+        setIsLoadingClasses(false);
     };
 
     const getRaces = async () => {
@@ -475,6 +481,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
             const data = await response.json();
             setRaceOptions(data.results);
         }
+        setIsLoadingRaces(false);
     };
 
     const getAllEquipment = async () => {
@@ -582,7 +589,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
     }, []);
 
     useEffect(() => {
-        if (editMode) {
+        if (editMode && !isLoadingClasses && !isLoadingRaces) {
             const fetchInitialValues = async () => {
                 const charRef = ref(firebaseDatabase, `/characters/${charId}`);
                 const response = await get(charRef);
@@ -594,10 +601,11 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                         return;
                     }
                     setEditable(true);
-                    setCustomClass(true);
-                    setCustomRace(true);
                     setCharName(charData.name);
                     setCharRace(charData.race);
+                    // TODO: remove once refactored
+                    onRaceDropdownChange(charData.race);
+                    onClassDropdownChange(charData.class);
                     setCharClass(charData.class);
                     setCharDesc(charData.description);
                     setCharLvl(charData.level);
@@ -610,7 +618,6 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                         dispatch(setInventory(charData.inventory));
                     }
                     if (charData.spells) {
-                        console.log(charData.spells);
                         dispatch(setCharSpells(charData.spells));
                     }
                 } else {
@@ -620,7 +627,15 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
             };
             fetchInitialValues();
         }
-    }, [editMode, charId, dispatch, user?.uid]);
+        // eslint-disable-next-line
+    }, [
+        editMode,
+        charId,
+        dispatch,
+        user?.uid,
+        isLoadingClasses,
+        isLoadingRaces,
+    ]);
 
     useEffect(() => {
         //on unmount, reset inventory
@@ -628,6 +643,8 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
             dispatch(resetInventory());
             dispatch(resetCharSpells());
             dispatch(resetSelectedSpellState());
+            dispatch(resetSpellSlots());
+            dispatch(resetSpellcasting());
         };
     }, [dispatch]);
 
@@ -694,6 +711,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                                             options={raceOptions}
                                             onOptChange={onRaceDropdownChange}
                                             data-testid="char-race-dropdown"
+                                            defaultValue={charRace?.name}
                                         />
                                     )}
                                     <Form.Control.Feedback type="invalid">
@@ -732,6 +750,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                                             options={classOptions}
                                             onOptChange={onClassDropdownChange}
                                             data-testid="char-class-dropdown"
+                                            defaultValue={charClass?.name}
                                         />
                                     )}
                                     <Form.Control.Feedback type="invalid">
@@ -887,7 +906,8 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                                 <Row>
                                     <h5>Spells</h5>
                                     <CharacterSpells
-                                        charClass={charClass?.name || ''}
+                                        charClass={charClass}
+                                        charLvl={Number(charLvl)}
                                         edit
                                     />
                                 </Row>

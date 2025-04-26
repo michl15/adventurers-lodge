@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Spell } from '../constants/types';
+import { Spell, SpellCastingInfo, SpellsKnown } from '../constants/types';
 import { RowSelectionState } from '@tanstack/react-table';
 
 export interface SpellInitialState {
@@ -7,6 +7,8 @@ export interface SpellInitialState {
     spellsLoading: boolean;
     selectedSpellsState: RowSelectionState;
     charSpells: Spell[];
+    spellSlots: SpellsKnown | null;
+    spellcasting: SpellCastingInfo;
 }
 
 const initialSpells: SpellInitialState = {
@@ -14,6 +16,8 @@ const initialSpells: SpellInitialState = {
     spellsLoading: true,
     selectedSpellsState: {},
     charSpells: [],
+    spellSlots: null,
+    spellcasting: {},
 };
 
 export const spellSlice = createSlice({
@@ -67,6 +71,21 @@ export const spellSlice = createSlice({
         setCharSpells: (state, action: PayloadAction<Spell[]>) => {
             state.charSpells = action.payload;
         },
+        setSpellSlots: (state, action: PayloadAction<SpellsKnown>) => {
+            state.spellSlots = action.payload;
+        },
+        resetSpellSlots: (state) => {
+            state.spellSlots = null;
+        },
+        setSpellcastingInfo: (
+            state,
+            action: PayloadAction<SpellCastingInfo>
+        ) => {
+            state.spellcasting = action.payload;
+        },
+        resetSpellcasting: (state) => {
+            state.spellcasting = {};
+        },
     },
 });
 
@@ -81,5 +100,9 @@ export const {
     resetCharSpells,
     resetSelectedSpellState,
     setCharSpells,
+    setSpellSlots,
+    resetSpellSlots,
+    setSpellcastingInfo,
+    resetSpellcasting,
 } = spellSlice.actions;
 export default spellSlice.reducer;

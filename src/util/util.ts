@@ -4,7 +4,7 @@ const filterSpellListByClass = (spellList: Spell[], classIndex: string) => {
     return spellList.filter((spell) => {
         if (spell.classes) {
             for (let i = 0; i < spell.classes?.length; i++) {
-                if (spell.classes[i].name === classIndex) {
+                if (spell.classes[i].index === classIndex) {
                     return true;
                 }
             }

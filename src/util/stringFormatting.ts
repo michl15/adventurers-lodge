@@ -5,4 +5,10 @@ const shortenString = (text: string, maxLen: number) => {
     return text;
 };
 
-export { shortenString };
+const getIndexFromString = (str: string) => {
+    const lowerString = str.toLowerCase().trim();
+    const index = lowerString.split(' ').join('-');
+    return index;
+};
+
+export { shortenString, getIndexFromString };

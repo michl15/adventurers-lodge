@@ -1,4 +1,9 @@
-import { ProficienciesTypes, SkillsTypes, StatsTypes } from './types';
+import {
+    ProficienciesTypes,
+    SkillsTypes,
+    SpellsKnown,
+    StatsTypes,
+} from './types';
 
 const BASE_STATS: StatsTypes = {
     str: 10,
@@ -61,10 +66,25 @@ const EXTRA_EQUIPMENT = [
     'wondrous-items',
 ];
 
+const EMPTY_SPELL_SLOTS: SpellsKnown = {
+    cantrips_known: 0,
+    spell_slots_level_1: 0,
+    spell_slots_level_2: 0,
+    spell_slots_level_3: 0,
+    spell_slots_level_4: 0,
+    spell_slots_level_5: 0,
+    spell_slots_level_6: 0,
+    spell_slots_level_7: 0,
+    spell_slots_level_8: 0,
+    spell_slots_level_9: 0,
+    spells_known: 0,
+};
+
 export {
     BASE_STATS,
     SKILLS,
     STATS_MAP,
     DEFAULT_PROFICIENCIES,
     EXTRA_EQUIPMENT,
+    EMPTY_SPELL_SLOTS,
 };

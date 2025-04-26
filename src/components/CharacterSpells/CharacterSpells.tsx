@@ -6,14 +6,16 @@ import { getAllSpells } from '../../graphql/queries';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux';
 import { setSpells, setSpellsLoading } from '../../redux/SpellsReducer';
-import { Spell } from '../../constants/types';
+import { Class, Spell, SpellsKnown } from '../../constants/types';
 import { PlusCircle } from 'react-bootstrap-icons';
 import styled from 'styled-components';
 import SpellSection from './SpellSection';
+import SpellSlots from '../SpellSlots';
 
 type CharacterSpellsProps = {
-    charClass: string;
+    charClass: Class | null;
     edit?: boolean;
+    charLvl?: number;
 };
 
 type Section = {
@@ -27,7 +29,11 @@ const AddSpellButton = styled(ListGroup.Item)`
     }
 `;
 
-const CharacterSpells = ({ charClass, edit }: CharacterSpellsProps) => {
+const CharacterSpells = ({
+    charClass,
+    edit,
+    charLvl,
+}: CharacterSpellsProps) => {
     const [showSpellModal, setShowSpellModal] = useState(false);
 
     // spell lists by level
@@ -56,6 +62,7 @@ const CharacterSpells = ({ charClass, edit }: CharacterSpellsProps) => {
                     spellList={section.spells}
                     name={section.name}
                     edit={edit}
+                    key={`spells-section-${index}`}
                 />
             );
         });
@@ -71,7 +78,6 @@ const CharacterSpells = ({ charClass, edit }: CharacterSpellsProps) => {
             }
             dispatch(setSpellsLoading(false));
         };
-
         fetchSpells();
     }, [dispatch, spellList]);
 
@@ -162,8 +168,33 @@ const CharacterSpells = ({ charClass, edit }: CharacterSpellsProps) => {
         }
     };
 
+    const getKnownSpells = () => {
+        const known: SpellsKnown = {
+            cantrips_known: cantrips.length,
+            spell_slots_level_1: firstLvl.length,
+            spell_slots_level_2: secondLvl.length,
+            spell_slots_level_3: thirdLvl.length,
+            spell_slots_level_4: fourthLvl.length,
+            spell_slots_level_5: fifthLvl.length,
+            spell_slots_level_6: sixthLvl.length,
+            spell_slots_level_7: seventhLvl.length,
+            spell_slots_level_8: eighthLvl.length,
+            spell_slots_level_9: ninthLvl.length,
+            spells_known: 0,
+        };
+
+        return known;
+    };
+
     return (
         <Container>
+            <Row>
+                <SpellSlots
+                    charClass={charClass}
+                    charLvl={charLvl}
+                    spellsKnown={getKnownSpells()}
+                />
+            </Row>
             <Row>
                 <Accordion alwaysOpen>
                     {renderSection(spellSections)}
@@ -189,6 +220,8 @@ const CharacterSpells = ({ charClass, edit }: CharacterSpellsProps) => {
                 showSpellModal={showSpellModal}
                 closeModal={() => setShowSpellModal(false)}
                 charClass={charClass}
+                spellsKnown={getKnownSpells()}
+                charLvl={charLvl}
             />
         </Container>
     );

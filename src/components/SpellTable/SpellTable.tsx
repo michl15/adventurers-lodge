@@ -73,7 +73,7 @@ const SpellTable = ({ spellList }: SpellTableProps) => {
     const [tableData, setTableData] = useState(spellList);
     const [pagination, setPagination] = useState({
         pageIndex: 0,
-        pageSize: 10,
+        pageSize: 5,
     });
     const [rowSelection, setRowSelection] =
         useState<RowSelectionState>(selectedSpellsState);
@@ -97,18 +97,18 @@ const SpellTable = ({ spellList }: SpellTableProps) => {
                         />
                     );
                 },
-                size: 50,
+                size: 10,
             },
             columnHelper.accessor('name', {
                 cell: (info) => info.getValue(),
                 header: 'Spell Name',
-                size: 500,
+                size: 300,
             }),
             columnHelper.accessor('level', {
                 cell: (info) =>
                     info.getValue() === 0 ? 'Cantrip' : info.getValue(),
                 header: 'Level',
-                size: 100,
+                size: 50,
             }),
             columnHelper.accessor('school.name', {
                 cell: (info) => info.getValue(),
@@ -237,7 +237,7 @@ const SpellTable = ({ spellList }: SpellTableProps) => {
                             size="sm"
                             style={{ width: 'auto' }}
                         >
-                            {[10, 20, 30, 40, 50].map((pageSize) => (
+                            {[5, 10, 20].map((pageSize) => (
                                 <option key={pageSize} value={pageSize}>
                                     {pageSize}
                                 </option>

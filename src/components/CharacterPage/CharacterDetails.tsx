@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Button,
     Card,
@@ -17,12 +17,13 @@ import HPDisplay from './HPDisplay';
 import CharacterLanguages from '../CharacterLanguages';
 import CharacterTraits from '../CharacterTraits/CharacterTraits';
 import Inventory from '../Inventory';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux';
 import { useNavigate } from 'react-router';
 import { ref, remove } from 'firebase/database';
 import { firebaseDatabase } from '../../firebase/firebase';
 import CharacterSpells from '../CharacterSpells';
+import { resetSpellcasting, resetSpellSlots } from '../../redux/SpellsReducer';
 
 type CharacterDetailsProps = {
     details: CharacterData | null;
@@ -39,6 +40,7 @@ const EditButton = styled(Button)`
 const CharacterDetails = ({ details }: CharacterDetailsProps) => {
     const user = useSelector((state: RootState) => state.user.user);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -67,6 +69,14 @@ const CharacterDetails = ({ details }: CharacterDetailsProps) => {
             });
         });
     };
+
+    useEffect(() => {
+        //on unmount, reset inventory
+        return () => {
+            dispatch(resetSpellSlots());
+            dispatch(resetSpellcasting());
+        };
+    }, [dispatch]);
 
     if (details) {
         const editable = details.owner === user?.uid;
@@ -132,7 +142,10 @@ const CharacterDetails = ({ details }: CharacterDetailsProps) => {
                         <hr />
                         <Row>
                             <h4>Spells</h4>
-                            <CharacterSpells charClass={details.class.name} />
+                            <CharacterSpells
+                                charClass={details.class}
+                                charLvl={details.level}
+                            />
                         </Row>
                         <hr />
                         <Row>
