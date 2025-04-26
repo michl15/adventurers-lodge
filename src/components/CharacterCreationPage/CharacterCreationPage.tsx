@@ -603,6 +603,9 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                     setEditable(true);
                     setCharName(charData.name);
                     setCharRace(charData.race);
+                    // TODO: remove once refactored
+                    onRaceDropdownChange(charData.race);
+                    onClassDropdownChange(charData.class);
                     setCharClass(charData.class);
                     setCharDesc(charData.description);
                     setCharLvl(charData.level);
@@ -624,6 +627,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
             };
             fetchInitialValues();
         }
+        // eslint-disable-next-line
     }, [
         editMode,
         charId,
