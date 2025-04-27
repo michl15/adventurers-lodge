@@ -26,29 +26,34 @@ jest.mock('../../../util/calculations', () => ({
 const mockRaceAPIResp = {
     json: () =>
         Promise.resolve({
-            languages: [
-                {
-                    name: 'common',
-                    index: 'common',
-                    url: 'mockUrl',
+            data: {
+                race: {
+                    languages: [
+                        {
+                            name: 'common',
+                            index: 'common',
+                            url: 'mockUrl',
+                        },
+                    ],
+                    traits: [
+                        {
+                            name: 'test trait',
+                            index: 'test-trait',
+                            url: 'mockUrl',
+                            desc: ['test'],
+                        },
+                    ],
+                    ability_bonuses: [
+                        {
+                            ability_score: {
+                                index: 'str',
+                                name: 'str',
+                            },
+                            bonus: 2,
+                        },
+                    ],
                 },
-            ],
-            traits: [
-                {
-                    name: 'test trait',
-                    index: 'test-trait',
-                    url: 'mockUrl',
-                },
-            ],
-            ability_bonuses: [
-                {
-                    ability_score: {
-                        index: 'str',
-                        name: 'str',
-                    },
-                    bonus: 2,
-                },
-            ],
+            },
         }),
     ok: true,
     status: 200,
@@ -70,18 +75,35 @@ describe('CharacterCreationPage', () => {
     beforeEach(() => {
         global.fetch = jest.fn();
 
-        const mockResponseData = {
-            results: [
-                { name: 'mockName', url: 'mockUrl', index: 'mockIndex' },
-                { name: 'mockName2', url: 'mockUrl2', index: 'mockIndex2' },
-            ],
+        const mockResponseClassData = {
+            data: {
+                classes: [
+                    { name: 'mockName', url: 'mockUrl', index: 'mockIndex' },
+                    { name: 'mockName2', url: 'mockUrl2', index: 'mockIndex2' },
+                ],
+            },
         };
 
-        (global.fetch as jest.Mock).mockResolvedValue({
-            json: () => Promise.resolve(mockResponseData),
-            ok: true,
-            status: 200,
-        });
+        const mockResponseRaceData = {
+            data: {
+                races: [
+                    { name: 'mockName', url: 'mockUrl', index: 'mockIndex' },
+                    { name: 'mockName2', url: 'mockUrl2', index: 'mockIndex2' },
+                ],
+            },
+        };
+
+        (global.fetch as jest.Mock)
+            .mockResolvedValueOnce({
+                json: () => Promise.resolve(mockResponseClassData),
+                ok: true,
+                status: 200,
+            })
+            .mockResolvedValueOnce({
+                json: () => Promise.resolve(mockResponseRaceData),
+                ok: true,
+                status: 200,
+            });
     });
 
     afterEach(() => {
@@ -390,9 +412,7 @@ describe('CharacterCreationPage', () => {
         const dropdowns = await screen.findAllByTestId('dropdown');
         const classDropdown = dropdowns[0];
 
-        (global.fetch as jest.Mock)
-            .mockResolvedValueOnce(mockRaceAPIResp)
-            .mockResolvedValueOnce(mockDesc);
+        (global.fetch as jest.Mock).mockResolvedValueOnce(mockRaceAPIResp);
         fireEvent.change(classDropdown, { target: { selectedIndex: 1 } });
         await waitFor(() => {
             expect(screen.getByTestId('race-info-alert')).toBeInTheDocument();
