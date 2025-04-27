@@ -1,4 +1,4 @@
-import { renderWithProviders } from '../../../util/test-utils';
+import { renderWithProviders } from '../../../../util/test-utils';
 import AuthBoundary from '../AuthBoundary';
 
 const mockedUseNavigate = jest.fn();

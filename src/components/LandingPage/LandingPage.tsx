@@ -87,7 +87,7 @@ const LandingPage = () => {
             <Row>
                 <h4>For GMs</h4>
                 <Col>
-                    <Carousel variant="dark" style={{ width: '80%' }}>
+                    <Carousel variant="dark">
                         <Carousel.Item>
                             <CarouselImage src={wipSrc} />
                             <Carousel.Caption>

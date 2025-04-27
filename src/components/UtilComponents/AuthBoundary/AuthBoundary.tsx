@@ -1,9 +1,9 @@
 import { PropsWithChildren, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
-import { firebaseAuth, firebaseDatabase } from '../../firebase/firebase';
+import { firebaseAuth, firebaseDatabase } from '../../../firebase/firebase';
 import { useDispatch } from 'react-redux';
-import { updateUser } from '../../redux/UserReducer';
-import { CurrentUser } from '../../constants/types';
+import { updateUser } from '../../../redux/UserReducer';
+import { CurrentUser } from '../../../constants/types';
 import { get, ref, update } from 'firebase/database';
 
 const AuthBoundary = (props: PropsWithChildren) => {

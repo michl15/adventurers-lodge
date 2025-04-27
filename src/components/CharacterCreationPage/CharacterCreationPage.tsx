@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, Col, Container, Form, Row } from 'react-bootstrap';
+import {
+    Alert,
+    Button,
+    Col,
+    Container,
+    Form,
+    Row,
+    Spinner,
+} from 'react-bootstrap';
 import { get, push, ref, set, update } from 'firebase/database';
 import { Toast } from 'react-bootstrap';
 import { firebaseDatabase } from '../../firebase/firebase';
 import { useNavigate, useParams } from 'react-router';
 import styled from 'styled-components';
-import {
-    BASE_STATS,
-    DEFAULT_PROFICIENCIES,
-    EXTRA_EQUIPMENT,
-} from '../../constants/constants';
+import { BASE_STATS, DEFAULT_PROFICIENCIES } from '../../constants/constants';
 import {
     calculateProficiencyBonus,
     calculateStatModifier,
@@ -27,12 +31,6 @@ import {
     Trait,
 } from '../../constants/types';
 import Dropdown from './Dropdown';
-import {
-    API_BASE_URL_5E,
-    API_CLASSES,
-    API_EQUIPMENT_CATEGORIES,
-    API_RACES,
-} from '../../constants/api';
 import CharacterLanguages from '../CharacterLanguages';
 import CharacterTraits from '../CharacterTraits';
 import Inventory from '../Inventory';
@@ -41,13 +39,13 @@ import { RootState } from '../../redux';
 import { resetInventory, setInventory } from '../../redux/InventoryReducer';
 import CharacterAccessDenied from './CharacterAccessDenied';
 import { graphQuery } from '../../graphql/queryUtil';
-import { equipmentQuery, equipmentQueryByIndex } from '../../graphql/queries';
 import {
-    addEquipment,
-    setEquipment,
-    setEquipmentIsLoading,
-    setExtraEquipmentFetched,
-} from '../../redux/EquipmentReducer';
+    getAllClasses,
+    getAllEquipmentCategories,
+    getAllRaces,
+    getClassProficiencies,
+    getRaceData,
+} from '../../graphql/queries';
 import CharacterSpells from '../CharacterSpells';
 import {
     resetCharSpells,
@@ -138,6 +136,8 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
     const [isLoadingInitial, setIsLoadingInitial] = useState(true);
     const [isLoadingClasses, setIsLoadingClasses] = useState(true);
     const [isLoadingRaces, setIsLoadingRaces] = useState(true);
+    const [isLoadingProficiencies, setIsLoadingProficiencies] = useState(false);
+    const [isLoadingRaceInfo, setIsLoadingRaceInfo] = useState(false);
 
     // options for dropdowns
     const [classOptions, setClassOptions] = useState<Class[]>([]);
@@ -154,8 +154,6 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
     const inventory = useSelector(
         (state: RootState) => state.inventory.inventoryList
     );
-    const { equipmentList, equipmentIsLoading, extraEquipmentFetched } =
-        useSelector((state: RootState) => state.equipment);
     const { charSpells } = useSelector((state: RootState) => state.spells);
     const dispatch = useDispatch();
 
@@ -182,7 +180,6 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
             setCharClass({
                 name: event.target.value,
                 index: getIndexFromString(event.target.value),
-                url: false,
             });
         } else {
             setCharClass(null);
@@ -192,60 +189,57 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
     const onClassDropdownChange = async (selectedClass: Class | null) => {
         setValidated(false);
         setCharClass(selectedClass);
-        if (selectedClass?.url) {
-            const response = await fetch(
-                `${API_BASE_URL_5E}${selectedClass.url}`
+        if (selectedClass?.index) {
+            setIsLoadingProficiencies(true);
+            const response = await graphQuery(
+                getClassProficiencies(selectedClass.index)
             );
-            const classInfo = await response.json();
-            setHitDie(classInfo.hit_die);
-            setCharMaxHP(
-                classInfo.hit_die + calculateStatModifier(charStats['con'])
-            );
-            setProficienciesInfo(classInfo.proficiency_choices[0].desc);
+            if (response) {
+                const classInfo = response.class;
+                setHitDie(classInfo.hit_die);
+                setCharMaxHP(
+                    classInfo.hit_die + calculateStatModifier(charStats['con'])
+                );
+                setProficienciesInfo(classInfo.proficiency_choices[0].desc);
+            }
+            setIsLoadingProficiencies(false);
         }
     };
 
     const onRaceDropdownChange = async (race: Race | null) => {
         setValidated(false);
         setCharRace(race);
-        if (race?.url) {
-            const response = await fetch(`${API_BASE_URL_5E}${race.url}`);
-            const raceInfo = await response.json();
+        if (race?.index) {
+            setIsLoadingRaceInfo(true);
+            const response = await graphQuery(getRaceData(race.index));
+            if (response) {
+                // ability bonuses
+                const abilityBonuses = response.race.ability_bonuses;
+                setStatBonuses(abilityBonuses);
 
-            // Languages from race
-            const languages = raceInfo.languages;
-            languages.forEach((lang: Language) => {
-                lang.source = race.name;
-            });
-            const removeOld = charLanguages.filter(
-                (lang) => lang.source === false
-            );
-            const newLanguages: Language[] = [...removeOld, ...languages];
-            setCharLanguages(newLanguages);
-
-            // traits from race
-            const traits = raceInfo.traits;
-            for (let i = 0; i < traits.length; i++) {
-                traits[i].source = race.name;
-                const traitResp = await fetch(
-                    `${API_BASE_URL_5E}${traits[i].url}`
+                // languages
+                const languages = response.race.languages;
+                languages.forEach((lang: Language) => {
+                    lang.source = race.name;
+                });
+                const removeOld = charLanguages.filter(
+                    (lang) => lang.source === false
                 );
-                const traitInfo = await traitResp.json();
-                let desc = '';
-                traitInfo.desc.forEach((str: string) => (desc += str + ' '));
-                traits[i].info = desc;
-            }
-            // when selecting a new race, remove other traits from prev race
-            const removeOldTraits = charTraits.filter(
-                (trait) => trait.source === false
-            );
-            const newTraits: Trait[] = [...removeOldTraits, ...traits];
-            setCharTraits(newTraits);
 
-            // stat bonuses from race
-            const abilities = raceInfo.ability_bonuses;
-            setStatBonuses(abilities);
-            setStatsApplied(false);
+                const newLanguages: Language[] = [...removeOld, ...languages];
+                setCharLanguages(newLanguages);
+
+                const traits = response.race.traits;
+                traits.forEach((trait: Trait) => {
+                    trait.source = race.name;
+                });
+                const removeOldTraits = charTraits.filter(
+                    (trait) => trait.source === false
+                );
+                const newTraits: Trait[] = [...removeOldTraits, ...traits];
+                setCharTraits(newTraits);
+            }
+            setIsLoadingRaceInfo(false);
         } else {
             removeOldValues();
         }
@@ -467,53 +461,25 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
     /* ===================================== Initial API fetches ======================================== */
     // #region API calls
     const getClasses = async () => {
-        const response = await fetch(API_CLASSES);
-        if (response.ok) {
-            const data = await response.json();
-            setClassOptions(data.results);
+        const response = await graphQuery(getAllClasses());
+        if (response) {
+            setClassOptions(response.classes);
         }
         setIsLoadingClasses(false);
     };
 
     const getRaces = async () => {
-        const response = await fetch(API_RACES);
-        if (response.ok) {
-            const data = await response.json();
-            setRaceOptions(data.results);
+        const response = await graphQuery(getAllRaces());
+        if (response) {
+            setRaceOptions(response.races);
         }
         setIsLoadingRaces(false);
     };
 
-    const getAllEquipment = async () => {
-        if (!equipmentIsLoading && !(equipmentList.length > 0)) {
-            dispatch(setEquipmentIsLoading(true));
-            const graphResponse = await graphQuery(equipmentQuery());
-            if (graphResponse) {
-                dispatch(setEquipment(graphResponse.equipments));
-            }
-
-            if (!extraEquipmentFetched) {
-                for (let i in EXTRA_EQUIPMENT) {
-                    const extraResp = await graphQuery(
-                        equipmentQueryByIndex(EXTRA_EQUIPMENT[i])
-                    );
-                    if (extraResp) {
-                        dispatch(
-                            addEquipment(extraResp.equipmentCategory.equipment)
-                        );
-                    }
-                }
-                dispatch(setExtraEquipmentFetched(true));
-            }
-            dispatch(setEquipmentIsLoading(false));
-        }
-    };
-
     const getEquipmentCategories = async () => {
-        const response = await fetch(API_EQUIPMENT_CATEGORIES);
-        if (response.ok) {
-            const equipmentCategoriesData = await response.json();
-            setEquipmentCategories(equipmentCategoriesData.results);
+        const response = await graphQuery(getAllEquipmentCategories());
+        if (response) {
+            setEquipmentCategories(response.equipmentCategories);
         }
     };
 
@@ -584,7 +550,6 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
         getClasses();
         getRaces();
         getEquipmentCategories();
-        getAllEquipment();
         // eslint-disable-next-line
     }, []);
 
@@ -712,6 +677,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                                             onOptChange={onRaceDropdownChange}
                                             data-testid="char-race-dropdown"
                                             defaultValue={charRace?.name}
+                                            loading={isLoadingRaces}
                                         />
                                     )}
                                     <Form.Control.Feedback type="invalid">
@@ -751,6 +717,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                                             onOptChange={onClassDropdownChange}
                                             data-testid="char-class-dropdown"
                                             defaultValue={charClass?.name}
+                                            loading={isLoadingClasses}
                                         />
                                     )}
                                     <Form.Control.Feedback type="invalid">
@@ -827,7 +794,11 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                                     data-testid="class-info-alert"
                                 >
                                     <b>{charClass?.name}:</b>{' '}
-                                    {proficienciesInfo}
+                                    {isLoadingProficiencies ? (
+                                        <Spinner size="sm" />
+                                    ) : (
+                                        proficienciesInfo
+                                    )}
                                 </Alert>
                                 <Proficiencies
                                     charLvl={charLvl}
@@ -849,8 +820,17 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                                         >
                                             <Row>
                                                 <Col className="d-flex my-auto">
-                                                    <b>{charRace?.name}</b>:{' '}
-                                                    {statInfo()}
+                                                    <span>
+                                                        <b>{charRace?.name}</b>:{' '}
+                                                        {isLoadingRaceInfo ? (
+                                                            <Spinner
+                                                                size="sm"
+                                                                className="my-auto"
+                                                            />
+                                                        ) : (
+                                                            statInfo()
+                                                        )}
+                                                    </span>
                                                 </Col>
                                                 <Col className="d-flex justify-content-end">
                                                     <Button

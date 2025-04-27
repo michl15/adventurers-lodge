@@ -10,14 +10,14 @@ const mockTraitList: Trait[] = [
         index: 'trait1',
         url: 'trait1url',
         source: false,
-        info: 'trait 1 info',
+        desc: ['trait 1 info'],
     },
     {
         name: 'Trait2',
         index: 'trait2',
         url: 'trait2url',
         source: false,
-        info: 'trait 2 info',
+        desc: ['trait 2 info'],
     },
 ];
 

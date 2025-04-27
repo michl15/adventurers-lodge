@@ -6,9 +6,15 @@ type DropdownProps = {
     options: Class[] | Race[];
     onOptChange: (selectedItem: Race | Class | null) => void;
     defaultValue?: string;
+    loading?: boolean;
 };
 
-const Dropdown = ({ options, onOptChange, defaultValue }: DropdownProps) => {
+const Dropdown = ({
+    options,
+    onOptChange,
+    defaultValue,
+    loading,
+}: DropdownProps) => {
     const renderDropdown = () => {
         if (options.length > 0) {
             return options.map((item: Class | Race, index) => (
@@ -31,6 +37,7 @@ const Dropdown = ({ options, onOptChange, defaultValue }: DropdownProps) => {
                     onOptChange(selectedItem);
                 }
             }}
+            disabled={loading}
         >
             <option key="no-selection"></option>
             {renderDropdown()}

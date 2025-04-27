@@ -6,7 +6,6 @@ const mockCharacterData: CharacterData = {
     class: {
         name: 'test class',
         index: 'test-class',
-        url: false,
     },
     level: 1,
     key: 'mock key',
@@ -20,7 +19,6 @@ const mockCharacterData: CharacterData = {
     race: {
         name: 'test race',
         index: 'test-race',
-        url: false,
     },
     languages: [],
     traits: [],
