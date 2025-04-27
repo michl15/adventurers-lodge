@@ -23,7 +23,11 @@ import { useNavigate } from 'react-router';
 import { ref, remove } from 'firebase/database';
 import { firebaseDatabase } from '../../firebase/firebase';
 import CharacterSpells from '../CharacterSpells';
-import { resetSpellcasting, resetSpellSlots } from '../../redux/SpellsReducer';
+import {
+    resetCharSpells,
+    resetSpellcasting,
+    resetSpellSlots,
+} from '../../redux/SpellsReducer';
 
 type CharacterDetailsProps = {
     details: CharacterData | null;
@@ -75,6 +79,7 @@ const CharacterDetails = ({ details }: CharacterDetailsProps) => {
         return () => {
             dispatch(resetSpellSlots());
             dispatch(resetSpellcasting());
+            dispatch(resetCharSpells());
         };
     }, [dispatch]);
 

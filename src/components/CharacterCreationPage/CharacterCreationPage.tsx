@@ -610,6 +610,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
             dispatch(resetSelectedSpellState());
             dispatch(resetSpellSlots());
             dispatch(resetSpellcasting());
+            dispatch(resetCharSpells());
         };
     }, [dispatch]);
 
