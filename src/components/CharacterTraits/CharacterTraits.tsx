@@ -47,7 +47,13 @@ const CharacterTraits = ({
                                         From <b>{trait.source}</b>
                                     </SourceInfo>
                                 )}
-                                {trait.info}
+                                {trait.desc.map((line, index) => (
+                                    <p
+                                        key={`${trait.index}-desc-line-${index}`}
+                                    >
+                                        {line}
+                                    </p>
+                                ))}
                             </Col>
                             <Col
                                 md="auto"
@@ -97,7 +103,7 @@ const CharacterTraits = ({
             setIsValidName(true);
             const newTrait: Trait = {
                 name: traitName,
-                info: traitInfo,
+                desc: [traitInfo],
                 index: index,
                 url: false,
                 source: false,

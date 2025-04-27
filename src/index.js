@@ -9,17 +9,18 @@ import HomePage from './components/HomePage';
 import CharacterCreationPage from './components/CharacterCreationPage';
 import NavigationBar from './components/NavigationBar';
 import PageContainer from './components/PageContainer';
-import ScrollToTop from './components/ScrollToTop';
+import ScrollToTop from './components/UtilComponents/ScrollToTop';
 import CharacterPage from './components/CharacterPage';
 import { Provider } from 'react-redux';
 import { store } from './redux';
-import ErrorBoundary from './components/ErrorBoundary';
-import AuthErrorScreen from './components/AuthErrorScreen';
-import AuthBoundary from './components/AuthBoundary';
+import ErrorBoundary from './components/UtilComponents/ErrorBoundary';
+import AuthErrorScreen from './components/UtilComponents/AuthErrorScreen';
+import AuthBoundary from './components/UtilComponents/AuthBoundary';
 import UserProfile from './components/UserProfile';
 import UserAccount from './components/UserAccount';
-import UnderConstruction from './components/UnderConstruction';
+import UnderConstruction from './components/UtilComponents/UnderConstruction';
 import LandingPage from './components/LandingPage';
+import LargeQueries from './components/UtilComponents/LargeQueries';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -29,6 +30,7 @@ root.render(
                 <ErrorBoundary>
                     <AuthBoundary>
                         <NavigationBar />
+                        <LargeQueries />
                         <PageContainer>
                             <ScrollToTop />
                             <Routes>

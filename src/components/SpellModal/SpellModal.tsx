@@ -48,6 +48,7 @@ const SpellModal = ({
                 closeModal();
             }}
             size="xl"
+            scrollable
         >
             <Modal.Header closeButton>
                 <Modal.Title>Spells</Modal.Title>

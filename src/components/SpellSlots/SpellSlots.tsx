@@ -146,6 +146,13 @@ const SpellSlots = ({
                                     section.available
                                 )}
                                 key={`spell-slots-${index}`}
+                                style={{
+                                    color:
+                                        section.available === 0 ||
+                                        section.available === null
+                                            ? 'grey'
+                                            : 'black',
+                                }}
                             >
                                 <Row className="text-center">
                                     <SlotLabel>{section.name}</SlotLabel>

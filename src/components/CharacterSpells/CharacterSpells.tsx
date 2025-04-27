@@ -1,11 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Accordion, Container, ListGroup, Row } from 'react-bootstrap';
+import { Accordion, Container, ListGroup, Row, Spinner } from 'react-bootstrap';
 import SpellModal from '../SpellModal';
-import { graphQuery } from '../../graphql/queryUtil';
-import { getAllSpells } from '../../graphql/queries';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '../../redux';
-import { setSpells, setSpellsLoading } from '../../redux/SpellsReducer';
 import { Class, Spell, SpellsKnown } from '../../constants/types';
 import { PlusCircle } from 'react-bootstrap-icons';
 import styled from 'styled-components';
@@ -50,10 +47,9 @@ const CharacterSpells = ({
 
     const [spellSections, setSpellSections] = useState<Section[]>([]);
 
-    const { spellList, charSpells } = useSelector(
+    const { charSpells, spellsLoading } = useSelector(
         (state: RootState) => state.spells
     );
-    const dispatch = useDispatch();
 
     const renderSection = (sectionList: Section[]) => {
         return sectionList.map((section, index) => {
@@ -67,19 +63,6 @@ const CharacterSpells = ({
             );
         });
     };
-
-    useEffect(() => {
-        const fetchSpells = async () => {
-            if (spellList.length === 0) {
-                const response = await graphQuery(getAllSpells());
-                if (response) {
-                    dispatch(setSpells(response.spells));
-                }
-            }
-            dispatch(setSpellsLoading(false));
-        };
-        fetchSpells();
-    }, [dispatch, spellList]);
 
     useEffect(() => {
         setCantrips(charSpells.filter((spell) => spell.level === 0));
@@ -185,7 +168,6 @@ const CharacterSpells = ({
 
         return known;
     };
-
     return (
         <Container>
             <Row>
@@ -203,13 +185,21 @@ const CharacterSpells = ({
                             <AddSpellButton
                                 onClick={() => setShowSpellModal(true)}
                                 style={getAddButtonStyle()}
+                                disabled={spellsLoading}
                             >
-                                <PlusCircle
-                                    style={{
-                                        marginRight: '10px',
-                                        marginBottom: '4px',
-                                    }}
-                                />{' '}
+                                {spellsLoading ? (
+                                    <Spinner
+                                        size="sm"
+                                        style={{ marginRight: '10px' }}
+                                    />
+                                ) : (
+                                    <PlusCircle
+                                        style={{
+                                            marginRight: '10px',
+                                            marginBottom: '4px',
+                                        }}
+                                    />
+                                )}
                                 Add a spell
                             </AddSpellButton>
                         </ListGroup>

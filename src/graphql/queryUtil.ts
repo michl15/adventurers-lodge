@@ -14,6 +14,11 @@ const graphQuery = async (query: { query: string; queryName: string }) => {
             console.error(
                 'HTTP Response Error: ' + response.status + response.statusText
             );
+            console.error(
+                'The above error occurred while attempting to query graphql: ',
+                query.queryName
+            );
+            return response;
         }
     } catch (error) {
         console.error('Error: ', error);

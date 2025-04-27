@@ -15,7 +15,7 @@ import { PencilSquare } from 'react-bootstrap-icons';
 import { ref, update } from 'firebase/database';
 import { firebaseDatabase } from '../../firebase/firebase';
 import { updateDisplayName } from '../../redux/UserReducer';
-import UnderConstruction from '../UnderConstruction';
+import UnderConstruction from '../UtilComponents/UnderConstruction';
 
 const ProfilePhoto = styled(Image)`
     height: 90px;

@@ -5,6 +5,7 @@ import {
     Container,
     ListGroup,
     Row,
+    Spinner,
 } from 'react-bootstrap';
 import { Equipment, EquipmentCategory } from '../../constants/types';
 import styled from 'styled-components';
@@ -42,6 +43,10 @@ const Inventory = ({ edit, categories }: InventoryProps) => {
 
     const inventory = useSelector(
         (state: RootState) => state.inventory.inventoryList
+    );
+
+    const { equipmentIsLoading } = useSelector(
+        (state: RootState) => state.equipment
     );
     const dispatch = useDispatch();
 
@@ -134,10 +139,21 @@ const Inventory = ({ edit, categories }: InventoryProps) => {
                     <AddButton
                         onClick={() => setShowItemModal(true)}
                         data-testid="add-to-inventory-btn"
+                        disabled={equipmentIsLoading}
                     >
-                        <PlusCircle
-                            style={{ marginRight: '10px', marginBottom: '4px' }}
-                        />
+                        {equipmentIsLoading ? (
+                            <Spinner
+                                size="sm"
+                                style={{ marginRight: '10px' }}
+                            />
+                        ) : (
+                            <PlusCircle
+                                style={{
+                                    marginRight: '10px',
+                                    marginBottom: '4px',
+                                }}
+                            />
+                        )}
                         Add an item
                     </AddButton>
                 )}

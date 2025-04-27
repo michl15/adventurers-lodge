@@ -3,7 +3,7 @@ import { RootState } from '../../redux';
 import { useEffect } from 'react';
 import { Col, Container, Image, Row } from 'react-bootstrap';
 import styled from 'styled-components';
-import UnderConstruction from '../UnderConstruction';
+import UnderConstruction from '../UtilComponents/UnderConstruction';
 
 const ProfilePhoto = styled(Image)`
     height: 120px;

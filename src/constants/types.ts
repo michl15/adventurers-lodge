@@ -45,13 +45,11 @@ type Inventory = {
 type Class = {
     name: string;
     index: string;
-    url: string | boolean;
 };
 
 type Race = {
     index: string;
     name: string;
-    url: string | boolean;
 };
 
 type Language = {
@@ -66,14 +64,13 @@ type Trait = {
     name: string;
     url: string | boolean;
     source: string | boolean;
-    info: string;
+    desc: string[];
 };
 
 type AbilityBonus = {
     ability_score: {
         index: string;
         name: string;
-        url: string;
     };
     bonus: number;
 };
@@ -123,6 +120,7 @@ type EquipmentData = {
         name: string;
     };
     quantity?: number;
+    rarity?: string;
 };
 
 type EquipmentCategory = {
@@ -202,6 +200,29 @@ type SpellCastingInfo = {
     };
 };
 
+type RaceInfo = {
+    index: string;
+    name: string;
+    ability_bonuses?: {
+        ability_score: {
+            name: string;
+        };
+        bonus: number;
+    };
+    languages?: {
+        name: string;
+    };
+    language_desc?: string;
+    traits?: {
+        name: string;
+        desc: string[];
+    }[];
+};
+
+type RaceDict = {
+    [index: string]: RaceInfo;
+};
+
 export type {
     ProficienciesTypes,
     CharacterData,
@@ -221,4 +242,6 @@ export type {
     Spell,
     SpellsKnown,
     SpellCastingInfo,
+    RaceInfo,
+    RaceDict,
 };
