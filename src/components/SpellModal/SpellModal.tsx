@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux';
-import { Alert, Container, Modal, Nav, Row } from 'react-bootstrap';
+import { Alert, Container, Modal, Nav } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { Class, Spell, SpellsKnown } from '../../constants/types';
 import SpellTable from '../SpellTable';
