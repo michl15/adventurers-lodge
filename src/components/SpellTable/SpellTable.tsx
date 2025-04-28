@@ -7,8 +7,10 @@ import {
     RowSelectionState,
     useReactTable,
     Row as TableRow,
+    getFilteredRowModel,
+    ColumnFiltersState,
 } from '@tanstack/react-table';
-import { Spell } from '../../constants/types';
+import { Class, Spell } from '../../constants/types';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
     Button,
@@ -16,6 +18,7 @@ import {
     Container,
     FormCheck,
     FormSelect,
+    Form,
     Row,
 } from 'react-bootstrap';
 import SpellDetails from '../SpellDetails';
@@ -26,16 +29,17 @@ import {
     setSelectedSpellsState,
 } from '../../redux/SpellsReducer';
 import { RootState } from '../../redux';
+import Select from 'react-select';
+import { CLASS_LIST, LEVEL_OPTIONS } from '../../constants/constants';
 
 type SpellTableProps = {
     spellList: Spell[];
+    charClass?: Class | null;
 };
 
-const StyledRow = styled.tr<{ $even: boolean }>`
-    ${(props) => props.$even && 'background-color: oklch(98.4% 0.019 200.873);'}
-
+const StyledRow = styled.tr`
     &:hover {
-        background-color: oklch(95.6% 0.045 203.388);
+        background-color: oklch(98.4% 0.019 200.873);
         color: oklch(48.8% 0.243 264.376);
         cursor: pointer;
     }
@@ -65,7 +69,7 @@ const StyledTable = styled.table`
     border-spacing: 0;
 `;
 
-const SpellTable = ({ spellList }: SpellTableProps) => {
+const SpellTable = ({ spellList, charClass }: SpellTableProps) => {
     const { selectedSpellsState } = useSelector(
         (state: RootState) => state.spells
     );
@@ -73,10 +77,14 @@ const SpellTable = ({ spellList }: SpellTableProps) => {
     const [tableData, setTableData] = useState(spellList);
     const [pagination, setPagination] = useState({
         pageIndex: 0,
-        pageSize: 5,
+        pageSize: 10,
     });
+
     const [rowSelection, setRowSelection] =
         useState<RowSelectionState>(selectedSpellsState);
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
+        { id: 'classCol', value: charClass?.name || 'All' },
+    ]);
     const dispatch = useDispatch();
 
     const columnHelper = createColumnHelper<Spell>();
@@ -102,18 +110,52 @@ const SpellTable = ({ spellList }: SpellTableProps) => {
             columnHelper.accessor('name', {
                 cell: (info) => info.getValue(),
                 header: 'Spell Name',
-                size: 300,
+                size: 200,
+                id: 'spellName',
+                filterFn: 'includesString',
             }),
             columnHelper.accessor('level', {
                 cell: (info) =>
                     info.getValue() === 0 ? 'Cantrip' : info.getValue(),
                 header: 'Level',
-                size: 50,
+                id: 'spellLevel',
+                filterFn: (row, columnId, filterValue) => {
+                    if (filterValue.length > 0) {
+                        const val = row.getValue(columnId);
+                        return filterValue.includes(val);
+                    }
+                    return true;
+                },
+                size: 100,
             }),
             columnHelper.accessor('school.name', {
                 cell: (info) => info.getValue(),
                 header: 'School',
-                size: 200,
+                id: 'spellSchool',
+                size: 100,
+            }),
+            columnHelper.accessor('classes', {
+                cell: (info) => {
+                    const classList = info.getValue();
+                    const names = classList?.map((charClass) => charClass.name);
+                    return names?.join(', ');
+                },
+                header: 'Classes',
+                id: 'classCol',
+                size: 300,
+                filterFn: (row, columnId, filterValue) => {
+                    if (
+                        filterValue !== 'All' &&
+                        CLASS_LIST.includes(filterValue)
+                    ) {
+                        const val: Class[] = row.getValue(columnId);
+                        return (
+                            val.filter((item) => item.name === filterValue)
+                                .length > 0
+                        );
+                    }
+                    return true;
+                },
             }),
         ],
         [columnHelper, dispatch]
@@ -133,17 +175,103 @@ const SpellTable = ({ spellList }: SpellTableProps) => {
         data: tableData,
         getCoreRowModel: getCoreRowModel(),
         getExpandedRowModel: getExpandedRowModel(),
-        getRowCanExpand: (row) => true,
+        getRowCanExpand: (_row) => true,
         getPaginationRowModel: getPaginationRowModel(),
         onRowSelectionChange: setRowSelection,
+        getFilteredRowModel: getFilteredRowModel(),
         getRowId: (row) => row.index,
         state: {
             pagination,
             rowSelection,
+            columnFilters,
         },
     });
+
+    const tableFilters = () => {
+        return (
+            <Container>
+                <Row>
+                    <Col md={5}>
+                        <Form.Group>
+                            <Form.Label>Name</Form.Label>
+                            <Form.Control
+                                onChange={(e) => {
+                                    setColumnFilters([
+                                        ...columnFilters,
+                                        {
+                                            id: 'spellName',
+                                            value: e.target.value,
+                                        },
+                                    ]);
+                                    setPagination({
+                                        ...pagination,
+                                        pageIndex: 0,
+                                    });
+                                }}
+                            />
+                        </Form.Group>
+                    </Col>
+                    <Col md={2}>
+                        <Form.Group>
+                            <Form.Label>Class</Form.Label>
+                            <Form.Select
+                                defaultValue={charClass ? charClass.name : ''}
+                                onChange={(e) => {
+                                    setColumnFilters([
+                                        ...columnFilters,
+                                        {
+                                            id: 'classCol',
+                                            value: e.target.value,
+                                        },
+                                    ]);
+                                    setPagination({
+                                        ...pagination,
+                                        pageIndex: 0,
+                                    });
+                                }}
+                            >
+                                <option>All</option>
+                                {CLASS_LIST.map((className) => (
+                                    <option
+                                        key={`class-filter-option-${className}`}
+                                    >
+                                        {className}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+                    </Col>
+                    <Col md={5}>
+                        <Form.Group>
+                            <Form.Label>Level</Form.Label>
+                            <Select
+                                options={LEVEL_OPTIONS}
+                                isMulti
+                                onChange={(values) => {
+                                    setColumnFilters([
+                                        ...columnFilters,
+                                        {
+                                            id: 'spellLevel',
+                                            value: values.map(
+                                                (val) => val.value
+                                            ),
+                                        },
+                                    ]);
+                                    setPagination({
+                                        ...pagination,
+                                        pageIndex: 0,
+                                    });
+                                }}
+                            />
+                        </Form.Group>
+                    </Col>
+                </Row>
+            </Container>
+        );
+    };
     return (
         <>
+            {tableFilters()}
             <TableContainer>
                 <StyledTable>
                     <StyledHeader>
@@ -163,10 +291,7 @@ const SpellTable = ({ spellList }: SpellTableProps) => {
                     <tbody>
                         {table.getRowModel().rows.map((row) => (
                             <React.Fragment key={row.id}>
-                                <StyledRow
-                                    $even={row.index % 2 === 0}
-                                    onClick={() => row.toggleExpanded()}
-                                >
+                                <StyledRow onClick={() => row.toggleExpanded()}>
                                     {row.getVisibleCells().map((cell) => (
                                         <StyledCell
                                             key={cell.id}

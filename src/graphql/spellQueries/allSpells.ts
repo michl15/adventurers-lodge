@@ -10,6 +10,7 @@ const getAllSpells = () => {
         casting_time
         classes {
           index
+          name
         }
         components
         concentration
