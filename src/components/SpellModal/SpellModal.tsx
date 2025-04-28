@@ -1,10 +1,12 @@
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux';
-import { Modal, Nav } from 'react-bootstrap';
-import { useState } from 'react';
-import { Class, SpellsKnown } from '../../constants/types';
+import { Alert, Container, Modal, Nav } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
+import { Class, Spell, SpellsKnown } from '../../constants/types';
 import SpellTable from '../SpellTable';
 import SpellSlots from '../SpellSlots';
+import { filterSpellListByClass } from '../../util/util';
+import { ExclamationCircle } from 'react-bootstrap-icons';
 
 type SpellModalProps = {
     showSpellModal: boolean;
@@ -22,12 +24,35 @@ const SpellModal = ({
     spellsKnown,
 }: SpellModalProps) => {
     const [activeTab, setActiveTab] = useState('tab-1');
+    const [classSpellList, setClassSpellList] = useState<Spell[]>([]);
     const { spellList } = useSelector((state: RootState) => state.spells);
 
     const renderTab = () => {
         switch (activeTab) {
             case 'tab-1':
-                return <SpellTable spellList={spellList} />;
+                if (classSpellList?.length > 0 && charClass) {
+                    return (
+                        <SpellTable
+                            spellList={spellList}
+                            charClass={charClass}
+                        />
+                    );
+                }
+                return (
+                    <Container>
+                        <Alert className="my-3">
+                            <ExclamationCircle
+                                style={{ margin: '0px 10px 3px 0px' }}
+                            />
+                            The class {charClass?.name || 'you selected'} has no
+                            spellcasting data. Displaying all spells.
+                        </Alert>
+                        <SpellTable
+                            spellList={spellList}
+                            charClass={charClass}
+                        />
+                    </Container>
+                );
             case 'tab-2':
                 return 'Not yet implemented';
             case 'tab-3':
@@ -40,6 +65,14 @@ const SpellModal = ({
     const handleTabSelect = (eventKey: string | null) => {
         setActiveTab(eventKey || 'tab-1');
     };
+
+    useEffect(() => {
+        if (charClass) {
+            setClassSpellList(
+                filterSpellListByClass(spellList, charClass?.index)
+            );
+        }
+    }, [spellList, charClass]);
 
     return (
         <Modal

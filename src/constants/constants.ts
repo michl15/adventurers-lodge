@@ -80,6 +80,60 @@ const EMPTY_SPELL_SLOTS: SpellsKnown = {
     spells_known: 0,
 };
 
+const CLASS_LIST = [
+    'Bard',
+    'Cleric',
+    'Druid',
+    'Ranger',
+    'Paladin',
+    'Sorcerer',
+    'Warlock',
+    'Wizard',
+];
+
+const LEVEL_OPTIONS = [
+    {
+        value: 0,
+        label: 'Cantrip',
+    },
+    {
+        value: 1,
+        label: '1st Level',
+    },
+    {
+        value: 2,
+        label: '2nd Level',
+    },
+    {
+        value: 3,
+        label: '3rd Level',
+    },
+    {
+        value: 4,
+        label: '4th Level',
+    },
+    {
+        value: 5,
+        label: '5th Level',
+    },
+    {
+        value: 6,
+        label: '6th Level',
+    },
+    {
+        value: 7,
+        label: '7th Level',
+    },
+    {
+        value: 8,
+        label: '8th Level',
+    },
+    {
+        value: 9,
+        label: '9th Level',
+    },
+];
+
 export {
     BASE_STATS,
     SKILLS,
@@ -87,4 +141,6 @@ export {
     DEFAULT_PROFICIENCIES,
     EXTRA_EQUIPMENT,
     EMPTY_SPELL_SLOTS,
+    CLASS_LIST,
+    LEVEL_OPTIONS,
 };

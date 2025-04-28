@@ -147,6 +147,7 @@ type Spell = {
     casting_time?: string;
     classes?: {
         index: string;
+        name: string;
     }[];
     components?: string[];
     concentration?: boolean;
