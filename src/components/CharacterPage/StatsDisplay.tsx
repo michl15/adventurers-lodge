@@ -2,6 +2,7 @@ import { Alert, Container, ListGroup, Row } from 'react-bootstrap';
 import { StatsTypes } from '../../constants/types';
 import styled from 'styled-components';
 import { calculateStatModifier } from '../../util/calculations';
+import { BASE_STATS } from '../../constants/constants';
 
 type StatsDisplayProps = {
     stats: StatsTypes;
@@ -30,7 +31,7 @@ const Modifier = styled(Alert)`
 
 const StatsDisplay = ({ stats }: StatsDisplayProps) => {
     const renderStats = () => {
-        const statsList = Object.keys(stats);
+        const statsList = Object.keys(BASE_STATS);
         return statsList.map((stat) => {
             const statValue = stats[stat as keyof StatsTypes];
             const modifier = calculateStatModifier(statValue);

@@ -170,7 +170,7 @@ const CharacterTraits = ({
     return (
         <Accordion alwaysOpen data-testid="character-traits-container">
             {renderTraits()}
-            {!traits ? (
+            {!traits && !edit ? (
                 <Accordion.Item
                     eventKey="Empty"
                     data-testid="no-traits-element"

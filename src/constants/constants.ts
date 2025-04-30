@@ -91,6 +91,15 @@ const CLASS_LIST = [
     'Wizard',
 ];
 
+const BASE_SAVING_THROWS = {
+    str: false,
+    dex: false,
+    con: false,
+    int: false,
+    wis: false,
+    cha: false,
+};
+
 const LEVEL_OPTIONS = [
     {
         value: 0,
@@ -143,4 +152,5 @@ export {
     EMPTY_SPELL_SLOTS,
     CLASS_LIST,
     LEVEL_OPTIONS,
+    BASE_SAVING_THROWS,
 };

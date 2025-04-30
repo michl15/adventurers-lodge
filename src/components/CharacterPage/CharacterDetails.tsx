@@ -11,7 +11,10 @@ import {
 import { CharacterData } from '../../constants/types';
 import styled from 'styled-components';
 import Proficiencies from '../Proficiencies';
-import { DEFAULT_PROFICIENCIES } from '../../constants/constants';
+import {
+    BASE_SAVING_THROWS,
+    DEFAULT_PROFICIENCIES,
+} from '../../constants/constants';
 import StatsDisplay from './StatsDisplay';
 import HPDisplay from './HPDisplay';
 import CharacterLanguages from '../CharacterLanguages';
@@ -28,6 +31,7 @@ import {
     resetSpellcasting,
     resetSpellSlots,
 } from '../../redux/SpellsReducer';
+import CharacterSavingThrows from '../CharacterSavingThrows';
 
 type CharacterDetailsProps = {
     details: CharacterData | null;
@@ -138,6 +142,14 @@ const CharacterDetails = ({ details }: CharacterDetailsProps) => {
                         <Row>
                             <h4>Stats</h4>
                             <StatsDisplay stats={details.stats} />
+                            <h5>Saving throws</h5>
+                            <CharacterSavingThrows
+                                charSavingThrows={
+                                    details.savingThrows || BASE_SAVING_THROWS
+                                }
+                                charStats={details.stats}
+                                charLvl={details.level}
+                            />
                         </Row>
                         <hr />
                         <Row>
