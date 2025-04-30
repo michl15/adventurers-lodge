@@ -100,7 +100,6 @@ const SpellModal = ({
                     </Nav.Item>
                     <Nav.Item>
                         <Nav.Link eventKey={'tab-3'}>
-                            {' '}
                             Class Spellcasting Info
                         </Nav.Link>
                     </Nav.Item>

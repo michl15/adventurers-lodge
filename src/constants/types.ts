@@ -18,6 +18,7 @@ type CharacterData = {
     languages: Language[];
     traits: Trait[];
     owner: string;
+    savingThrows?: SavingThrowsTypes;
 };
 
 type Item = {
@@ -36,6 +37,10 @@ type StatsTypes = {
     int: number;
     wis: number;
     cha: number;
+};
+
+type SavingThrowsTypes = {
+    [index: string]: boolean;
 };
 
 type Inventory = {
@@ -220,6 +225,37 @@ type RaceInfo = {
     }[];
 };
 
+type ClassInfo = {
+    index: string;
+    name: string;
+    proficiencies?: {
+        name: string;
+    }[];
+    proficiency_choices?: {
+        desc: string;
+    }[];
+    starting_equipment_options?: {
+        desc: string;
+    };
+    hit_die: number;
+    saving_throws?: {
+        name: string;
+    }[];
+    spellcasting?: {
+        info?: {
+            name: string;
+            desc: string[];
+        };
+    };
+    multi_classing?: {
+        prerequisites?: {
+            ability_score?: {
+                name: string;
+            }[];
+        };
+    };
+};
+
 type RaceDict = {
     [index: string]: RaceInfo;
 };
@@ -245,4 +281,6 @@ export type {
     SpellCastingInfo,
     RaceInfo,
     RaceDict,
+    SavingThrowsTypes,
+    ClassInfo,
 };

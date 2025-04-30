@@ -13,7 +13,11 @@ import { Toast } from 'react-bootstrap';
 import { firebaseDatabase } from '../../firebase/firebase';
 import { useNavigate, useParams } from 'react-router';
 import styled from 'styled-components';
-import { BASE_STATS, DEFAULT_PROFICIENCIES } from '../../constants/constants';
+import {
+    BASE_SAVING_THROWS,
+    BASE_STATS,
+    DEFAULT_PROFICIENCIES,
+} from '../../constants/constants';
 import {
     calculateProficiencyBonus,
     calculateStatModifier,
@@ -23,10 +27,12 @@ import Proficiencies from '../Proficiencies';
 import {
     AbilityBonus,
     Class,
+    ClassInfo,
     EquipmentCategory,
     Language,
     ProficienciesTypes,
     Race,
+    SavingThrowsTypes,
     StatsTypes,
     Trait,
 } from '../../constants/types';
@@ -55,6 +61,7 @@ import {
     setCharSpells,
 } from '../../redux/SpellsReducer';
 import { getIndexFromString } from '../../util/stringFormatting';
+import CharacterSavingThrows from '../CharacterSavingThrows';
 
 const StatsRowContainer = styled(Row)`
     display: flex;
@@ -125,6 +132,8 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
     const [equipmentCategories, setEquipmentCategories] = useState<
         EquipmentCategory[]
     >([]);
+    const [charSavingThrows, setCharSavingThrows] =
+        useState<SavingThrowsTypes>(BASE_SAVING_THROWS);
 
     // flags
     const [validated, setValidated] = useState(false);
@@ -195,20 +204,37 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                 getClassProficiencies(selectedClass.index)
             );
             if (response) {
-                const classInfo = response.class;
+                const classInfo: ClassInfo = response.class;
                 setHitDie(classInfo.hit_die);
                 setCharMaxHP(
                     classInfo.hit_die + calculateStatModifier(charStats['con'])
                 );
-                setProficienciesInfo(classInfo.proficiency_choices[0].desc);
+                if (classInfo.proficiency_choices) {
+                    setProficienciesInfo(classInfo.proficiency_choices[0].desc);
+                }
+
+                const savingThrows = classInfo.saving_throws;
+                let newSavingThrows = BASE_SAVING_THROWS;
+                if (savingThrows && savingThrows.length > 0) {
+                    for (const i in savingThrows) {
+                        newSavingThrows = {
+                            ...newSavingThrows,
+                            [savingThrows[i].name.toLowerCase()]: true,
+                        };
+                    }
+                }
+                setCharSavingThrows({ ...newSavingThrows });
             }
             setIsLoadingProficiencies(false);
+        } else {
+            setCharSavingThrows(BASE_SAVING_THROWS);
         }
     };
 
     const onRaceDropdownChange = async (race: Race | null) => {
         setValidated(false);
         setCharRace(race);
+        setStatsApplied(false);
         if (race?.index) {
             setIsLoadingRaceInfo(true);
             const response = await graphQuery(getRaceData(race.index));
@@ -309,6 +335,13 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
         setCharSkills({ ...charSkills, [skill]: !charSkills[skill] });
     };
 
+    const onSavingThrowChange = (stat: string) => {
+        setCharSavingThrows({
+            ...charSavingThrows,
+            [stat]: !charSavingThrows[stat],
+        });
+    };
+
     // #endregion onChange handlers
     /* ===================================== Button onClick handlers ======================================== */
     // #region onClick handlers
@@ -356,6 +389,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                 inventory: inventory,
                 owner: user.uid,
                 spells: charSpells,
+                savingThrows: charSavingThrows,
             };
 
             const newCharKey = push(charRef, charData).key;
@@ -390,6 +424,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                 hitDie: hitDie,
                 inventory: inventory,
                 spells: charSpells,
+                savingThrows: charSavingThrows,
             };
             update(charRef, charData)
                 .then(() => {
@@ -445,12 +480,19 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
         let newCharStats = { ...charStats };
         for (let i = 0; i < statBonuses.length; i++) {
             const stat = statBonuses[i].ability_score?.index;
-            const adjustedStat =
-                charStats[stat as keyof StatsTypes] + statBonuses[i].bonus;
+            let adjustedStat;
+            if (!statsApplied) {
+                adjustedStat =
+                    charStats[stat as keyof StatsTypes] + statBonuses[i].bonus;
+                setStatsApplied(true);
+            } else {
+                adjustedStat =
+                    charStats[stat as keyof StatsTypes] - statBonuses[i].bonus;
+                setStatsApplied(false);
+            }
             newCharStats = { ...newCharStats, [stat]: adjustedStat };
         }
         setCharStats(newCharStats);
-        setStatsApplied(true);
     };
 
     const onCancelEdit = () => {
@@ -565,19 +607,14 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                         setIsLoadingInitial(false);
                         return;
                     }
+                    await onRaceDropdownChange(charData.race);
+                    await onClassDropdownChange(charData.class);
+                    setCharStats(charData.stats);
                     setEditable(true);
-                    setCharName(charData.name);
-                    setCharRace(charData.race);
-                    // TODO: remove once refactored
-                    onRaceDropdownChange(charData.race);
-                    onClassDropdownChange(charData.class);
-                    setCharClass(charData.class);
                     setCharDesc(charData.description);
                     setCharLvl(charData.level);
-                    setCharStats(charData.stats);
-                    setCharMaxHP(charData.maxHP);
-                    setCharLanguages(charData.languages);
-                    setCharTraits(charData.traits);
+                    setCharLanguages(charData.languages || []);
+                    setCharTraits(charData.traits || []);
                     setCharSkills(charData.skills);
                     if (charData.inventory) {
                         dispatch(setInventory(charData.inventory));
@@ -585,6 +622,11 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                     if (charData.spells) {
                         dispatch(setCharSpells(charData.spells));
                     }
+                    setCharName(charData.name);
+                    setCharMaxHP(charData.maxHP);
+                    setCharSavingThrows(
+                        charData.savingThrows || BASE_SAVING_THROWS
+                    );
                 } else {
                     setEditable(false);
                 }
@@ -842,17 +884,16 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                                                                 ? 'outline-info'
                                                                 : 'info'
                                                         }
-                                                        disabled={statsApplied}
                                                     >
                                                         {statsApplied
-                                                            ? 'Bonuses Applied'
+                                                            ? 'Undo Apply Bonuses'
                                                             : 'Apply Bonuses'}
                                                     </Button>
                                                 </Col>
                                             </Row>
                                         </Alert>
                                     </Row>
-                                    {renderStatsForm()}
+                                    <Row>{renderStatsForm()}</Row>
                                     <Row>
                                         <Col className="d-flex justify-content-end">
                                             <StatsButtons
@@ -873,6 +914,16 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                                                 Reset
                                             </StatsButtons>
                                         </Col>
+                                    </Row>
+                                    <Row>
+                                        <span>Saving Throws</span>
+                                        <CharacterSavingThrows
+                                            charSavingThrows={charSavingThrows}
+                                            charStats={charStats}
+                                            charLvl={Number(charLvl)}
+                                            onCheckChange={onSavingThrowChange}
+                                            edit
+                                        />
                                     </Row>
                                 </StatsRowContainer>
                                 <h4>Other</h4>

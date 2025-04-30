@@ -14,8 +14,20 @@ const getClassProficiencies = (index: string) => {
           }
           hit_die
           saving_throws {
-            full_name
-            desc
+            name
+          }
+          spellcasting {
+            info {
+              name
+              desc
+            }
+          }
+          multi_classing {
+            prerequisites {
+              ability_score {
+                name
+              }
+            }
           }
         }
       }`;

@@ -40,7 +40,7 @@ const CharacterDisplay = ({ uid }: CharacterDisplayProps) => {
         const getCharacterData = async (characters: object, db: Database) => {
             try {
                 // iterate through characters
-                for (const char of Object.entries(characters)) {
+                for (const char of Object.entries(characters).reverse()) {
                     const charId = char[0];
                     const charRef = ref(db, `/characters/${charId}`);
 
