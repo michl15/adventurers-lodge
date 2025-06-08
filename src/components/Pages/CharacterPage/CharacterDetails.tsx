@@ -162,6 +162,7 @@ const CharacterDetails = ({ details }: CharacterDetailsProps) => {
                             <CharacterSpells
                                 charClass={details.class}
                                 charLvl={details.level}
+                                showSpellSlots
                             />
                         </Row>
                         <hr />

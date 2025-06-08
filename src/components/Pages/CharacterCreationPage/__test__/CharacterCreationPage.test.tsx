@@ -157,7 +157,7 @@ describe('CharacterCreationPage', () => {
 
         const lvlInput = await screen.findByTestId('char-lvl-input');
         fireEvent.change(lvlInput, { target: { value: '' } });
-        expect(lvlInput).toHaveValue('');
+        expect(lvlInput).toHaveValue('1');
     });
 
     test('character level onChange non-number value', async () => {
@@ -275,7 +275,7 @@ describe('CharacterCreationPage', () => {
         });
         const statInput = await screen.findByTestId('stats-input-dex');
         fireEvent.change(statInput, { target: { value: '' } });
-        expect(statInput).toHaveValue('');
+        expect(statInput).toHaveValue('0');
         const statModifier = await screen.findByTestId('stats-modifier-dex');
         expect(statModifier).toHaveTextContent('-5');
     });

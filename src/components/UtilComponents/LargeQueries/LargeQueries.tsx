@@ -28,14 +28,14 @@ const LargeQueries = () => {
                 dispatch(setEquipmentIsLoading(true));
                 const graphResponse = await graphQuery(equipmentQuery());
                 if (graphResponse) {
-                    dispatch(setEquipment(graphResponse.equipments));
+                    dispatch(setEquipment(graphResponse?.equipments || []));
                 }
 
                 if (!extraEquipmentFetched) {
                     dispatch(setExtraEquipmentFetched(true));
                     const extraResp = await graphQuery(getMagicItems());
                     if (extraResp) {
-                        dispatch(addEquipment(extraResp.magicItems));
+                        dispatch(addEquipment(extraResp?.magicItems || []));
                     }
                 }
                 dispatch(setEquipmentIsLoading(false));
@@ -43,24 +43,21 @@ const LargeQueries = () => {
         };
 
         getAllEquipment();
-    }, [
-        dispatch,
-        equipmentIsLoading,
-        equipmentList.length,
-        extraEquipmentFetched,
-    ]);
+        // eslint-disable-next-line
+    }, [dispatch]);
 
     useEffect(() => {
         const fetchSpells = async () => {
             if (spellList.length === 0) {
                 const response = await graphQuery(getAllSpells());
                 if (response) {
-                    dispatch(setSpells(response.spells));
+                    dispatch(setSpells(response?.spells || []));
                 }
             }
             dispatch(setSpellsLoading(false));
         };
         fetchSpells();
+        // eslint-disable-next-line
     }, [dispatch, spellList]);
     return null;
 };

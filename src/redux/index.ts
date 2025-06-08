@@ -3,12 +3,14 @@ import InventoryReducer from './InventoryReducer';
 import UserReducer from './UserReducer';
 import EquipmentReducer from './EquipmentReducer';
 import SpellsReducer from './SpellsReducer';
+import CharDataReducer from './CharDataReducer';
 
 const rootReducer = combineReducers({
     inventory: InventoryReducer,
     user: UserReducer,
     equipment: EquipmentReducer,
     spells: SpellsReducer,
+    charData: CharDataReducer,
 });
 
 export const store = configureStore({

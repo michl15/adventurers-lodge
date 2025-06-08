@@ -17,8 +17,13 @@ export const equipmentSlice = createSlice({
     name: 'equipment',
     initialState: initialEquipment,
     reducers: {
-        setEquipment: (state, action: PayloadAction<EquipmentData[]>) => {
-            state.equipmentList = [...action.payload];
+        setEquipment: (
+            state,
+            action: PayloadAction<EquipmentData[] | null>
+        ) => {
+            if (action.payload) {
+                state.equipmentList = [...action.payload];
+            }
         },
         resetEquipment: (state) => {
             state.equipmentList = [];
@@ -26,8 +31,13 @@ export const equipmentSlice = createSlice({
         setEquipmentIsLoading: (state, action: PayloadAction<boolean>) => {
             state.equipmentIsLoading = action.payload;
         },
-        addEquipment: (state, action: PayloadAction<EquipmentData[]>) => {
-            state.equipmentList.push(...action.payload);
+        addEquipment: (
+            state,
+            action: PayloadAction<EquipmentData[] | null>
+        ) => {
+            if (action.payload) {
+                state.equipmentList.push(...action.payload);
+            }
         },
         setExtraEquipmentFetched: (state, action: PayloadAction<boolean>) => {
             state.extraEquipmentFetched = action.payload;

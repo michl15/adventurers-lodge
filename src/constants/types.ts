@@ -19,6 +19,7 @@ type CharacterData = {
     traits: Trait[];
     owner: string;
     savingThrows?: SavingThrowsTypes;
+    spells?: Spell[];
 };
 
 type Item = {
@@ -245,6 +246,9 @@ type ClassInfo = {
         info?: {
             name: string;
             desc: string[];
+        };
+        spellcasting_ability?: {
+            name: string;
         };
     };
     multi_classing?: {

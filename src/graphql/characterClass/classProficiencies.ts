@@ -21,6 +21,9 @@ const getClassProficiencies = (index: string) => {
               name
               desc
             }
+            spellcasting_ability {
+              name
+            }
           }
           multi_classing {
             prerequisites {

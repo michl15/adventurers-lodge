@@ -24,8 +24,10 @@ export const spellSlice = createSlice({
     name: 'spells',
     initialState: initialSpells,
     reducers: {
-        setSpells: (state, action: PayloadAction<Spell[]>) => {
-            state.spellList = [...action.payload];
+        setSpells: (state, action: PayloadAction<Spell[] | null>) => {
+            if (action.payload) {
+                state.spellList = [...action.payload];
+            }
         },
         resetSpells: (state) => {
             state.spellList = [];
@@ -86,6 +88,7 @@ export const spellSlice = createSlice({
         resetSpellcasting: (state) => {
             state.spellcasting = {};
         },
+        resetAllSpellData: () => initialSpells,
     },
 });
 
@@ -104,5 +107,6 @@ export const {
     resetSpellSlots,
     setSpellcastingInfo,
     resetSpellcasting,
+    resetAllSpellData,
 } = spellSlice.actions;
 export default spellSlice.reducer;
