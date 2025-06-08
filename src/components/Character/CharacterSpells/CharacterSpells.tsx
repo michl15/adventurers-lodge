@@ -1,5 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Accordion, Container, ListGroup, Row, Spinner } from 'react-bootstrap';
+import {
+    Accordion,
+    Badge,
+    Container,
+    ListGroup,
+    Row,
+    Spinner,
+} from 'react-bootstrap';
 import SpellModal from '../../Spells/SpellModal';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux';
@@ -13,6 +20,7 @@ type CharacterSpellsProps = {
     charClass: Class | null;
     edit?: boolean;
     charLvl?: number;
+    showSpellSlots?: boolean;
 };
 
 type Section = {
@@ -30,6 +38,7 @@ const CharacterSpells = ({
     charClass,
     edit,
     charLvl,
+    showSpellSlots,
 }: CharacterSpellsProps) => {
     const [showSpellModal, setShowSpellModal] = useState(false);
 
@@ -163,7 +172,17 @@ const CharacterSpells = ({
             spell_slots_level_7: seventhLvl.length,
             spell_slots_level_8: eighthLvl.length,
             spell_slots_level_9: ninthLvl.length,
-            spells_known: 0,
+            spells_known:
+                cantrips.length +
+                firstLvl.length +
+                secondLvl.length +
+                thirdLvl.length +
+                fourthLvl.length +
+                fifthLvl.length +
+                sixthLvl.length +
+                seventhLvl.length +
+                eighthLvl.length +
+                ninthLvl.length,
         };
 
         return known;
@@ -171,11 +190,14 @@ const CharacterSpells = ({
     return (
         <Container>
             <Row>
-                <SpellSlots
-                    charClass={charClass}
-                    charLvl={charLvl}
-                    spellsKnown={getKnownSpells()}
-                />
+                {showSpellSlots && (
+                    <SpellSlots
+                        charClass={charClass}
+                        charLvl={charLvl}
+                        spellsKnown={getKnownSpells()}
+                        edit={edit}
+                    />
+                )}
             </Row>
             <Row>
                 <Accordion alwaysOpen>

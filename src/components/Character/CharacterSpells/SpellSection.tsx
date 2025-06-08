@@ -2,6 +2,7 @@ import {
     AccordionBody,
     AccordionHeader,
     AccordionItem,
+    Badge,
     Button,
     Col,
     ListGroup,
@@ -36,6 +37,17 @@ const SpellSection = ({ name, spellList, edit }: SpellSectionProps) => {
         } else {
             return {};
         }
+    };
+
+    const sectionHeader = () => {
+        return (
+            <span>
+                {name}
+                <Badge bg="primary" className="ms-3">
+                    {spellList.length}
+                </Badge>
+            </span>
+        );
     };
 
     const renderList = () => {
@@ -79,9 +91,7 @@ const SpellSection = ({ name, spellList, edit }: SpellSectionProps) => {
     return (
         notEmptyList(spellList) && (
             <AccordionItem eventKey={`spell-section-${name}`}>
-                <AccordionHeader>
-                    <b>{name}</b>
-                </AccordionHeader>
+                <AccordionHeader>{sectionHeader()}</AccordionHeader>
                 <AccordionBody style={{ padding: '0px' }}>
                     <ListGroup variant="flush">{renderList()}</ListGroup>
                 </AccordionBody>

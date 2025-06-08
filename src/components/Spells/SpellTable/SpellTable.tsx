@@ -391,7 +391,8 @@ const SpellTable = ({ spellList, charClass }: SpellTableProps) => {
                                 setPagination({
                                     ...pagination,
                                     pageIndex: Math.floor(
-                                        spellList.length / pagination.pageSize
+                                        table.getRowCount() /
+                                            pagination.pageSize
                                     ),
                                 });
                             }}

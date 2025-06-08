@@ -109,6 +109,7 @@ const SpellModal = ({
                     charClass={charClass}
                     charLvl={charLvl}
                     compact
+                    edit
                 />
                 {renderTab()}
             </Modal.Body>

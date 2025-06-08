@@ -11,7 +11,7 @@ import {
 import { get, push, ref, set, update } from 'firebase/database';
 import { Toast } from 'react-bootstrap';
 import { firebaseDatabase } from '../../../firebase/firebase';
-import { useNavigate, useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import styled from 'styled-components';
 import {
     BASE_SAVING_THROWS,
@@ -26,6 +26,7 @@ import {
 import Proficiencies from '../../Character/Proficiencies';
 import {
     AbilityBonus,
+    CharacterData,
     Class,
     ClassInfo,
     EquipmentCategory,
@@ -53,15 +54,17 @@ import {
     getRaceData,
 } from '../../../graphql/queries';
 import CharacterSpells from '../../Character/CharacterSpells';
-import {
-    resetCharSpells,
-    resetSelectedSpellState,
-    resetSpellcasting,
-    resetSpellSlots,
-    setCharSpells,
-} from '../../../redux/SpellsReducer';
+import { resetAllSpellData, setCharSpells } from '../../../redux/SpellsReducer';
 import { getIndexFromString } from '../../../util/stringFormatting';
 import CharacterSavingThrows from '../../Character/CharacterSavingThrows';
+import {
+    resetAllCharData,
+    setAllStats,
+    setCharSpellcastingAbility,
+    setLvl,
+    setStat,
+} from '../../../redux/CharDataReducer';
+import { getClassSpellcasting } from '../../../graphql/characterClass';
 
 const StatsRowContainer = styled(Row)`
     display: flex;
@@ -118,8 +121,6 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
     // Character input fields
     const [charName, setCharName] = useState<string>('');
     const [charClass, setCharClass] = useState<Class | null>(null);
-    const [charStats, setCharStats] = useState<StatsTypes>(BASE_STATS);
-    const [charLvl, setCharLvl] = useState<number | string>(1);
     const [charSkills, setCharSkills] = useState<ProficienciesTypes<boolean>>(
         DEFAULT_PROFICIENCIES
     );
@@ -164,7 +165,12 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
         (state: RootState) => state.inventory.inventoryList
     );
     const { charSpells } = useSelector((state: RootState) => state.spells);
+    const { charStats, charLvl, spellcastingAbility } = useSelector(
+        (state: RootState) => state.charData
+    );
     const dispatch = useDispatch();
+
+    const location = useLocation();
 
     // #endregion State
     // hook for React Router navigation
@@ -299,11 +305,10 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
         setValidated(false);
         setStatsApplied(false);
         if (!event.target.value) {
-            setCharStats({ ...charStats, [label]: '' });
+            dispatch(setStat({ stat: label, val: Number(event.target.value) }));
         } else if (Number(event.target.value)) {
-            setCharStats({ ...charStats, [label]: Number(event.target.value) });
+            dispatch(setStat({ stat: label, val: Number(event.target.value) }));
         }
-
         if (label === 'con' && hitDie) {
             setCharMaxHP(hitDie + calculateStatModifier(event.target.value));
         }
@@ -312,9 +317,9 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
     const onLevelChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValidated(false);
         if (!event.target.value) {
-            setCharLvl('');
+            dispatch(setLvl(1));
         } else if (Number(event.target.value)) {
-            setCharLvl(Number(event.target.value));
+            dispatch(setLvl(Number(event.target.value)));
         }
     };
 
@@ -352,13 +357,13 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
             const newStat = rollStat();
             newStatsObj[key as keyof StatsTypes] = newStat;
         }
-        setCharStats(newStatsObj);
+        dispatch(setAllStats(newStatsObj));
         setCharMaxHP(hitDie + calculateStatModifier(newStatsObj['con']));
         setStatsApplied(false);
     };
 
     const onResetStats = () => {
-        setCharStats(BASE_STATS);
+        dispatch(setAllStats(BASE_STATS));
         setCharMaxHP(hitDie);
         setStatsApplied(false);
     };
@@ -492,7 +497,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
             }
             newCharStats = { ...newCharStats, [stat]: adjustedStat };
         }
-        setCharStats(newCharStats);
+        dispatch(setAllStats(newCharStats));
     };
 
     const onCancelEdit = () => {
@@ -601,7 +606,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                 const charRef = ref(firebaseDatabase, `/characters/${charId}`);
                 const response = await get(charRef);
                 if (response.exists()) {
-                    const charData = response.val();
+                    const charData: CharacterData = response.val();
                     if (charData.owner !== user?.uid) {
                         setEditable(false);
                         setIsLoadingInitial(false);
@@ -609,10 +614,10 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                     }
                     await onRaceDropdownChange(charData.race);
                     await onClassDropdownChange(charData.class);
-                    setCharStats(charData.stats);
+                    dispatch(setAllStats(charData.stats));
                     setEditable(true);
-                    setCharDesc(charData.description);
-                    setCharLvl(charData.level);
+                    setCharDesc(charData.description || '');
+                    dispatch(setLvl(charData.level));
                     setCharLanguages(charData.languages || []);
                     setCharTraits(charData.traits || []);
                     setCharSkills(charData.skills);
@@ -645,16 +650,27 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
     ]);
 
     useEffect(() => {
-        //on unmount, reset inventory
-        return () => {
-            dispatch(resetInventory());
-            dispatch(resetCharSpells());
-            dispatch(resetSelectedSpellState());
-            dispatch(resetSpellSlots());
-            dispatch(resetSpellcasting());
-            dispatch(resetCharSpells());
+        const getSpellcastingAbility = async () => {
+            if (charClass?.index) {
+                const classResponse = await graphQuery(
+                    getClassSpellcasting(charClass?.index)
+                );
+                const spellcastingAbility =
+                    classResponse.class.spellcasting?.spellcasting_ability.name;
+                dispatch(setCharSpellcastingAbility(spellcastingAbility));
+            } else {
+                dispatch(setCharSpellcastingAbility(''));
+            }
         };
-    }, [dispatch]);
+
+        getSpellcastingAbility();
+    }, [charClass]);
+
+    useEffect(() => {
+        dispatch(resetInventory());
+        dispatch(resetAllCharData());
+        dispatch(resetAllSpellData());
+    }, [dispatch, location.pathname]);
 
     return (
         <div data-testid="character-creation-page-container">
@@ -828,7 +844,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                         </Row>
                         <hr />
                         <Row>
-                            <Col md="auto">
+                            <Col md="auto" className="justify-content-center">
                                 <h4>Skills</h4>
                                 <Alert
                                     show={!customClass && charClass !== null}
@@ -940,6 +956,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
                                     <CharacterSpells
                                         charClass={charClass}
                                         charLvl={Number(charLvl)}
+                                        showSpellSlots
                                         edit
                                     />
                                 </Row>

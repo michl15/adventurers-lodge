@@ -1,6 +1,6 @@
 const getAllSpells = () => {
     const query = `query AllSpellsQuery {
-      spells(limit: 0, order: {by: LEVEL}) {
+      spells(limit: 1000, order: {by: LEVEL, direction: ASC}) {
         index
         area_of_effect {
           type
@@ -20,11 +20,7 @@ const getAllSpells = () => {
           }
         }
         dc {
-          desc
-          success
-          type {
-            full_name
-          }
+          dc_success
         }
         desc
         duration
