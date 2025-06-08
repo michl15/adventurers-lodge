@@ -1,12 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-    Accordion,
-    Badge,
-    Container,
-    ListGroup,
-    Row,
-    Spinner,
-} from 'react-bootstrap';
+import { Accordion, Container, ListGroup, Row, Spinner } from 'react-bootstrap';
 import SpellModal from '../../Spells/SpellModal';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux';

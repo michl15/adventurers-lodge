@@ -10,7 +10,6 @@ import {
 } from '../../../redux/SpellsReducer';
 import { RootState } from '../../../redux';
 import { Container, ListGroup, Row, Spinner } from 'react-bootstrap';
-import styled from 'styled-components';
 import { getClassSpellcasting } from '../../../graphql/characterClass';
 import { calculateStatModifier } from '../../../util/calculations';
 import { setCharSpellsPrepared } from '../../../redux/CharDataReducer';
@@ -28,11 +27,6 @@ type SpellSlotsSection = {
     known: number;
     available: number;
 };
-
-const SlotLabel = styled.span`
-    font-size: 10px;
-    margin-bottom: -5px;
-`;
 
 const SpellSlots = ({
     charClass,
@@ -84,6 +78,7 @@ const SpellSlots = ({
         };
 
         getSpellsPrepared();
+        // eslint-disable-next-line
     }, [charLvl, charStats]);
 
     useEffect(() => {
@@ -106,6 +101,7 @@ const SpellSlots = ({
             setIsLoadingSpellSlots(false);
         };
         fetchSpellCastingInfo();
+        // eslint-disable-next-line
     }, [charClass, charLvl, dispatch]);
 
     useEffect(() => {
@@ -163,7 +159,14 @@ const SpellSlots = ({
                 },
             ]);
         }
-    }, [spellSlots, spellsKnown, charClass, charLvl, isLoadingSpellSlots]);
+    }, [
+        spellSlots,
+        spellsKnown,
+        charClass,
+        charLvl,
+        isLoadingSpellSlots,
+        compact,
+    ]);
 
     return spellsKnown.spells_known || edit ? (
         <Container className="py-2">

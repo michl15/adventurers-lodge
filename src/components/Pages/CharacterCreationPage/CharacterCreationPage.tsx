@@ -60,11 +60,9 @@ import CharacterSavingThrows from '../../Character/CharacterSavingThrows';
 import {
     resetAllCharData,
     setAllStats,
-    setCharSpellcastingAbility,
     setLvl,
     setStat,
 } from '../../../redux/CharDataReducer';
-import { getClassSpellcasting } from '../../../graphql/characterClass';
 
 const StatsRowContainer = styled(Row)`
     display: flex;
@@ -165,7 +163,7 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
         (state: RootState) => state.inventory.inventoryList
     );
     const { charSpells } = useSelector((state: RootState) => state.spells);
-    const { charStats, charLvl, spellcastingAbility } = useSelector(
+    const { charStats, charLvl } = useSelector(
         (state: RootState) => state.charData
     );
     const dispatch = useDispatch();

@@ -43,6 +43,7 @@ const LargeQueries = () => {
         };
 
         getAllEquipment();
+        // eslint-disable-next-line
     }, [dispatch]);
 
     useEffect(() => {
@@ -56,6 +57,7 @@ const LargeQueries = () => {
             dispatch(setSpellsLoading(false));
         };
         fetchSpells();
+        // eslint-disable-next-line
     }, [dispatch, spellList]);
     return null;
 };
