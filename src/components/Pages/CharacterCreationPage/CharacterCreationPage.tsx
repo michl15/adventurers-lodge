@@ -650,23 +650,6 @@ const CharacterCreationPage = ({ editMode }: CharacterCreationPageProps) => {
     ]);
 
     useEffect(() => {
-        const getSpellcastingAbility = async () => {
-            if (charClass?.index) {
-                const classResponse = await graphQuery(
-                    getClassSpellcasting(charClass?.index)
-                );
-                const spellcastingAbility =
-                    classResponse.class.spellcasting?.spellcasting_ability.name;
-                dispatch(setCharSpellcastingAbility(spellcastingAbility));
-            } else {
-                dispatch(setCharSpellcastingAbility(''));
-            }
-        };
-
-        getSpellcastingAbility();
-    }, [charClass]);
-
-    useEffect(() => {
         dispatch(resetInventory());
         dispatch(resetAllCharData());
         dispatch(resetAllSpellData());
